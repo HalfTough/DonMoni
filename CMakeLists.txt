@@ -1,0 +1,7 @@
+#cmake_minimum_required (VERSION 2.6)
+project (GenerousTracker)
+set (GenerousTracker_VERSION_MAJOR 1)
+set (GenerousTracker_VERSION MINOR 0)
+find_package(Qt5Core)
+add_executable(donate main.cpp tracker.cpp project.cpp payment.cpp)
+target_link_libraries(donate Qt5::Core)
