@@ -9,11 +9,15 @@
 class Project {
     QString name;
     QList<Payment*> payments;
+    int money=0;
 
 public:
     Project(QString name);
     void addPayment(int amount, QDate date = QDate());
     QDate getEarliestDate() const;
+    QString getName() const {return name;}
+    int getMoney() const { return money; }
+    int getFrom(int year,int month) const;
 };
 
 #endif

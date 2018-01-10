@@ -6,14 +6,20 @@
 #include "project.h"
 
 class Tracker{
-    QMap<QString,Project*> projects;
-    enum Timeframe {custom=1, year=2, month=4, week=6, day=8};
+    QMap<QString,Project*> *projects;
+    int money=0;
     
 public:
+    Tracker();
     void addProject(QString name);
     void add(QString name, int amount, QDate date = QDate());
-    void print(Timeframe timeframe = month, QDate from = QDate(), QDate to = QDate()) const;
+    QMap<QString,Project*> *getProjects() const { return projects; }
     QDate getEarliestDate() const;
+    QList <QVector<int>*> * getMoneyTable(QDate from, QDate to) const;
+    //int getMax(int, int) const;
+    int getMoney() const { return money; }
+    int getSumFrom(int year, int month) const;
+    QString getLongestProjectName() const;
 };
 
 #endif 

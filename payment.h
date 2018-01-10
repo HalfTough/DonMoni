@@ -9,7 +9,8 @@ class Payment{
     QDate date;
 public:
     Payment ( int amount, QDate date );
-    QDate getDate(){ return date; }
+    int getAmount() const { return amount; }
+    QDate getDate() const { return date; }
 };
 
 #endif
