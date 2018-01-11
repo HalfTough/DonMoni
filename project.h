@@ -2,6 +2,7 @@
 #define PROJECT_H
 
 #include <QDate>
+#include <QList>
 #include <QString>
 
 #include "payment.h"
@@ -14,6 +15,7 @@ class Project {
 public:
     Project(QString name);
     void addPayment(int amount, QDate date = QDate());
+    bool empty() const;
     QDate getEarliestDate() const;
     QString getName() const {return name;}
     int getMoney() const { return money; }

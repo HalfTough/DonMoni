@@ -1,7 +1,5 @@
 #include "project.h"
 
-#include <QDebug> //TODO
-
 Project::Project(QString name) : name(name){
 
 }
@@ -10,9 +8,17 @@ void Project::addPayment(int amount, QDate date){
     if(date.isNull()){
         date = QDate::currentDate();
     }
-    //TODO sorting if needed
-    money+=amount;
-    payments.push_back(new Payment(amount, date));
+    money += amount;
+    Payment *payment = new Payment(amount, date);
+    //Usually new payment will land at the end of list
+    auto i = payments.rbegin();
+    while(i!=payments.rend() && (*i)->getDate() > date)
+        i++;
+    payments.insert(i.base(), payment);
+}
+
+bool Project::empty() const{
+    return payments.empty();
 }
 
 QDate Project::getEarliestDate() const{

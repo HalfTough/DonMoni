@@ -45,6 +45,10 @@ int Printer::fieldWidth(QVector<int> *vec){
 }
 
 void Printer::print(){
+    if(tracker->empty()){
+        out << empty << endl;
+        return;
+    }
     QDate from = _from;
     QDate to = _to;
     int width = getTermWidth();
@@ -53,18 +57,6 @@ void Printer::print(){
     }
     if(to.isNull()){
         to = QDate::currentDate();
-    }
-
-    //TODO Do I use it?
-    int cols; //Liczba kolumn bez sumy i projektów
-    switch(timeframe){
-    case month: {
-        int dYears = to.year()-from.year(); //TODO year 0 exception
-        cols = 12*dYears + to.month()-from.month();
-        break;
-    }
-    default:
-        throw 3; //TODO
     }
 
     QList<int> *sizes = new QList<int>();
@@ -140,7 +132,7 @@ void Printer::printHeader(QList<int> *sizes, bool isOlder){
             month=0;
     }
     printString(sum, *size, right);
-    out << "\n";
+    out << endl;
 }
 
 void Printer::printProjects(QList<QVector<int> *> *table, QList<int> *sizes){
@@ -153,7 +145,7 @@ void Printer::printProjects(QList<QVector<int> *> *table, QList<int> *sizes){
             printMoney((*vec)->at(i), *size);
         }
         printMoney(project->getMoney(), sizes->back());
-        out << "\n";
+        out << endl;
         i++;
     }
 }
@@ -166,7 +158,7 @@ void Printer::printFooter(QList<QVector<int> *> *table, QList<int> *sizes){
         printMoney(vectorSum(vec), *size++);
     }
     printMoney(tracker->getMoney(), *size);
-    out << "\n";
+    out << endl;
 }
 
 void Printer::printString(const QString &string, int space, Align align){

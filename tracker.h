@@ -13,6 +13,7 @@ public:
     Tracker();
     void addProject(QString name);
     void add(QString name, int amount, QDate date = QDate());
+    bool empty() const;
     QMap<QString,Project*> *getProjects() const { return projects; }
     QDate getEarliestDate() const;
     QList <QVector<int>*> * getMoneyTable(QDate from, QDate to) const;

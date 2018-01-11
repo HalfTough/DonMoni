@@ -22,6 +22,7 @@ class Printer{
     QString older = "Starsze";
     QString sum = "Suma";
     QString currency = "zł";
+    QString empty = "Nie dodano żadnych wpłat.";
 
     int getTermWidth();
     int fieldWidth(int);

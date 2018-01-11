@@ -23,6 +23,15 @@ void Tracker::add(QString name, int amount, QDate date)
     projects->value(name)->addPayment(amount, date);
 }
 
+bool Tracker::empty() const {
+    bool empty = true;
+    auto p = projects->begin();
+    while(empty && p!=projects->end()){
+        empty = (*p++)->empty();
+    }
+    return empty;
+}
+
 QDate Tracker::getEarliestDate() const{
     QDate earliest = QDate::currentDate();
     for(Project *project : *projects){
