@@ -124,7 +124,7 @@ void Printer::printHeader(QList<int> *sizes, bool isOlder){
     }
     month = ((month-sizes->size()+3+(isOlder?1:0))%12+12)%12;
     if(isOlder){
-        printString(older, *size++);
+        printString(older, *size++, right);
     }
     while(size!=sizes->end()-1){
         printString(months[month],*size++, right);

@@ -4,15 +4,33 @@ Project::Project(QString name) : name(name){
 
 }
 
+Project::Project(QJsonObject jobject){
+    QJsonValue jname = jobject.value("name");
+    if(jname.isUndefined() || !jname.isString())
+        throw 6;
+    name = jname.toString();
+    QJsonValue jpayments = jobject.value("payments");
+    if(jpayments.isUndefined() || !jpayments.isArray())
+        throw 6;
+    for(QJsonValue payment : jpayments.toArray()){
+        if(payment.isUndefined() || !payment.isObject())
+            throw 6;
+        addPayment(new Payment(payment.toObject()));
+    }
+}
+
 void Project::addPayment(int amount, QDate date){
     if(date.isNull()){
         date = QDate::currentDate();
     }
-    money += amount;
-    Payment *payment = new Payment(amount, date);
+    addPayment( new Payment(amount, date) );
+}
+
+void Project::addPayment(Payment *payment){
+    money += payment->getAmount();
     //Usually new payment will land at the end of list
     auto i = payments.rbegin();
-    while(i!=payments.rend() && (*i)->getDate() > date)
+    while(i!=payments.rend() && (*i)->getDate() > payment->getDate())
         i++;
     payments.insert(i.base(), payment);
 }
@@ -38,4 +56,15 @@ int Project::getFrom(int year, int month) const {
         }
     }
     return sum;
+}
+
+QJsonObject Project::toJson() const{
+    QJsonObject project;
+    project.insert("name", name);
+    QJsonArray jpayments;
+    for(Payment *payment : payments){
+        jpayments.append(payment->toJson());
+    }
+    project.insert("payments", jpayments);
+    return project;
 }

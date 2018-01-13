@@ -1,7 +1,8 @@
 #include <QDebug>
-#include <iostream>
-#include <algorithm>
+#include <QDir>
+#include <QJsonDocument>
 #include <QTextStream>
+#include <QStandardPaths>
 
 #include "tracker.h"
 
@@ -9,10 +10,53 @@ Tracker::Tracker(){
     projects = new QMap<QString,Project*>();
 }
 
+void Tracker::save(){
+    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
+    if(!dir.exists(dataDir)){
+        dir.mkdir(dataDir);
+    }
+    dir.cd(dataDir);
+    QFile saveFile(dir.filePath(projectsFile));
+    //TODO
+    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        throw 5;
+    QJsonDocument jdoc(toJson());
+    QTextStream out(&saveFile);
+    out << jdoc.toJson(QJsonDocument::Indented);
+}
+
+void Tracker::load(){
+    //TODO zabezpieczyć ?
+    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
+    if(!dir.cd(dataDir))
+        return;
+    QFile saveFile(dir.filePath(projectsFile));
+    if(!saveFile.exists())
+        return;
+    //TODO
+    if (!saveFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        throw 5;
+    QJsonDocument jdoc = QJsonDocument::fromJson(saveFile.readAll());
+    if(!jdoc.isArray())
+        throw 6;
+    QJsonArray array = jdoc.array();
+    for(QJsonValue project : array){
+        if(!project.isObject())
+            throw 6;
+        addProject(new Project(project.toObject()));
+    }
+
+
+}
+
 void Tracker::addProject(QString name){
     if(projects->contains(name))
         throw 1; //TODO
     projects->insert(name, new Project(name));
+}
+
+void Tracker::addProject(Project *project){
+    projects->insert(project->getName(), project);
 }
 
 void Tracker::add(QString name, int amount, QDate date)
@@ -60,19 +104,6 @@ QList <QVector<int>*> * Tracker::getMoneyTable(QDate from, QDate to) const {
     return table;
 }
 
-/*
-int Tracker::getMax(int year, int month) const {
-    int max = 0;
-    for(Project *project : *projects){
-        int x;
-        if( (x = project->getFrom(year, month)) > max){
-            max = x;
-        }
-    }
-    return max;
-}
-*/
-
 int Tracker::getSumFrom(int year, int month) const {
     int sum = 0;
     for(Project *project : *projects){
@@ -89,4 +120,12 @@ QString Tracker::getLongestProjectName() const {
         }
     }
     return longest;
+}
+
+QJsonArray Tracker::toJson() const{
+    QJsonArray array;
+    for(Project *project : *projects){
+        array.append(project->toJson());
+    }
+    return array;
 }
