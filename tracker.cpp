@@ -56,6 +56,7 @@ void Tracker::addProject(QString name){
 }
 
 void Tracker::addProject(Project *project){
+    money += project->getMoney();
     projects->insert(project->getName(), project);
 }
 

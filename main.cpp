@@ -1,29 +1,36 @@
 #include <iostream>
 
+#include "parser.h"
 #include "printer.h"
 
-int main(){
+int main(int argc, char **argv){
+    Parser parser(argc, argv);
+    Printer printer(stdout);
+    if(parser.getAction() == Parser::error){
+        printer.printParseError();
+        return 1;
+    }
+    if(parser.getAction() == Parser::help){
+        printer.printHelp();
+        return 0;
+    }
     Tracker *tracker = new Tracker();
     tracker->load();
-    /*
-    tracker->add("KDE", 1);
-    tracker->add("Team Four Star", 4, QDate(2017,8,16));
-    tracker->add("Krita", 12, QDate(2017,11,13));
-    tracker->add("Landuke", 15, QDate(2016,10,22));
-    tracker->add("Landuke", 15, QDate(2017,1,22));
-    tracker->add("Landuke", 15, QDate(2016,5,22));
-    tracker->add("Landuke", 15, QDate(2015,10,22));
-    //tracker->save();
-    /*
-
-
-    tracker->add("HiDive", 14, QDate(2018,1,6));
-
-
-    tracker->add("Landuke", 15, QDate(2016,8,22));
-    tracker->add("Landuke", 15, QDate(2017,3,22));
-    */
-    Printer printer(stdout, tracker);
-    printer.print();
+    printer.setTracker(tracker);
+    if(parser.getAction() == Parser::show){
+        //TODO set filters
+        printer.print();
+        return 0;
+    }
+    if(parser.getAction() == Parser::add){
+        if(parser.hasAmount())
+            tracker->add(parser.getName(), parser.getAmount(), parser.getDate());
+        else
+            throw 123;
+        tracker->save();
+    }
+    if(parser.getAction() == Parser::remove){
+        throw 1232;
+    }
 	return 0;
 }

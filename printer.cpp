@@ -10,6 +10,18 @@ Printer::Printer(FILE *file, Tracker *tracker) : out(file), tracker(tracker){
 
 }
 
+void Printer::setTracker(Tracker *tr){
+    tracker = tr;
+}
+
+void Printer::printParseError(){
+    out << parseErrorMessage;
+}
+
+void Printer::printHelp(){
+    out << helpMessage;
+}
+
 //TODO Windows?
 int Printer::getTermWidth(){
     struct ioctl::winsize w;

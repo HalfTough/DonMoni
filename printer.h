@@ -23,6 +23,8 @@ class Printer{
     QString sum = "Suma";
     QString currency = "zł";
     QString empty = "Nie dodano żadnych wpłat.";
+    QString parseErrorMessage = "Nieprawidłowe argomenty\n";
+    QString helpMessage = "Użycie donate [akcja] [argumenty]\n";
 
     int getTermWidth();
     int fieldWidth(int);
@@ -38,12 +40,15 @@ class Printer{
     int vectorSum(QVector<int>*);
 
 public:
-    Printer(FILE*, Tracker*);
+    Printer(FILE*, Tracker* = nullptr);
+    void setTracker(Tracker *);
     void setFrom(QDate from){ _from = from; }
     void setTo(QDate to){ _to = to; }
     void clearFrom(){ _from = QDate();}
     void clearTo(){ _to = QDate(); }
     void print();
+    void printParseError();
+    void printHelp();
 };
 
 #endif
