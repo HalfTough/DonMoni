@@ -179,27 +179,6 @@ void Printer::printString(const QString &string, int space, QTextStream::FieldAl
     out << string;
     out.setFieldWidth(0);
     out.setFieldAlignment(QTextStream::AlignLeft);
-    /*switch(align){
-    case left:
-        out << string;
-        for(int i=0;i<space-string.size();i++)
-            out << " ";
-        break;
-    case right:
-        for(int i=0;i<space-string.size();i++)
-            out << " ";
-        out << string;
-        break;
-    case center:{
-        int i=0;
-        for(;i<(space-string.size())/2;i++)
-            out << " ";
-        out << string;
-        for(;i<space-string.size();i++)
-            out << " ";
-    }
-    }*/
-
 }
 
 void Printer::printMoney(int string, int space ){
