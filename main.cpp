@@ -1,9 +1,11 @@
-#include <iostream>
+#include <QTextStream>
+
 
 #include "parser.h"
 #include "printer.h"
 
 int main(int argc, char **argv){
+
     Parser parser(argc, argv);
     Printer printer(stdout);
     if(parser.getAction() == Parser::error){

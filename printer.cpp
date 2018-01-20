@@ -136,14 +136,14 @@ void Printer::printHeader(QList<int> *sizes, bool isOlder){
     }
     month = ((month-sizes->size()+3+(isOlder?1:0))%12+12)%12;
     if(isOlder){
-        printString(older, *size++, right);
+        printString(older, *size++, QTextStream::AlignRight);
     }
     while(size!=sizes->end()-1){
-        printString(months[month],*size++, right);
+        printString(months[month],*size++, QTextStream::AlignRight);
         if(++month==12)
             month=0;
     }
-    printString(sum, *size, right);
+    printString(sum, *size, QTextStream::AlignRight);
     out << endl;
 }
 
@@ -173,8 +173,13 @@ void Printer::printFooter(QList<QVector<int> *> *table, QList<int> *sizes){
     out << endl;
 }
 
-void Printer::printString(const QString &string, int space, Align align){
-    switch(align){
+void Printer::printString(const QString &string, int space, QTextStream::FieldAlignment align){
+    out.setFieldWidth(space);
+    out.setFieldAlignment(align);
+    out << string;
+    out.setFieldWidth(0);
+    out.setFieldAlignment(QTextStream::AlignLeft);
+    /*switch(align){
     case left:
         out << string;
         for(int i=0;i<space-string.size();i++)
@@ -193,10 +198,10 @@ void Printer::printString(const QString &string, int space, Align align){
         for(;i<space-string.size();i++)
             out << " ";
     }
-    }
+    }*/
 
 }
 
 void Printer::printMoney(int string, int space ){
-    printString(QString::number(string)+" "+currency, space, right);
+    printString(QString::number(string)+" "+currency, space, QTextStream::AlignRight);
 }

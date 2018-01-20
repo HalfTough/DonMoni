@@ -11,7 +11,6 @@ class Printer{
     QDate _from, _to;
     int minCol = 3;
     enum Timeframe {year, month, week, day};
-    enum Align {left, right, center};
     Timeframe timeframe = month;
     int timeInt = 1;
     //TODO translations
@@ -33,7 +32,7 @@ class Printer{
     void printHeader(QList<int> *sizes, bool isOlder = false);
     void printProjects(QList<QVector<int>*>*table, QList<int> *sizes);
     void printFooter(QList<QVector<int> *> *table, QList<int> *sizes);
-    void printString(const QString &string, int space, Align align=left);
+    void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
     void printMoney(int, int space);
     //TODO move it maybe
     void addToVector(QVector<int>*, QVector<int>*);
