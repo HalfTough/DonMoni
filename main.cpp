@@ -1,11 +1,11 @@
 #include <QTextStream>
 
-
 #include "parser.h"
 #include "printer.h"
 
-int main(int argc, char **argv){
+#include <QDebug> //TODO
 
+int main(int argc, char **argv){
     Parser parser(argc, argv);
     Printer printer(stdout);
     if(parser.getAction() == Parser::error){
@@ -33,6 +33,9 @@ int main(int argc, char **argv){
     }
     if(parser.getAction() == Parser::remove){
         throw 1232;
+    }
+    if(parser.getAction() == Parser::project){
+        printer.printProjectInfo(parser.getName());
     }
 	return 0;
 }

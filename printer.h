@@ -13,6 +13,7 @@ class Printer{
     enum Timeframe {year, month, week, day};
     Timeframe timeframe = month;
     int timeInt = 1;
+    int line = 0;
     //TODO translations
     QString months[12] = {"styczeń", "luty", "marzec", "kwiecień", "maj",
                        "czerwiec", "lipiec", "sierpień", "wrzesień",
@@ -24,6 +25,13 @@ class Printer{
     QString empty = "Nie dodano żadnych wpłat.";
     QString parseErrorMessage = "Nieprawidłowe argomenty\n";
     QString helpMessage = "Użycie donate [akcja] [argumenty]\n";
+    QString noProject = "%1 – nie znaleziono projektu o tej nazwie";
+    QString donations = "Wpłaty:";
+    QString noDonations = "Projekt nie ma żadnych wpłat.";
+
+    //TODO support
+    QString line1 = "\e[0m";
+    QString line2 = "\e[40m";
 
     int getTermWidth();
     int fieldWidth(int);
@@ -46,6 +54,7 @@ public:
     void clearFrom(){ _from = QDate();}
     void clearTo(){ _to = QDate(); }
     void print();
+    void printProjectInfo(QString);
     void printParseError();
     void printHelp();
 };

@@ -127,7 +127,26 @@ void Printer::print(){
     delete moneyTable;
 }
 
+void Printer::printProjectInfo(QString name){
+    Project *project = tracker->getProject(name);
+    if(!project){
+        out << noProject.arg(name) << endl;
+        return;
+    }
+    auto payments = project->getPayments();
+    if(payments->empty()){
+        out << noDonations << endl;
+        return;
+    }
+    out << project->getName() << endl << donations << endl;
+    for(Payment* payment : *payments){
+        out << payment->getDate().toString(Qt::ISODate) << QString(": ") << payment->getAmount() << currency << endl;
+    }
+    out << sum << ": " << project->getMoney() << currency << endl;
+}
+
 void Printer::printHeader(QList<int> *sizes, bool isOlder){
+    out << ((line++%2)?line2:line1);
     auto size = sizes->begin();
     printString(project, *size++);
     int month = _to.month()-1; //TODO timeframe
@@ -144,12 +163,13 @@ void Printer::printHeader(QList<int> *sizes, bool isOlder){
             month=0;
     }
     printString(sum, *size, QTextStream::AlignRight);
-    out << endl;
+    out << line1 << endl;
 }
 
 void Printer::printProjects(QList<QVector<int> *> *table, QList<int> *sizes){
     int i=0;
     for(Project *project : *tracker->getProjects()){
+        out << ((line++%2)?line2:line1);
         auto size = sizes->begin();
         printString(project->getName(), *size);
         size++;
@@ -157,12 +177,13 @@ void Printer::printProjects(QList<QVector<int> *> *table, QList<int> *sizes){
             printMoney((*vec)->at(i), *size);
         }
         printMoney(project->getMoney(), sizes->back());
-        out << endl;
+        out << line1 << endl;
         i++;
     }
 }
 
 void Printer::printFooter(QList<QVector<int> *> *table, QList<int> *sizes){
+    out << ((line++%2)?line2:line1);
     auto size = sizes->begin();
     auto vec = table->begin();
     printString(sum, *size++);
@@ -170,7 +191,7 @@ void Printer::printFooter(QList<QVector<int> *> *table, QList<int> *sizes){
         printMoney(vectorSum(vec), *size++);
     }
     printMoney(tracker->getMoney(), *size);
-    out << endl;
+    out << line1 << endl;
 }
 
 void Printer::printString(const QString &string, int space, QTextStream::FieldAlignment align){

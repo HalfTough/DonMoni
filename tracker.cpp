@@ -45,8 +45,6 @@ void Tracker::load(){
             throw 6;
         addProject(new Project(project.toObject()));
     }
-
-
 }
 
 void Tracker::addProject(QString name){
@@ -75,6 +73,12 @@ bool Tracker::empty() const {
         empty = (*p++)->empty();
     }
     return empty;
+}
+
+Project * Tracker::getProject(QString name){
+    if(projects->contains(name))
+        return projects->value(name);
+    return nullptr;
 }
 
 QDate Tracker::getEarliestDate() const{
