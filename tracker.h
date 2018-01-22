@@ -20,6 +20,7 @@ public:
     void addProject(Project *project);
     void add(QString name, int amount, QDate date = QDate());
     bool empty() const;
+    bool hasProject(QString name) const;
     Project *getProject(QString);
     QMap<QString,Project*> *getProjects() const { return projects; }
     QDate getEarliestDate() const;

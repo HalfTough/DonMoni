@@ -28,6 +28,8 @@ class Printer{
     QString noProject = "%1 – nie znaleziono projektu o tej nazwie";
     QString donations = "Wpłaty:";
     QString noDonations = "Projekt nie ma żadnych wpłat.";
+    QString projectExists = "%1: projekt już istnieje.";
+    QString emptyProjectsString = "Projekty bez wpłat:";
 
     //TODO support
     QString line1 = "\e[0m";
@@ -39,7 +41,6 @@ class Printer{
     int fieldWidth(QVector<int>*);
     void printHeader(QList<int> *sizes, bool isOlder = false);
     void printProjects(QList<QVector<int>*>*table, QList<int> *sizes);
-    void printFooter(QList<QVector<int> *> *table, QList<int> *sizes);
     void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
     void printMoney(int, int space);
     //TODO move it maybe
@@ -55,6 +56,7 @@ public:
     void clearTo(){ _to = QDate(); }
     void print();
     void printProjectInfo(QString);
+    void printProjectExists(QString);
     void printParseError();
     void printHelp();
 };

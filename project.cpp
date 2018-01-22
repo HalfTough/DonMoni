@@ -1,4 +1,5 @@
 #include "project.h"
+#include "exceptions/nopaymentsexception.h"
 
 #include <QDebug> //TODO
 
@@ -48,8 +49,7 @@ bool Project::empty() const{
 
 QDate Project::getEarliestDate() const{
     if(payments->empty()){
-        //TODO
-        throw 2;
+        throw NoPaymentsException();
     }
     payments->at(0)->getDate();
 }

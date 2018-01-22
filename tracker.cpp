@@ -5,6 +5,7 @@
 #include <QStandardPaths>
 
 #include "tracker.h"
+#include "exceptions/nopaymentsexception.h"
 
 Tracker::Tracker(){
     projects = new QMap<QString,Project*>();
@@ -75,6 +76,10 @@ bool Tracker::empty() const {
     return empty;
 }
 
+bool Tracker::hasProject(QString name) const{
+    return projects->contains(name);
+}
+
 Project * Tracker::getProject(QString name){
     if(projects->contains(name))
         return projects->value(name);
@@ -84,9 +89,12 @@ Project * Tracker::getProject(QString name){
 QDate Tracker::getEarliestDate() const{
     QDate earliest = QDate::currentDate();
     for(Project *project : *projects){
-        if(project->getEarliestDate() < earliest){
-            earliest = project->getEarliestDate();
+        try{
+            if(project->getEarliestDate() < earliest){
+                earliest = project->getEarliestDate();
+            }
         }
+        catch(NoPaymentsException){}
     }
     return earliest;
 }

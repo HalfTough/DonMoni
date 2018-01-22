@@ -25,10 +25,16 @@ int main(int argc, char **argv){
         return 0;
     }
     if(parser.getAction() == Parser::add){
-        if(parser.hasAmount())
+        if(parser.hasAmount()){
             tracker->add(parser.getName(), parser.getAmount(), parser.getDate());
-        else
-            throw 123;
+        }
+        else{
+            if(tracker->hasProject(parser.getName())){
+                printer.printProjectExists(parser.getName());
+                return 1; //TODO
+            }
+            tracker->addProject(parser.getName());
+        }
         tracker->save();
     }
     if(parser.getAction() == Parser::remove){

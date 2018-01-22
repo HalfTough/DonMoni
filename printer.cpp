@@ -119,7 +119,6 @@ void Printer::print(){
 
     printHeader(sizes, isOlder);
     printProjects(moneyTable, sizes);
-    printFooter(moneyTable, sizes);
 
     for(auto vec : *moneyTable){
         delete vec;
@@ -133,16 +132,21 @@ void Printer::printProjectInfo(QString name){
         out << noProject.arg(name) << endl;
         return;
     }
+    out << project->getName() << endl;
     auto payments = project->getPayments();
     if(payments->empty()){
         out << noDonations << endl;
         return;
     }
-    out << project->getName() << endl << donations << endl;
+    out << donations << endl;
     for(Payment* payment : *payments){
         out << payment->getDate().toString(Qt::ISODate) << QString(": ") << payment->getAmount() << currency << endl;
     }
     out << sum << ": " << project->getMoney() << currency << endl;
+}
+
+void Printer::printProjectExists(QString name){
+    out << projectExists.arg(name) << endl;
 }
 
 void Printer::printHeader(QList<int> *sizes, bool isOlder){
@@ -168,7 +172,12 @@ void Printer::printHeader(QList<int> *sizes, bool isOlder){
 
 void Printer::printProjects(QList<QVector<int> *> *table, QList<int> *sizes){
     int i=0;
+    QList<Project *> emptyProjects;
     for(Project *project : *tracker->getProjects()){
+        if(project->empty()){
+            emptyProjects.push_back(project);
+            continue;
+        }
         out << ((line++%2)?line2:line1);
         auto size = sizes->begin();
         printString(project->getName(), *size);
@@ -180,9 +189,8 @@ void Printer::printProjects(QList<QVector<int> *> *table, QList<int> *sizes){
         out << line1 << endl;
         i++;
     }
-}
 
-void Printer::printFooter(QList<QVector<int> *> *table, QList<int> *sizes){
+    //Wypisanie sum
     out << ((line++%2)?line2:line1);
     auto size = sizes->begin();
     auto vec = table->begin();
@@ -192,6 +200,13 @@ void Printer::printFooter(QList<QVector<int> *> *table, QList<int> *sizes){
     }
     printMoney(tracker->getMoney(), *size);
     out << line1 << endl;
+
+    if(!emptyProjects.empty()){
+        out << endl << emptyProjectsString << endl;
+        for(Project *project : emptyProjects){
+            out << project->getName() << endl;
+        }
+    }
 }
 
 void Printer::printString(const QString &string, int space, QTextStream::FieldAlignment align){
