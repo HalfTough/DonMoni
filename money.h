@@ -21,6 +21,9 @@ public:
     QJsonObject toJson() const;
     bool isNull() { return amounts.empty(); }
 
+    static QString currencyString(double val);
+    static QString currencyString(double val, QString currency);
+
     Money operator+(const Money &a);
     Money operator+=(const Money &a);
 };

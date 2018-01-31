@@ -49,11 +49,10 @@ int Printer::fieldWidth(QString name){
     return name.size()+1;
 }
 int Printer::fieldWidth(QVector<Money> *vec){
-    int max=0;
+    Money sum;
     for(Money a : *vec)
-        if( a.toString().size() > max)
-            max = a.toString().size();
-    return max+1;
+        sum += a;
+    return sum.toString().size()+1;
 }
 
 void Printer::print(){

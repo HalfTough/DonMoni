@@ -13,10 +13,6 @@ Money::Money(double a, QString currency){
     add(a, currency);
 }
 
-//Money::Money(Money &a){
-//    amounts = a.amounts;
-//}
-
 void Money::initCurrencies(){
     if(!currencies.empty())
         return;
@@ -28,6 +24,7 @@ void Money::initCurrencies(){
             currencies.insert(ISO, sym);
         }
     }
+    currencies.insert("BTC",QString("₿"));
 }
 
 void Money::add(double a, QString cur){
@@ -48,13 +45,13 @@ void Money::add(double a, QString cur){
 QString Money::toString() const{
     QString str("");
     if(amounts.empty()){
-        str = locale.toCurrencyString(0);
+        str = currencyString(0);
     }
     else{
         QMapIterator<QString,double> i(amounts);
         while(i.hasNext()){
             i.next();
-            str += locale.toCurrencyString(i.value(), i.key());
+            str += currencyString(i.value(), i.key());
             if(i.hasNext()){
                 str += ", ";
             }
@@ -71,6 +68,14 @@ QJsonObject Money::toJson() const{
         jMoney.insert(i.key(), i.value());
     }
     return jMoney;
+}
+
+QString Money::currencyString(double val){
+    return currencyString(val, locale.currencySymbol());
+}
+
+QString Money::currencyString(double val, QString currency){
+    return QString::number(val)+" "+currency;
 }
 
 Money Money::operator +(const Money &a){
