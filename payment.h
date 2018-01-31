@@ -4,14 +4,16 @@
 #include <QDate>
 #include <QJsonObject>
 
+#include "money.h"
+
 class Payment{
-    //TODO waluty
-    float amount;
+    Money amount;
     QDate date;
 public:
-    Payment( float amount, QDate date );
+    Payment( Money amount, QDate date);
+    Payment( double amount, QString currency=QString(), QDate date=QDate() );
     Payment(QJsonObject jobject);
-    int getAmount() const { return amount; }
+    Money getAmount() const { return amount; }
     QDate getDate() const { return date; }
     QJsonObject toJson() const;
 };

@@ -12,20 +12,21 @@
 class Project {
     QString name;
     QList<Payment*> *payments;
-    int money=0;
+    Money money;
 
 public:
     Project(QString name);
     Project(QJsonObject jobject);
     ~Project();
-    void addPayment(int amount, QDate date = QDate());
+    void addPayment(Money money, QDate date);
+    void addPayment(double amount, QString currency=QString(), QDate date = QDate());
     void addPayment(Payment *);
     bool empty() const;
     QDate getEarliestDate() const;
     QList<Payment*> *getPayments() const { return payments; }
     QString getName() const {return name;}
-    int getMoney() const { return money; }
-    int getFrom(int year,int month) const;
+    Money getMoney() const { return money; }
+    Money getFrom(int year,int month) const;
     QJsonObject toJson() const;
 
 };

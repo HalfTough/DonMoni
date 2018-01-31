@@ -27,11 +27,12 @@ Project::Project(QJsonObject jobject){
     }
 }
 
-void Project::addPayment(int amount, QDate date){
-    if(date.isNull()){
-        date = QDate::currentDate();
-    }
-    addPayment( new Payment(amount, date) );
+void Project::addPayment(Money money, QDate date){
+    addPayment(new Payment(money, date));
+}
+
+void Project::addPayment(double amount, QString currency, QDate date){
+    addPayment( new Payment(amount, currency, date) );
 }
 
 void Project::addPayment(Payment *payment){
@@ -54,8 +55,8 @@ QDate Project::getEarliestDate() const{
     payments->at(0)->getDate();
 }
 
-int Project::getFrom(int year, int month) const {
-    int sum = 0;
+Money Project::getFrom(int year, int month) const {
+    Money sum;
     //TODO optymalizacja?
     for(Payment* payment : *payments){
         if(payment->getDate().year()==year && payment->getDate().month()==month){

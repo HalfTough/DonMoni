@@ -6,6 +6,7 @@
 #include <QStringList>
 
 #include "filter.h"
+#include "money.h"
 
 class Parser{
 public:
@@ -31,7 +32,7 @@ private:
     Filter _filter;
     Action _action;
     bool _hasAmount = false, _hasDate=false;
-    int _amount;
+    Money _amount;
     QDate _date;
     QString _name;
 
@@ -46,13 +47,13 @@ private:
     ArgumentType getAcceptableTypes() const;
     void parseArgument(QString arg, ArgumentType acceptableTypes);
     QDate checkDate(QString) const;
-    int checkAmount(QString) const;
+    Money checkAmount(QString) const;
 public:
     Parser(int argc, char **argv);
     Action getAction(){ return _action; }
     QString getName() const{ return _name; }
     bool hasAmount() const{ return _hasAmount; }
-    int getAmount() const{ return (_hasAmount?_amount:-1); }
+    Money getAmount() const{ return _amount; }
     QDate getDate() const{ return _date; }
 };
 

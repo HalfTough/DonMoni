@@ -1,3 +1,4 @@
+#include <QLocale>
 #include <QTextStream>
 
 #include "parser.h"
@@ -19,12 +20,12 @@ int main(int argc, char **argv){
     Tracker *tracker = new Tracker();
     tracker->load();
     printer.setTracker(tracker);
-    if(parser.getAction() == Parser::show){
+    switch(parser.getAction()){
+    case Parser::show:
         //TODO set filters
         printer.print();
         return 0;
-    }
-    if(parser.getAction() == Parser::add){
+    case Parser::add:
         if(parser.hasAmount()){
             tracker->add(parser.getName(), parser.getAmount(), parser.getDate());
         }
@@ -36,12 +37,16 @@ int main(int argc, char **argv){
             tracker->addProject(parser.getName());
         }
         tracker->save();
-    }
-    if(parser.getAction() == Parser::remove){
-        throw 1232;
-    }
-    if(parser.getAction() == Parser::project){
+        return 0;
+    case Parser::remove:
+        throw Parser::remove;
+    case Parser::project:
         printer.printProjectInfo(parser.getName());
+        return 0;
+    case Parser::projects:
+        throw Parser::projects;
+    case Parser::modify:
+        throw Parser::modify;
     }
 	return 0;
 }

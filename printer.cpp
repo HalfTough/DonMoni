@@ -29,31 +29,31 @@ int Printer::getTermWidth(){
     return w.ws_col;
 }
 
-void Printer::addToVector(QVector<int> *a, QVector<int> *b){
+void Printer::addToVector(QVector<Money> *a, QVector<Money> *b){
     for(int i = 0; i<a->size(); i++){
         (*a)[i] += (*b)[i];
     }
 }
-int Printer::vectorSum(QVector<int> *a){
-    int sum=0;
-    for(int i : *a){
+Money Printer::vectorSum(QVector<Money> *a){
+    Money sum;
+    for(Money i : *a){
         sum += i;
     }
     return sum;
 }
 
-int Printer::fieldWidth(int money){
-    return QString::number(money).size() + 2 + currency.size();
+int Printer::fieldWidth(Money money){
+    return money.toString().size()+1;
 }
 int Printer::fieldWidth(QString name){
     return name.size()+1;
 }
-int Printer::fieldWidth(QVector<int> *vec){
+int Printer::fieldWidth(QVector<Money> *vec){
     int max=0;
-    for(int a : *vec)
-        if( a > max)
-            max = a;
-    return QString::number(max).size() + 2 + currency.size();
+    for(Money a : *vec)
+        if( a.toString().size() > max)
+            max = a.toString().size();
+    return max+1;
 }
 
 void Printer::print(){
@@ -72,7 +72,7 @@ void Printer::print(){
     }
 
     QList<int> *sizes = new QList<int>();
-    QList<QVector<int>* > *moneyTable = tracker->getMoneyTable(from, to);
+    QList<QVector<Money>* > *moneyTable = tracker->getMoneyTable(from, to);
     int sizesSum = 0;
 
     //Wielkość kolumny sum
@@ -102,7 +102,7 @@ void Printer::print(){
     if(sizesSum > width && moneyTable->size() > minCol){
         isOlder = true;
         int olderW = fieldWidth(older);
-        QVector<int> *sums = new QVector<int>(moneyTable->at(0)->size(), 0);
+        QVector<Money> *sums = new QVector<Money>(moneyTable->at(0)->size());
         auto size = sizes->begin(); size++;
         auto vec = moneyTable->begin();
         do{
@@ -140,9 +140,9 @@ void Printer::printProjectInfo(QString name){
     }
     out << donations << endl;
     for(Payment* payment : *payments){
-        out << payment->getDate().toString(Qt::ISODate) << QString(": ") << payment->getAmount() << currency << endl;
+        out << payment->getDate().toString(Qt::ISODate) << QString(": ") << payment->getAmount() << endl;
     }
-    out << sum << ": " << project->getMoney() << currency << endl;
+    out << sum << ": " << project->getMoney() << endl;
 }
 
 void Printer::printProjectExists(QString name){
@@ -170,7 +170,7 @@ void Printer::printHeader(QList<int> *sizes, bool isOlder){
     out << line1 << endl;
 }
 
-void Printer::printProjects(QList<QVector<int> *> *table, QList<int> *sizes){
+void Printer::printProjects(QList<QVector<Money> *> *table, QList<int> *sizes){
     int i=0;
     QList<Project *> emptyProjects;
     for(Project *project : *tracker->getProjects()){
@@ -217,6 +217,6 @@ void Printer::printString(const QString &string, int space, QTextStream::FieldAl
     out.setFieldAlignment(QTextStream::AlignLeft);
 }
 
-void Printer::printMoney(int string, int space ){
-    printString(QString::number(string)+" "+currency, space, QTextStream::AlignRight);
+void Printer::printMoney(Money money, int space ){
+    printString(money.toString(), space, QTextStream::AlignRight);
 }

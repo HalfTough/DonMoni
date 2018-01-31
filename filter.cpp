@@ -4,12 +4,12 @@ void Filter::addNames(const QStringList &newNames){
     names.append(newNames);
 }
 
-void Filter::setMin(int a){
+void Filter::setMin(Money a){
     _hasMin = true;
     min = a;
 }
 
-void Filter::setMax(int a){
+void Filter::setMax(Money a){
     _hasMax = true;
     max = a;
 }

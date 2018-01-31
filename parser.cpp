@@ -132,16 +132,16 @@ bool Parser::parseAsDates(const QString &arg){
 
 bool Parser::parseAsMoney(const QString &arg){
     if(arg.startsWith(minPrefix)){
-        int a = checkAmount(arg.mid(minPrefix.size()));
-        if(a>0)
+        Money a = checkAmount(arg.mid(minPrefix.size()));
+        if(!a.isNull())
             _filter.setMin(a);
         else
             _action = error;
         return true;
     }
     if(arg.startsWith(maxPrefix)){
-        int a = checkAmount(arg.mid(maxPrefix.size()));
-        if(a>0)
+        Money a = checkAmount(arg.mid(maxPrefix.size()));
+        if(!a.isNull())
             _filter.setMax(a);
         else
             _action = error;
@@ -161,8 +161,8 @@ bool Parser::parseAsDate(const QString &arg){
 }
 
 bool Parser::parseAsAmount(const QString &arg){
-    int a = checkAmount(arg);
-    if(a>0){
+    Money a = checkAmount(arg);
+    if(!a.isNull()){
         _hasAmount = true;
         _amount = a;
         return true;
@@ -251,11 +251,13 @@ QDate Parser::checkDate(QString str) const {
 }
 
 //TODO waluty
-int Parser::checkAmount(QString str) const {
-    QRegularExpression re("^(\\d+)(zł)?$");
+Money Parser::checkAmount(QString str) const {
+    QRegularExpression re("^(\\d+)(.*)$");
     QRegularExpressionMatch match = re.match(str);
     if(match.hasMatch()){
-        return match.capturedTexts()[1].toInt();
+        double amount = match.capturedTexts()[1].toDouble();
+        QString currency = match.capturedTexts()[2];
+        return Money(amount, currency);
     }
-    return -1;
+    return Money();
 }

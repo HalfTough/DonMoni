@@ -21,7 +21,6 @@ class Printer{
     QString project = "Projekt";
     QString older = "Starsze";
     QString sum = "Suma";
-    QString currency = "zł";
     QString empty = "Nie dodano żadnych wpłat.";
     QString parseErrorMessage = "Nieprawidłowe argomenty\n";
     QString helpMessage = "Użycie donate [akcja] [argumenty]\n";
@@ -36,16 +35,16 @@ class Printer{
     QString line2 = "\e[40m";
 
     int getTermWidth();
-    int fieldWidth(int);
+    int fieldWidth(Money);
     int fieldWidth(QString);
-    int fieldWidth(QVector<int>*);
+    int fieldWidth(QVector<Money>*);
     void printHeader(QList<int> *sizes, bool isOlder = false);
-    void printProjects(QList<QVector<int>*>*table, QList<int> *sizes);
+    void printProjects(QList<QVector<Money>*>*table, QList<int> *sizes);
     void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
-    void printMoney(int, int space);
+    void printMoney(Money, int space);
     //TODO move it maybe
-    void addToVector(QVector<int>*, QVector<int>*);
-    int vectorSum(QVector<int>*);
+    void addToVector(QVector<Money>*, QVector<Money>*);
+    Money vectorSum(QVector<Money>*);
 
 public:
     Printer(FILE*, Tracker* = nullptr);

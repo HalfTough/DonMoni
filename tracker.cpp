@@ -59,7 +59,7 @@ void Tracker::addProject(Project *project){
     projects->insert(project->getName(), project);
 }
 
-void Tracker::add(QString name, int amount, QDate date)
+void Tracker::add(QString name, Money amount, QDate date)
 {
     if(!projects->contains(name))
         projects->insert(name, new Project(name));
@@ -99,12 +99,12 @@ QDate Tracker::getEarliestDate() const{
     return earliest;
 }
 
-QList <QVector<int>*> * Tracker::getMoneyTable(QDate from, QDate to) const {
-    QList <QVector<int>*> *table = new QList <QVector<int>*>();
+QList <QVector<Money>*> * Tracker::getMoneyTable(QDate from, QDate to) const {
+    QList <QVector<Money>*> *table = new QList <QVector<Money>*>();
 
     int m = from.month(),y=from.year();
     while(y<to.year() || y==to.year() && m<=to.month()){
-        auto col = new QVector<int>();
+        auto col = new QVector<Money>();
         for(Project *project : *projects){
             col->push_back(project->getFrom(y,m));
         }
@@ -117,8 +117,8 @@ QList <QVector<int>*> * Tracker::getMoneyTable(QDate from, QDate to) const {
     return table;
 }
 
-int Tracker::getSumFrom(int year, int month) const {
-    int sum = 0;
+Money Tracker::getSumFrom(int year, int month) const {
+    Money sum;
     for(Project *project : *projects){
         sum += project->getFrom(year, month);
     }

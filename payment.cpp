@@ -1,14 +1,33 @@
 #include "payment.h"
 
-Payment::Payment(float amount, QDate date) : amount(amount), date(date)
+#include <QDebug> //TODO
+
+Payment::Payment(Money amount, QDate date) : amount(amount), date(date)
 {
+    if(date.isNull()){
+        this->date = QDate::currentDate();
+    }
+}
+
+Payment::Payment(double amount, QString currency, QDate date) : amount(amount, currency), date(date)
+{
+    if(date.isNull()){
+        this->date = QDate::currentDate();
+    }
 }
 
 Payment::Payment(QJsonObject jobject){
     QJsonValue jamount = jobject.value("amount");
-    if(jamount.isUndefined() || !jamount.isDouble())
+    if(jamount.isUndefined() || !jamount.isObject())
         throw 6;
-    amount = jamount.toDouble();
+    QJsonObject jMoney = jamount.toObject();
+    for(QString key : jMoney.keys()){
+        QJsonValue val = jMoney.value(key);
+        if(!val.isDouble())
+            throw 6;
+        amount.add(val.toDouble(), key);
+    }
+
     QJsonValue jdate = jobject.value("date");
     if(jdate.isUndefined() || !jdate.isString())
         throw 6;
@@ -17,7 +36,7 @@ Payment::Payment(QJsonObject jobject){
 
 QJsonObject Payment::toJson() const{
     QJsonObject payment;
-    payment.insert("amount", amount);
+    payment.insert("amount", amount.toJson());
     payment.insert("date", date.toString(Qt::ISODate));
     return payment;
 }

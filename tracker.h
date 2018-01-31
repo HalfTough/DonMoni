@@ -8,7 +8,7 @@
 
 class Tracker{
     QMap<QString,Project*> *projects;
-    int money=0;
+    Money money;
     QString dataDir = "donate";
     QString projectsFile = "projects";
     
@@ -18,15 +18,15 @@ public:
     void load();
     void addProject(QString name);
     void addProject(Project *project);
-    void add(QString name, int amount, QDate date = QDate());
+    void add(QString name, Money amount, QDate date = QDate());
     bool empty() const;
     bool hasProject(QString name) const;
     Project *getProject(QString);
     QMap<QString,Project*> *getProjects() const { return projects; }
     QDate getEarliestDate() const;
-    QList <QVector<int>*> * getMoneyTable(QDate from, QDate to) const;
-    int getMoney() const { return money; }
-    int getSumFrom(int year, int month) const;
+    QList <QVector<Money>*> * getMoneyTable(QDate from, QDate to) const;
+    Money getMoney() const { return money; }
+    Money getSumFrom(int year, int month) const;
     QString getLongestProjectName() const;
     QJsonArray toJson() const;
 };
