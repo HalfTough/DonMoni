@@ -75,7 +75,8 @@ QString Money::currencyString(double val){
 }
 
 QString Money::currencyString(double val, QString currency){
-    return QString::number(val)+" "+currency;
+    int a = QString::number(qRound(val)).size();
+    return QString::number(val, 'g', a+2)+" "+currency;
 }
 
 Money Money::operator +(const Money &a){

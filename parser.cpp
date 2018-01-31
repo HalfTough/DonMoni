@@ -252,7 +252,7 @@ QDate Parser::checkDate(QString str) const {
 
 //TODO waluty
 Money Parser::checkAmount(QString str) const {
-    QRegularExpression re("^(\\d+(\.\\d+)?)(.*)$");
+    QRegularExpression re("^(\\d+(\\.\\d+)?)(.*)$");
     QRegularExpressionMatch match = re.match(str);
     if(match.hasMatch()){
         double amount = match.capturedTexts()[1].toDouble();
