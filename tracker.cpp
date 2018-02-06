@@ -86,53 +86,23 @@ Project * Tracker::getProject(QString name){
     return nullptr;
 }
 
-QDate Tracker::getEarliestDate() const{
-    QDate earliest = QDate::currentDate();
-    for(Project *project : *projects){
-        try{
-            if(project->getEarliestDate() < earliest){
-                earliest = project->getEarliestDate();
-            }
-        }
-        catch(NoPaymentsException){}
-    }
-    return earliest;
-}
-
-QList <QVector<Money>*> * Tracker::getMoneyTable(QDate from, QDate to) const {
-    QList <QVector<Money>*> *table = new QList <QVector<Money>*>();
-
-    int m = from.month(),y=from.year();
-    while(y<to.year() || y==to.year() && m<=to.month()){
-        auto col = new QVector<Money>();
-        for(Project *project : *projects){
-            col->push_back(project->getFrom(y,m));
-        }
-        table->push_back(col);
-        if(++m>12){
-            m=1;
-            y++;
+QMap<QString,Project*>* Tracker::matchingProjects(const Filter &filter) const{
+    QMap<QString,Project*>*matches = new QMap<QString,Project*>();
+    for(Project*project : *projects){
+        if(project->matches(filter)){
+            matches->insert(project->getName(), project);
         }
     }
-    return table;
+    return matches;
 }
+
 
 Money Tracker::getSumFrom(int year, int month) const {
     Money sum;
     for(Project *project : *projects){
-        sum += project->getFrom(year, month);
+        sum += project->getFromMonth(year, month);
     }
     return sum;
-}
-
-QString Tracker::getLongestProjectName() const {
-    QString longest;
-    for(Project*project : *projects){
-        if(project->getName().size()>longest.size()){
-            longest = project->getName();
-        }
-    }
-    return longest;
 }
 
 QJsonArray Tracker::toJson() const{

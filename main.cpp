@@ -22,7 +22,7 @@ int main(int argc, char **argv){
     printer.setTracker(tracker);
     switch(parser.getAction()){
     case Parser::show:
-        //TODO set filters
+        printer.setFilter(parser.getFilter());
         printer.print();
         return 0;
     case Parser::add:

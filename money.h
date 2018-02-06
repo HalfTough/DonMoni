@@ -8,14 +8,16 @@
 #include <QTextStream>
 
 class Money{
+    enum CompareType { ignoreCurrencies, convertCurrencies };
     static QLocale locale;
     static QMap<QString,QString> currencies;
+    static CompareType howCompare;
 	QMap<QString,double> amounts;
     void initCurrencies();
 public:
     Money();
     explicit Money(double, QString = QString());
-    //Money(Money&);
+    void add(Money);
     void add(double, QString = QString());
     QString toString() const;
     QJsonObject toJson() const;
@@ -26,6 +28,11 @@ public:
 
     Money operator+(const Money &a);
     Money operator+=(const Money &a);
+    //Operators <,<=,>,>= might be little confusing. Read comments for details.
+    bool operator<(const Money &a);
+    bool operator<=(const Money &a);
+    bool operator>(const Money &a);
+    bool operator>=(const Money &a);
 };
 
 QTextStream& operator<<(QTextStream &out, const Money &money);

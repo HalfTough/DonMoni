@@ -48,6 +48,33 @@ bool Project::empty() const{
     return payments->empty();
 }
 
+bool Project::matches(const Filter filter) const{
+    if(filter.isEmpty())
+        return true;
+    if(filter.hasNames() && !filter.hasName(name))
+        return false;
+    QDate from = filter.getFrom();
+    QDate to = filter.getTo();
+    if(from.isNull())
+        from = getEarliestDate();
+    if(to.isNull())
+        to = QDate::currentDate();
+    Money money;
+
+    for(auto i = payments->begin(); i!= payments->end() && (*i)->getDate()<=to; i++){
+        if((*i)->getDate()>=from){
+            money.add((*i)->getAmount());
+        }
+    }
+    if(money.isNull())
+        return false;
+    if(filter.hasMin() && !(money>=filter.getMin()))
+        return false;
+    if(filter.hasMax() && !(money<=filter.getMax()))
+        return false;
+    return true;
+}
+
 QDate Project::getEarliestDate() const{
     if(payments->empty()){
         throw NoPaymentsException();
@@ -55,11 +82,13 @@ QDate Project::getEarliestDate() const{
     payments->at(0)->getDate();
 }
 
-Money Project::getFrom(int year, int month) const {
+Money Project::getFromMonth(int year, int month, QDate from, QDate to) const {
     Money sum;
     //TODO optymalizacja?
     for(Payment* payment : *payments){
-        if(payment->getDate().year()==year && payment->getDate().month()==month){
+        if(payment->getDate().year()==year && payment->getDate().month()==month
+                && (from.isNull() || payment->getDate()>=from)
+                && (to.isNull() || payment->getDate()<=to)){
             sum += payment->getAmount();
         }
     }

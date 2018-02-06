@@ -1,6 +1,7 @@
 #ifndef PRINTER_H
 #define PRINTER_H
 
+#include "filter.h"
 #include "tracker.h"
 
 #include <QTextStream>
@@ -8,7 +9,8 @@
 class Printer{
     QTextStream out;
     Tracker *tracker;
-    QDate _from, _to;
+    //QDate _from, _to;
+    Filter filter;
     int minCol = 3;
     enum Timeframe {year, month, week, day};
     Timeframe timeframe = month;
@@ -35,24 +37,28 @@ class Printer{
     QString line2 = "\e[40m";
 
     int getTermWidth();
-    int fieldWidth(Money);
-    int fieldWidth(QString);
-    int fieldWidth(QVector<Money>*);
+    int fieldWidth(Money) const;
+    int fieldWidth(QString) const;
+    int fieldWidth(QVector<Money>*) const;
+    int namesWidth(QMap<QString,Project*> *) const;
     void printHeader(QList<int> *sizes, bool isOlder = false);
-    void printProjects(QList<QVector<Money>*>*table, QList<int> *sizes);
+    void printProjects(QList<QVector<Money>*>*table, QList<int> *sizes, QMap<QString,Project*> *projects);
     void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
     void printMoney(Money, int space);
     //TODO move it maybe
     void addToVector(QVector<Money>*, QVector<Money>*);
     Money vectorSum(QVector<Money>*);
+    QDate getEarliestDate(QMap<QString,Project*> *projects) const;
+    QList <QVector<Money>*> * getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter) const;
 
 public:
     Printer(FILE*, Tracker* = nullptr);
     void setTracker(Tracker *);
-    void setFrom(QDate from){ _from = from; }
-    void setTo(QDate to){ _to = to; }
-    void clearFrom(){ _from = QDate();}
-    void clearTo(){ _to = QDate(); }
+    void setFilter(Filter filter){ this->filter = filter; }
+    //void setFrom(QDate from){ _from = from; }
+    //void setTo(QDate to){ _to = to; }
+    //void clearFrom(){ _from = QDate();}
+    //void clearTo(){ _to = QDate(); }
     void print();
     void printProjectInfo(QString);
     void printProjectExists(QString);

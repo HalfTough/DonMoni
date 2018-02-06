@@ -4,6 +4,7 @@
 #include <QJsonArray>
 #include <QMap>
 
+#include "filter.h"
 #include "project.h"
 
 class Tracker{
@@ -23,11 +24,9 @@ public:
     bool hasProject(QString name) const;
     Project *getProject(QString);
     QMap<QString,Project*> *getProjects() const { return projects; }
-    QDate getEarliestDate() const;
-    QList <QVector<Money>*> * getMoneyTable(QDate from, QDate to) const;
+    QMap<QString,Project*> *matchingProjects(const Filter &filter) const;
     Money getMoney() const { return money; }
     Money getSumFrom(int year, int month) const;
-    QString getLongestProjectName() const;
     QJsonArray toJson() const;
 };
 

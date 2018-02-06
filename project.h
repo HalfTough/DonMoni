@@ -7,6 +7,7 @@
 #include <QList>
 #include <QString>
 
+#include "filter.h"
 #include "payment.h"
 
 class Project {
@@ -22,11 +23,12 @@ public:
     void addPayment(double amount, QString currency=QString(), QDate date = QDate());
     void addPayment(Payment *);
     bool empty() const;
+    bool matches(const Filter filter) const;
     QDate getEarliestDate() const;
     QList<Payment*> *getPayments() const { return payments; }
     QString getName() const {return name;}
     Money getMoney() const { return money; }
-    Money getFrom(int year,int month) const;
+    Money getFromMonth(int year,int month, QDate from=QDate(), QDate to=QDate()) const;
     QJsonObject toJson() const;
 
 };

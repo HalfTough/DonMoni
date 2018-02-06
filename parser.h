@@ -51,6 +51,7 @@ private:
 public:
     Parser(int argc, char **argv);
     Action getAction(){ return _action; }
+    Filter getFilter(){ return _filter; }
     QString getName() const{ return _name; }
     bool hasAmount() const{ return _hasAmount; }
     Money getAmount() const{ return _amount; }
