@@ -171,6 +171,7 @@ void Printer::print(){
         delete vec;
     }
     delete moneyTable;
+    delete projects;
 }
 
 void Printer::printProjectExists(QString name){

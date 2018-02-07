@@ -55,18 +55,16 @@ bool Project::matches(const Filter filter) const{
         return false;
     QDate from = filter.getFrom();
     QDate to = filter.getTo();
-    if(from.isNull())
-        from = getEarliestDate();
     if(to.isNull())
         to = QDate::currentDate();
-    Money money;
 
+    Money money;
     for(auto i = payments->begin(); i!= payments->end() && (*i)->getDate()<=to; i++){
-        if((*i)->getDate()>=from){
+        if(from.isNull() || (*i)->getDate()>=from){
             money.add((*i)->getAmount());
         }
     }
-    if(money.isNull())
+    if(money.isNull() && (!from.isNull() || !filter.getTo().isNull() ) )
         return false;
     if(filter.hasMin() && !(money>=filter.getMin()))
         return false;

@@ -23,7 +23,7 @@ class Printer{
     QString project = "Projekt";
     QString older = "Starsze";
     QString sum = "Suma";
-    QString empty = "Nie dodano żadnych wpłat.";
+    QString empty = "Brak projektów spełniających warunki.";
     QString parseErrorMessage = "Nieprawidłowe argomenty\n";
     QString helpMessage = "Użycie donate [akcja] [argumenty]\n";
     QString noProject = "%1 – nie znaleziono projektu o tej nazwie";
