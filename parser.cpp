@@ -45,7 +45,7 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
     case project:
         return name;
     case modify:
-        throw 21;
+        throw modify;
         //TODO
     case version:
     case help:
@@ -250,7 +250,6 @@ QDate Parser::checkDate(QString str) const {
     return QDate();
 }
 
-//TODO waluty
 Money Parser::checkAmount(QString str) const {
     QRegularExpression re("^(\\d+(\\.\\d+)?)(.*)$");
     QRegularExpressionMatch match = re.match(str);
