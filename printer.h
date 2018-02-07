@@ -42,7 +42,7 @@ class Printer{
     int fieldWidth(QVector<Money>*) const;
     int namesWidth(QMap<QString,Project*> *) const;
     void printHeader(QList<int> *sizes, bool isOlder = false);
-    void printProjects(QList<QVector<Money>*>*table, QList<int> *sizes, QMap<QString,Project*> *projects);
+    void printTable(QList<QVector<Money>*>*table, QList<int> *sizes, QMap<QString,Project*> *projects);
     void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
     void printMoney(Money, int space);
     //TODO move it maybe
@@ -54,12 +54,9 @@ class Printer{
 public:
     Printer(FILE*, Tracker* = nullptr);
     void setTracker(Tracker *);
-    void setFilter(Filter filter){ this->filter = filter; }
-    //void setFrom(QDate from){ _from = from; }
-    //void setTo(QDate to){ _to = to; }
-    //void clearFrom(){ _from = QDate();}
-    //void clearTo(){ _to = QDate(); }
+    void setFilter(const Filter &filter){ this->filter = filter; }
     void print();
+    void printProjects();
     void printProjectInfo(QString);
     void printProjectExists(QString);
     void printParseError();

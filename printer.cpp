@@ -165,7 +165,7 @@ void Printer::print(){
     }
 
     printHeader(sizes, isOlder);
-    printProjects(moneyTable, sizes, projects);
+    printTable(moneyTable, sizes, projects);
 
     for(auto vec : *moneyTable){
         delete vec;
@@ -199,7 +199,7 @@ void Printer::printHeader(QList<int> *sizes, bool isOlder){
     out << line1 << endl;
 }
 
-void Printer::printProjects(QList<QVector<Money> *> *table, QList<int> *sizes, QMap<QString,Project*> *projects){
+void Printer::printTable(QList<QVector<Money> *> *table, QList<int> *sizes, QMap<QString,Project*> *projects){
     int i=0;
     QList<Project *> emptyProjects;
     for(Project *project : *projects){
@@ -247,6 +247,14 @@ void Printer::printString(const QString &string, int space, QTextStream::FieldAl
 
 void Printer::printMoney(Money money, int space ){
     printString(money.toString(), space, QTextStream::AlignRight);
+}
+
+void Printer::printProjects(){
+    QMap<QString,Project*> *projects = tracker->matchingProjects(filter);
+    for(Project*project : *projects){
+        out << project->getName() << endl;
+    }
+    delete projects;
 }
 
 void Printer::printProjectInfo(QString name){

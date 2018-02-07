@@ -44,7 +44,9 @@ int main(int argc, char **argv){
         printer.printProjectInfo(parser.getName());
         return 0;
     case Parser::projects:
-        throw Parser::projects;
+        printer.setFilter(parser.getFilter());
+        printer.printProjects();
+        return 0;
     case Parser::modify:
         throw Parser::modify;
     }
