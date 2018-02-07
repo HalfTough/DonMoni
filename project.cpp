@@ -8,6 +8,9 @@ Project::Project(QString name) : name(name){
 }
 
 Project::~Project(){
+    for(Payment *payment : *payments){
+        delete payment;
+    }
     delete payments;
 }
 

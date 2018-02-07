@@ -22,7 +22,7 @@ Shows all payments from given project
 `donate projects [filters]`  
 Shows all projects matching filters
 
-## Removing projects (notimplemented)
+## Removing projects
 `donate remove <project>`
 
 ## Removing payments (not implemented)

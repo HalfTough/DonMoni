@@ -23,7 +23,10 @@ Parser::Parser(int argc, char **argv){
     //sprawdzamy czy sa wymagane argumety
     if(_action == add && _name.isNull())
         _action = error;
-    if(_action == remove && _filter.isEmpty())
+    if(_action == remove && _filter.isEmpty() && _name.isNull())
+        _action = error;
+    //Sprawdzamy wykluczające się argumenty
+    if(_action == remove && !_name.isNull() && !_filter.isEmpty())
         _action = error;
 }
 
@@ -32,7 +35,6 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
     case null:
         return ArgumentType(action|filter);
     case show:
-    case remove:
     case projects:
         return filter;
     case add:
@@ -44,6 +46,8 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
             return date;
     case project:
         return name;
+    case remove:
+        return ArgumentType(name|filter);
     case modify:
         throw modify;
         //TODO

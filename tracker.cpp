@@ -67,6 +67,15 @@ void Tracker::add(QString name, Money amount, QDate date)
     projects->value(name)->addPayment(amount, date);
 }
 
+bool Tracker::removeProject(const QString &name){
+    auto project = projects->find(name);
+    if(project == projects->end())
+        return false;
+    delete *project;
+    projects->erase(project);
+    return true;
+}
+
 bool Tracker::empty() const {
     bool empty = true;
     auto p = projects->begin();

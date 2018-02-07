@@ -39,7 +39,14 @@ int main(int argc, char **argv){
         tracker->save();
         return 0;
     case Parser::remove:
-        throw Parser::remove;
+        //Filter caan be empty only if name is set and we are removing project
+        if(parser.getFilter().isEmpty()){
+            tracker->removeProject(parser.getName());
+            tracker->save();
+        }
+        else
+            throw Parser::remove;
+        return 0;
     case Parser::project:
         printer.printProjectInfo(parser.getName());
         return 0;

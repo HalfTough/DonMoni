@@ -20,6 +20,7 @@ public:
     void addProject(QString name);
     void addProject(Project *project);
     void add(QString name, Money amount, QDate date = QDate());
+    bool removeProject(const QString &name);
     bool empty() const;
     bool hasProject(QString name) const;
     Project *getProject(QString);
