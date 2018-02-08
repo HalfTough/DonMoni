@@ -87,9 +87,7 @@ bool Project::matches(const Filter &filter) const{
     }
     if(money.isNull() && (!from.isNull() || !filter.getTo().isNull() ) )
         return false;
-    if(filter.hasMin() && !(money>=filter.getMin()))
-        return false;
-    if(filter.hasMax() && !(money<=filter.getMax()))
+    if(!filter.matchesMoney(money))
         return false;
     return true;
 }
