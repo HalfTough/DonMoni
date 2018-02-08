@@ -29,7 +29,9 @@ class Printer{
     QString noProject = "%1 – nie znaleziono projektu o tej nazwie";
     QString donations = "Wpłaty:";
     QString noDonations = "Projekt nie ma żadnych wpłat.";
-    QString projectExists = "%1: projekt już istnieje.";
+    QString deleted = "Usunięto projekt – %1";
+    QString projectExists = "%1: projekt już istnieje";
+    QString projectDoesntExists = "%1: projekt nie istnieje";
     QString emptyProjectsString = "Projekty bez wpłat:";
 
     //TODO support
@@ -57,8 +59,10 @@ public:
     void setFilter(const Filter &filter){ this->filter = filter; }
     void print();
     void printProjects();
-    void printProjectInfo(QString);
-    void printProjectExists(QString);
+    void printDeleted(const QString&);
+    void printProjectInfo(const QString&);
+    void printProjectExists(const QString&);
+    void printProjectDoesntExists(const QString&);
     void printParseError();
     void printHelp();
 };

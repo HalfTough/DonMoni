@@ -174,10 +174,6 @@ void Printer::print(){
     delete projects;
 }
 
-void Printer::printProjectExists(QString name){
-    out << projectExists.arg(name) << endl;
-}
-
 void Printer::printHeader(QList<int> *sizes, bool isOlder){
     out << ((line++%2)?line2:line1);
     auto size = sizes->begin();
@@ -205,6 +201,7 @@ void Printer::printTable(QList<QVector<Money> *> *table, QList<int> *sizes, QMap
     for(Project *project : *projects){
         if(project->empty()){
             emptyProjects.push_back(project);
+            i++;
             continue;
         }
         out << ((line++%2)?line2:line1);
@@ -257,7 +254,11 @@ void Printer::printProjects(){
     delete projects;
 }
 
-void Printer::printProjectInfo(QString name){
+void Printer::printDeleted(const QString &name){
+    out << deleted.arg(name) << endl;
+}
+
+void Printer::printProjectInfo(const QString &name){
     Project *project = tracker->getProject(name);
     if(!project){
         out << noProject.arg(name) << endl;
@@ -274,4 +275,12 @@ void Printer::printProjectInfo(QString name){
         out << payment->getDate().toString(Qt::ISODate) << QString(": ") << payment->getAmount() << endl;
     }
     out << sum << ": " << project->getMoney() << endl;
+}
+
+void Printer::printProjectExists(const QString &name){
+    out << projectExists.arg(name) << endl;
+}
+
+void Printer::printProjectDoesntExists(const QString &name){
+    out << projectDoesntExists.arg(name) << endl;
 }
