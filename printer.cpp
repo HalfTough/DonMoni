@@ -258,6 +258,19 @@ void Printer::printDeleted(const QString &name){
     out << deleted.arg(name) << endl;
 }
 
+void Printer::printDeletedPayments(int a){
+    switch(a){
+    case 0:
+        out << noMatchingDonations << endl;
+        break;
+    case 1:
+        out << deleted1Payment << endl;
+        break;
+    default:
+        out << deletedPayments.arg(a) << endl;
+    }
+}
+
 void Printer::printProjectInfo(const QString &name){
     Project *project = tracker->getProject(name);
     if(!project){

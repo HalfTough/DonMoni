@@ -29,7 +29,10 @@ class Printer{
     QString noProject = "%1 – nie znaleziono projektu o tej nazwie";
     QString donations = "Wpłaty:";
     QString noDonations = "Projekt nie ma żadnych wpłat.";
+    QString noMatchingDonations = "Brak darowizn spełniających warunki";
     QString deleted = "Usunięto projekt – %1";
+    QString deleted1Payment = "Usunięto darowiznę";
+    QString deletedPayments = "Usunięto %1 darowizn";
     QString projectExists = "%1: projekt już istnieje";
     QString projectDoesntExists = "%1: projekt nie istnieje";
     QString emptyProjectsString = "Projekty bez wpłat:";
@@ -60,6 +63,7 @@ public:
     void print();
     void printProjects();
     void printDeleted(const QString&);
+    void printDeletedPayments(int);
     void printProjectInfo(const QString&);
     void printProjectExists(const QString&);
     void printProjectDoesntExists(const QString&);

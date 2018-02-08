@@ -22,8 +22,9 @@ public:
     void addPayment(Money money, QDate date);
     void addPayment(double amount, QString currency=QString(), QDate date = QDate());
     void addPayment(Payment *);
+    int removePayments(const Filter &filter);
     bool empty() const;
-    bool matches(const Filter filter) const;
+    bool matches(const Filter &filter) const;
     QDate getEarliestDate() const;
     QList<Payment*> *getPayments() const { return payments; }
     QString getName() const {return name;}

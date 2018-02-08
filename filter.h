@@ -21,6 +21,8 @@ public:
     void setMax(Money);
     bool hasNames() const { return !names.empty(); }
     bool hasName(QString name) const { return names.contains(name); }
+    bool matchesDate(const QDate &) const;
+    bool matchesMoney(const Money &) const;
     bool hasMin() const{ return _hasMin; }
     bool hasMax() const{ return _hasMax; }
     bool isEmpty() const;

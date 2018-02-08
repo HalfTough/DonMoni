@@ -50,9 +50,16 @@ int main(int argc, char **argv){
                 return 1;
             }
         }
-        else
-            throw Parser::remove;
-        return 0;
+        else{
+            int pc = tracker->removePayments(parser.getFilter());
+            printer.printDeletedPayments(pc);
+            if(pc){
+                tracker->save();
+                return 0;
+            }
+            else
+                return 1;
+        }
     case Parser::project:
         printer.printProjectInfo(parser.getName());
         return 0;

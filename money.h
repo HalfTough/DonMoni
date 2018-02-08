@@ -21,7 +21,7 @@ public:
     void add(double, QString = QString());
     QString toString() const;
     QJsonObject toJson() const;
-    bool isNull() { return amounts.empty(); }
+    bool isNull() const { return amounts.empty(); }
 
     static QString currencyString(double val);
     static QString currencyString(double val, QString currency);
@@ -29,10 +29,10 @@ public:
     Money operator+(const Money &a);
     Money operator+=(const Money &a);
     //Operators <,<=,>,>= might be little confusing. Read comments for details.
-    bool operator<(const Money &a);
-    bool operator<=(const Money &a);
-    bool operator>(const Money &a);
-    bool operator>=(const Money &a);
+    bool operator<(const Money &a) const;
+    bool operator<=(const Money &a) const;
+    bool operator>(const Money &a) const;
+    bool operator>=(const Money &a) const;
 };
 
 QTextStream& operator<<(QTextStream &out, const Money &money);

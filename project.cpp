@@ -47,11 +47,29 @@ void Project::addPayment(Payment *payment){
     payments->insert(i.base(), payment);
 }
 
+int Project::removePayments(const Filter &filter){
+    int count = 0;
+    if(filter.hasNames() && !filter.hasName(name))
+        return 0;
+
+    for(auto i = payments->begin(); i!=payments->end();){
+        if( filter.matchesDate((*i)->getDate())
+                && filter.matchesMoney((*i)->getAmount()) ){
+            count++;
+            i = payments->erase(i);
+        }
+        else{
+            i++;
+        }
+    }
+    return count;
+}
+
 bool Project::empty() const{
     return payments->empty();
 }
 
-bool Project::matches(const Filter filter) const{
+bool Project::matches(const Filter &filter) const{
     if(filter.isEmpty())
         return true;
     if(filter.hasNames() && !filter.hasName(name))

@@ -104,7 +104,7 @@ Money Money::operator +=(const Money &a){
 }
 
 //On ignoreCurrencies a is < than b only if each element of a is in b and is <= and at least one is smaller
-bool Money::operator <(const Money &a){
+bool Money::operator <(const Money &a) const{
     switch(howCompare){
     case ignoreCurrencies:{
         QMapIterator<QString,double> i(amounts);
@@ -126,7 +126,7 @@ bool Money::operator <(const Money &a){
 }
 
 //On ignoreCurrencies a is <= than b only if each element of a is in b and is <=
-bool Money::operator <=(const Money &a){
+bool Money::operator <=(const Money &a) const{
     switch(howCompare){
     case ignoreCurrencies:{
         QMapIterator<QString,double> i(amounts);
@@ -145,7 +145,7 @@ bool Money::operator <=(const Money &a){
 }
 
 //On ignoreCurrencies a is > than b only if each element of b is in a and is >= and at least one is bigger
-bool Money::operator >(const Money &a){
+bool Money::operator >(const Money &a) const{
     switch(howCompare){
     case ignoreCurrencies:{
         QMapIterator<QString,double> i(amounts);
@@ -178,7 +178,7 @@ bool Money::operator >(const Money &a){
 }
 
 //On ignoreCurrencies a is >= than b only if each element of b is in a
-bool Money::operator >=(const Money &a){
+bool Money::operator >=(const Money &a) const{
     switch(howCompare){
     case ignoreCurrencies:{
         QMapIterator<QString,double> i(amounts);

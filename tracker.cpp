@@ -76,6 +76,14 @@ bool Tracker::removeProject(const QString &name){
     return true;
 }
 
+int Tracker::removePayments(const Filter &filter){
+    int count = 0;
+    for(Project *project : *projects){
+        count += project->removePayments(filter);
+    }
+    return count;
+}
+
 bool Tracker::empty() const {
     bool empty = true;
     auto p = projects->begin();
