@@ -4,6 +4,66 @@
 <context>
     <name>Printer</name>
     <message>
+        <location filename="../printer.h" line="22"/>
+        <source>January</source>
+        <translation>Styczeń</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="22"/>
+        <source>February</source>
+        <translation>Luty</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="22"/>
+        <source>March</source>
+        <translation>Marzec</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="23"/>
+        <source>April</source>
+        <translation>Kwiecień</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="23"/>
+        <source>May</source>
+        <translation>Maj</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="23"/>
+        <source>June</source>
+        <translation>Czerwiec</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="24"/>
+        <source>July</source>
+        <translation>Lipiec</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="24"/>
+        <source>August</source>
+        <translation>Sierpień</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="24"/>
+        <source>September</source>
+        <translation>Wrzesień</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="25"/>
+        <source>October</source>
+        <translation>Październik</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="25"/>
+        <source>November</source>
+        <translation>Listopad</translation>
+    </message>
+    <message>
+        <location filename="../printer.h" line="25"/>
+        <source>December</source>
+        <translation>Grudzień</translation>
+    </message>
+    <message>
         <location filename="../printer.h" line="26"/>
         <source>Project</source>
         <translation>Project</translation>
@@ -37,7 +97,7 @@ donate [action] [args]</source>
     <message>
         <location filename="../printer.h" line="32"/>
         <source>%1: project not found</source>
-        <translation>%!: nie znaleziono projektu</translation>
+        <translation>%1: nie znaleziono projektu</translation>
     </message>
     <message>
         <location filename="../printer.h" line="33"/>

@@ -9,20 +9,20 @@
 #include <QLibraryInfo>
 
 class Printer{
-    Q_DECLARE_TR_FUNCTIONS(Printer);
+    Q_DECLARE_TR_FUNCTIONS(Printer)
 
     QTextStream out;
     Tracker *tracker;
-    //QDate _from, _to;
     Filter filter;
     int minCol = 3;
     enum Timeframe {year, month, week, day};
     Timeframe timeframe = month;
     int timeInt = 1;
     int line = 0;
-    QString months[12] = {"styczeń", "luty", "marzec", "kwiecień", "maj",
-                       "czerwiec", "lipiec", "sierpień", "wrzesień",
-                       "październik", "listopad", "grudzień"};
+    QString months[12] = {tr("January"), tr("February"), tr("March"),
+                          tr("April"), tr("May"), tr("June"),
+                          tr("July"), tr("August"), tr("September"),
+                          tr("October"), tr("November"), tr("December")};
     QString project = tr("Project");
     QString older = tr("Older");
     QString sum = tr("Sum");
