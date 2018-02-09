@@ -1,8 +1,19 @@
-#cmake_minimum_required (VERSION 2.6)
+#cmake_minimum_required (VERSION 3.2)
 project (DonationMonitor)
 set (DonationMonitor_VERSION_MAJOR 1)
 set (DonationMonitor_VERSION MINOR 0)
+set(CMAKE_AUTOMOC ON)
 find_package(Qt5Core)
-find_package(Curses)
-add_executable(donate main.cpp money.cpp parser.cpp filter.cpp tracker.cpp project.cpp payment.cpp printer.cpp exceptions/nopaymentsexception.cpp)
+find_package(Qt5Widgets)
+find_package(Qt5LinguistTools)
+
+#add_custom_target(translations ALL DEPENDS ${QM_FILES})
+SET(Lang_files
+  translations/donmoni_pl_PL.ts
+)
+
+QT5_CREATE_TRANSLATION(LangSrcs ${Lang_files})
+
+add_executable(donate main.cpp money.cpp parser.cpp filter.cpp tracker.cpp project.cpp payment.cpp printer.cpp exceptions/nopaymentsexception.cpp ${LangSrcs})
 target_link_libraries(donate Qt5::Core ${CURSES_LIBRARIES})
+target_link_libraries(donate Qt5::Widgets ${CURSES_LIBRARIES})

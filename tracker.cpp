@@ -29,8 +29,8 @@ void Tracker::save(){
 void Tracker::load(){
     //TODO zabezpieczyć ?
     QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
-    if(!dir.cd(dataDir))
-        return;
+    //if(!dir.cd(dataDir))
+    //    return;
     QFile saveFile(dir.filePath(projectsFile));
     if(!saveFile.exists())
         return;

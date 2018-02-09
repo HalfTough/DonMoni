@@ -1,5 +1,7 @@
+#include <QApplication>
 #include <QLocale>
 #include <QTextStream>
+#include <QTranslator>
 
 #include "parser.h"
 #include "printer.h"
@@ -7,6 +9,12 @@
 #include <QDebug> //TODO
 
 int main(int argc, char **argv){
+    QApplication app(argc, argv);
+    QString locale = QLocale::system().name();
+    QTranslator translator;
+    translator.load("donmoni_"+locale);
+    app.installTranslator(&translator);
+
     Parser parser(argc, argv);
     Printer printer(stdout);
     if(parser.getAction() == Parser::error){

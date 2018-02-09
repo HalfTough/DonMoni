@@ -1,4 +1,5 @@
 #include "printer.h"
+#include <QTranslator>
 
 namespace ioctl{
     #include <sys/ioctl.h>
