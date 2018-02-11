@@ -25,7 +25,7 @@ Shows all projects matching filters
 ## Removing projects
 `donate remove <project>`
 
-## Removing payments (not implemented)
+## Removing payments
 `donate remove <filters>`
 
 ## Money
