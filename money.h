@@ -16,6 +16,7 @@ class Money{
     void initCurrencies();
 public:
     Money();
+    Money(const QJsonObject&);
     explicit Money(double, QString = QString());
     void add(Money);
     void add(double, QString = QString());

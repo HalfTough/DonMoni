@@ -10,7 +10,7 @@
 class Tracker{
     QMap<QString,Project*> *projects;
     Money money;
-    QString dataDir = "donate";
+    //QString dataDir = "donate";
     QString projectsFile = "projects";
     
 public:
@@ -20,8 +20,10 @@ public:
     void addProject(QString name);
     void addProject(Project *project);
     void add(QString name, Money amount, QDate date = QDate());
+    void addRecur(QString name, Money amount, Time time, QDate date = QDate());
     bool removeProject(const QString &name);
     int removePayments(const Filter &filter);
+    void checkForRecurringDonations();
     bool empty() const;
     bool hasProject(QString name) const;
     Project *getProject(QString);

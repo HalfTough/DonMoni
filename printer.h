@@ -3,6 +3,7 @@
 
 #include "filter.h"
 #include "tracker.h"
+#include "exceptions/fileexception.h"
 
 #include <QTextStream>
 #include <QCoreApplication>
@@ -11,7 +12,7 @@
 class Printer{
     Q_DECLARE_TR_FUNCTIONS(Printer)
 
-    QTextStream out;
+    QTextStream out, err;
     Tracker *tracker;
     Filter filter;
     int minCol = 3;
@@ -26,11 +27,12 @@ class Printer{
     QString project = tr("Project");
     QString older = tr("Older");
     QString sum = tr("Sum");
-    QString empty = tr("No projects meeting criteria");
     QString parseErrorMessage = tr("Error parsing arguments");
     QString helpMessage = tr("Usage:\ndonate [action] [args]");
     QString noProject = tr("%1: project not found");
     QString donations = tr("Donations:");
+    QString recurringText = tr("Recurring donations:");
+    QString eachText = tr("each");
     QString noDonations = tr("Project has no donations");
     QString noMatchingDonations = tr("No donations meeting criteria");
     QString deleted = tr("Projekt removed: %1");
@@ -51,6 +53,7 @@ class Printer{
     int namesWidth(QMap<QString,Project*> *) const;
     void printHeader(QList<int> *sizes, bool isOlder = false);
     void printTable(QList<QVector<Money>*>*table, QList<int> *sizes, QMap<QString,Project*> *projects);
+    void printEmptyProjects(QList<Project *> *emptyProjects);
     void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
     void printMoney(Money, int space);
     //TODO move it maybe
@@ -60,7 +63,7 @@ class Printer{
     QList <QVector<Money>*> * getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter) const;
 
 public:
-    Printer(FILE*, Tracker* = nullptr);
+    Printer(FILE* out, FILE* err, Tracker* = nullptr);
     void setTracker(Tracker *);
     void setFilter(const Filter &filter){ this->filter = filter; }
     void print();
@@ -70,8 +73,12 @@ public:
     void printProjectInfo(const QString&);
     void printProjectExists(const QString&);
     void printProjectDoesntExists(const QString&);
+    void printFileOpenError(const FileOpenException &);
+    void printJsonParsingError(const JsonParsingException &);
     void printParseError();
     void printHelp();
+
+    static QString stringFromTime(Time);
 };
 
 #endif

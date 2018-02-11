@@ -16,7 +16,7 @@ int main(int argc, char **argv){
     app.installTranslator(&translator);
 
     Parser parser(argc, argv);
-    Printer printer(stdout);
+    Printer printer(stdout, stderr);
     if(parser.getAction() == Parser::error){
         printer.printParseError();
         return 1;
@@ -26,7 +26,13 @@ int main(int argc, char **argv){
         return 0;
     }
     Tracker *tracker = new Tracker();
-    tracker->load();
+    try{
+        tracker->load();
+    }catch(const FileOpenException &foe){
+        printer.printFileOpenError(foe);
+    }catch(const JsonParsingException &jpe){
+        printer.printJsonParsingError(jpe);
+    }
     printer.setTracker(tracker);
     switch(parser.getAction()){
     case Parser::show:
@@ -35,7 +41,12 @@ int main(int argc, char **argv){
         return 0;
     case Parser::add:
         if(parser.hasAmount()){
-            tracker->add(parser.getName(), parser.getAmount(), parser.getDate());
+            if(parser.hasRecurTime()){ //Adding recurring donation
+                tracker->addRecur(parser.getName(), parser.getAmount(), parser.getRecurTime(), parser.getDate());
+            }
+            else{ //Adding donation
+                tracker->add(parser.getName(), parser.getAmount(), parser.getDate());
+            }
         }
         else{
             if(tracker->hasProject(parser.getName())){

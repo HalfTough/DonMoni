@@ -14,6 +14,16 @@ Money::Money(double a, QString currency){
     add(a, currency);
 }
 
+Money::Money(const QJsonObject &jobject){
+    initCurrencies();
+    for(QString key : jobject.keys()){
+        QJsonValue val = jobject.value(key);
+        if(!val.isDouble())
+            throw this;
+        add(val.toDouble(), key);
+    }
+}
+
 void Money::initCurrencies(){
     if(!currencies.empty())
         return;

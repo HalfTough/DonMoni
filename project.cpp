@@ -5,6 +5,34 @@
 
 Project::Project(QString name) : name(name){
     payments = new QList<Payment*>();
+    recuring = new QList<RecurringDonation*>();
+}
+
+Project::Project(QJsonObject jobject){
+    payments = new QList<Payment*>();
+    recuring = new QList<RecurringDonation*>();
+    QJsonValue jname = jobject.value("name");
+    if(jname.isUndefined() || !jname.isString())
+        throw this;
+        //TODO
+    name = jname.toString();
+    QJsonValue jpayments = jobject.value("payments");
+    if(jpayments.isUndefined() || !jpayments.isArray())
+        throw this;
+        //TODO
+    for(QJsonValue payment : jpayments.toArray()){
+        if(payment.isUndefined() || !payment.isObject())
+            throw this;
+        addPayment(new Payment(payment.toObject()));
+    }
+    QJsonValue jrecur = jobject.value("recurring");
+    if(jrecur.isUndefined() || !jrecur.isArray())
+        throw this;
+    for(QJsonValue recur : jrecur.toArray()){
+        if(recur.isUndefined() || !recur.isObject())
+            throw this;
+        addRecur(new RecurringDonation(recur.toObject()));
+    }
 }
 
 Project::~Project(){
@@ -12,23 +40,12 @@ Project::~Project(){
         delete payment;
     }
     delete payments;
+    for(RecurringDonation *donation : *recuring){
+        delete donation;
+    }
+    delete recuring;
 }
 
-Project::Project(QJsonObject jobject){
-    payments = new QList<Payment*>();
-    QJsonValue jname = jobject.value("name");
-    if(jname.isUndefined() || !jname.isString())
-        throw 6;
-    name = jname.toString();
-    QJsonValue jpayments = jobject.value("payments");
-    if(jpayments.isUndefined() || !jpayments.isArray())
-        throw 6;
-    for(QJsonValue payment : jpayments.toArray()){
-        if(payment.isUndefined() || !payment.isObject())
-            throw 6;
-        addPayment(new Payment(payment.toObject()));
-    }
-}
 
 void Project::addPayment(Money money, QDate date){
     addPayment(new Payment(money, date));
@@ -47,6 +64,13 @@ void Project::addPayment(Payment *payment){
     payments->insert(i.base(), payment);
 }
 
+void Project::addRecur(RecurringDonation *donation){
+    while(Payment* payment = donation->getNextDueDonation()){
+        addPayment(payment);
+    }
+    recuring->push_back(donation);
+}
+
 int Project::removePayments(const Filter &filter){
     int count = 0;
     if(filter.hasNames() && !filter.hasName(name))
@@ -63,6 +87,15 @@ int Project::removePayments(const Filter &filter){
         }
     }
     return count;
+}
+
+void Project::checkForRecurringDonations(){
+    qDebug() << "checking" << name;
+    for(RecurringDonation *rec : *recuring){
+        while( Payment*donation = rec->getNextDueDonation() ){
+            addPayment(donation);
+        }
+    }
 }
 
 bool Project::empty() const{
@@ -119,6 +152,11 @@ QJsonObject Project::toJson() const{
     for(Payment *payment : *payments){
         jpayments.append(payment->toJson());
     }
+    QJsonArray jrecur;
+    for(RecurringDonation *recur : *recuring){
+        jrecur.append(recur->toJson());
+    }
     project.insert("payments", jpayments);
+    project.insert("recurring", jrecur);
     return project;
 }

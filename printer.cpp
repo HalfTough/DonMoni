@@ -7,7 +7,7 @@ namespace ioctl{
 
 #include <QDebug>
 
-Printer::Printer(FILE *file, Tracker *tracker) : out(file), tracker(tracker){
+Printer::Printer(FILE *out, FILE *err, Tracker *tracker) : out(out), err(err), tracker(tracker){
 
 }
 
@@ -16,7 +16,7 @@ void Printer::setTracker(Tracker *tr){
 }
 
 void Printer::printParseError(){
-    out << parseErrorMessage;
+    err << parseErrorMessage;
 }
 
 void Printer::printHelp(){
@@ -111,9 +111,19 @@ QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *project
 void Printer::print(){
     QMap<QString,Project*> *projects = tracker->matchingProjects(filter);
     if(projects->empty()){
-        out << empty << endl;
+        out << tr("No projects meeting criteria") << endl;
         return;
     }
+    QList<Project *> *emptyProjects = new QList<Project*>();
+    for(auto i = projects->begin(); i!=projects->end();){
+        if((*i)->empty()){
+            emptyProjects->push_back(*i);
+            i = projects->erase(i);
+        }
+        else
+            i++;
+    }
+
     int width = getTermWidth();
 
     QList<int> *sizes = new QList<int>();
@@ -165,14 +175,20 @@ void Printer::print(){
         moneyTable->push_front(sums);
     }
 
-    printHeader(sizes, isOlder);
-    printTable(moneyTable, sizes, projects);
+    if(!projects->empty()){
+        printHeader(sizes, isOlder);
+        printTable(moneyTable, sizes, projects);
+    }
+    if(!emptyProjects->empty()){
+        printEmptyProjects(emptyProjects);
+    }
 
     for(auto vec : *moneyTable){
         delete vec;
     }
     delete moneyTable;
     delete projects;
+    delete emptyProjects;
 }
 
 void Printer::printHeader(QList<int> *sizes, bool isOlder){
@@ -198,13 +214,7 @@ void Printer::printHeader(QList<int> *sizes, bool isOlder){
 
 void Printer::printTable(QList<QVector<Money> *> *table, QList<int> *sizes, QMap<QString,Project*> *projects){
     int i=0;
-    QList<Project *> emptyProjects;
     for(Project *project : *projects){
-        if(project->empty()){
-            emptyProjects.push_back(project);
-            i++;
-            continue;
-        }
         out << ((line++%2)?line2:line1);
         auto size = sizes->begin();
         printString(project->getName(), *size);
@@ -227,11 +237,12 @@ void Printer::printTable(QList<QVector<Money> *> *table, QList<int> *sizes, QMap
         }
         out << line1 << endl;
     }
-    if(!emptyProjects.empty()){
-        out << endl << emptyProjectsString << endl;
-        for(Project *project : emptyProjects){
-            out << project->getName() << endl;
-        }
+}
+
+void Printer::printEmptyProjects(QList<Project *> *emptyProjects){
+    out << emptyProjectsString << endl;
+    for(Project *project : *emptyProjects){
+        out << project->getName() << endl;
     }
 }
 
@@ -289,12 +300,40 @@ void Printer::printProjectInfo(const QString &name){
         out << payment->getDate().toString(Qt::ISODate) << QString(": ") << payment->getAmount() << endl;
     }
     out << sum << ": " << project->getMoney() << endl;
+    auto recurring = project->getRecurring();
+    if(!recurring->empty()){
+        out << recurringText << endl;
+        for(RecurringDonation *donation : *recurring){
+            out << tr("%1 each %2. Next: %3").arg(donation->getMoney().toString())
+                   .arg(stringFromTime(donation->getTime())).arg(donation->getNext().toString(Qt::ISODate)) << endl;
+        }
+    }
 }
 
 void Printer::printProjectExists(const QString &name){
-    out << projectExists.arg(name) << endl;
+    err << projectExists.arg(name) << endl;
 }
 
 void Printer::printProjectDoesntExists(const QString &name){
-    out << projectDoesntExists.arg(name) << endl;
+    err << projectDoesntExists.arg(name) << endl;
+}
+
+void Printer::printFileOpenError(const FileOpenException &foe){
+    err << tr("Cannot open file: %1").arg(foe.getUrl()) << endl;
+}
+
+void Printer::printJsonParsingError(const JsonParsingException &jpe){
+    err << tr("Error parsing file: %1\nData might be not loaded properly").arg(jpe.getUrl())
+        << endl;
+}
+
+QString Printer::stringFromTime(Time time){
+    QString out;
+    if(time.years)
+        out += tr("%n year(s)", "", time.years);
+    if(time.months)
+        out += (!out.isEmpty()?(time.days?", ":tr("and")):"") + tr("%n month(s)", "", time.months);
+    if(time.days)
+        out += (!out.isEmpty()?" "+tr("and")+" ":"") + tr("%n day(s)", "", time.days);
+    return out;
 }

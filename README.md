@@ -40,3 +40,13 @@ Note there is no space between value and currency.
 `from:<date>`  
 `to:<date>`  
 `between:<date>:<date>`
+
+## Recurring donations
+You can add recurring donations, by putting `recur:<time>` somwhere after `add`  
+`donate add OSM 20$ recur:monthly`  
+will add 20$ to project OSM each month, starting today.  
+`donate add Krita 5 05-02 recur:2weeks`  
+will add 5 of your default currency to project Krita every two weeks, statring on may 02.  
+
+Recurring time can be more complicated
+`donate add Wikipedia 10$ recur:1month,week`

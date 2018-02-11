@@ -20,13 +20,7 @@ Payment::Payment(QJsonObject jobject){
     QJsonValue jamount = jobject.value("amount");
     if(jamount.isUndefined() || !jamount.isObject())
         throw 6;
-    QJsonObject jMoney = jamount.toObject();
-    for(QString key : jMoney.keys()){
-        QJsonValue val = jMoney.value(key);
-        if(!val.isDouble())
-            throw 6;
-        amount.add(val.toDouble(), key);
-    }
+    amount = Money(jamount.toObject());
 
     QJsonValue jdate = jobject.value("date");
     if(jdate.isUndefined() || !jdate.isString())

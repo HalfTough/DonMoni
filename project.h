@@ -9,10 +9,12 @@
 
 #include "filter.h"
 #include "payment.h"
+#include "recur.h"
 
 class Project {
     QString name;
     QList<Payment*> *payments;
+    QList<RecurringDonation*> *recuring;
     Money money;
 
 public:
@@ -22,11 +24,14 @@ public:
     void addPayment(Money money, QDate date);
     void addPayment(double amount, QString currency=QString(), QDate date = QDate());
     void addPayment(Payment *);
+    void addRecur(RecurringDonation *);
     int removePayments(const Filter &filter);
+    void checkForRecurringDonations();
     bool empty() const;
     bool matches(const Filter &filter) const;
     QDate getEarliestDate() const;
     QList<Payment*> *getPayments() const { return payments; }
+    QList<RecurringDonation*> *getRecurring() const { return recuring; }
     QString getName() const {return name;}
     Money getMoney() const { return money; }
     Money getFromMonth(int year,int month, QDate from=QDate(), QDate to=QDate()) const;

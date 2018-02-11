@@ -6,6 +6,7 @@
 
 #include "tracker.h"
 #include "exceptions/nopaymentsexception.h"
+#include "exceptions/fileexception.h"
 
 Tracker::Tracker(){
     projects = new QMap<QString,Project*>();
@@ -13,38 +14,36 @@ Tracker::Tracker(){
 
 void Tracker::save(){
     QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
-    if(!dir.exists(dataDir)){
-        dir.mkdir(dataDir);
-    }
-    dir.cd(dataDir);
     QFile saveFile(dir.filePath(projectsFile));
-    //TODO
     if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        throw 5;
+        throw FileOpenException(saveFile.fileName());
     QJsonDocument jdoc(toJson());
     QTextStream out(&saveFile);
     out << jdoc.toJson(QJsonDocument::Indented);
 }
 
 void Tracker::load(){
-    //TODO zabezpieczyć ?
+    //We try to parse file, even if there were some errors and throw exception after we're done
+    bool parsingErr = false;
     QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
-    //if(!dir.cd(dataDir))
-    //    return;
     QFile saveFile(dir.filePath(projectsFile));
     if(!saveFile.exists())
         return;
-    //TODO
     if (!saveFile.open(QIODevice::ReadOnly | QIODevice::Text))
-        throw 5;
+        throw FileOpenException(saveFile.fileName());
     QJsonDocument jdoc = QJsonDocument::fromJson(saveFile.readAll());
     if(!jdoc.isArray())
-        throw 6;
+        throw JsonParsingException(saveFile.fileName());
     QJsonArray array = jdoc.array();
     for(QJsonValue project : array){
-        if(!project.isObject())
-            throw 6;
+        if(!project.isObject()){
+            parsingErr = true;
+            continue;
+        }
         addProject(new Project(project.toObject()));
+    }
+    if(parsingErr){
+        throw JsonParsingException(saveFile.fileName());
     }
 }
 
@@ -67,6 +66,12 @@ void Tracker::add(QString name, Money amount, QDate date)
     projects->value(name)->addPayment(amount, date);
 }
 
+void Tracker::addRecur(QString name, Money amount, Time time, QDate date){
+    if(!projects->contains(name))
+        projects->insert(name, new Project(name));
+    projects->value(name)->addRecur(new RecurringDonation(amount, time, date));
+}
+
 bool Tracker::removeProject(const QString &name){
     auto project = projects->find(name);
     if(project == projects->end())
@@ -82,6 +87,12 @@ int Tracker::removePayments(const Filter &filter){
         count += project->removePayments(filter);
     }
     return count;
+}
+
+void Tracker::checkForRecurringDonations(){
+    for(Project *project: *projects){
+        project->checkForRecurringDonations();
+    }
 }
 
 bool Tracker::empty() const {

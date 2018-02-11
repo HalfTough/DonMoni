@@ -43,7 +43,7 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
         else if(!_hasAmount)
             return amount;
         else
-            return date;
+            return ArgumentType(date|recur);
     case project:
         return name;
     case remove:
@@ -62,6 +62,8 @@ void Parser::parseArgument(QString arg, ArgumentType acceptableTypes){
         return;
     else if(acceptableTypes&dates && parseAsDates(arg))
         return;
+    else if(acceptableTypes&recur && parseAsRecur(arg))
+        return;
     else if(acceptableTypes&money && parseAsMoney(arg))
         return;
     else if(acceptableTypes&date && parseAsDate(arg))
@@ -78,7 +80,7 @@ void Parser::parseArgument(QString arg, ArgumentType acceptableTypes){
 //Each parseAs method checks if argument should be treated as given type
 //parses and returns true if yes, returns false if no
 //It will return true if agrument was meant as given type even if it is incorrect
-// from:2323-34-34 will still return true by parseAsDates, but also set sction to error
+// from:2323-34-34 will still return true by parseAsDates, but also set action to error
 bool Parser::parseAsNames(const QString &arg){
     if(!arg.startsWith(namesPrefix))
         return false;
@@ -132,6 +134,25 @@ bool Parser::parseAsDates(const QString &arg){
         return true;
     }
     return false;
+}
+
+bool Parser::parseAsRecur(const QString &arg){
+    if(!arg.startsWith(recurPrefix))
+        return false;
+    QStringList list = arg.mid(recurPrefix.size()).split(',');
+    for(QString part : list){
+        Time time = checkTime(part);
+        if(time.empty()){
+            _action = error;
+            return true;
+        }
+        if(recurTime.haveSameUnit(time)){
+            _action = error;
+            return true;
+        }
+        recurTime = recurTime + time;
+    }
+    return true;
 }
 
 bool Parser::parseAsMoney(const QString &arg){
@@ -263,4 +284,28 @@ Money Parser::checkAmount(QString str) const {
         return Money(amount, currency);
     }
     return Money();
+}
+
+Time Parser::checkTime(QString str) const {
+    Time time;
+    QRegularExpression re("^(\\d*)([a-z]+)$");
+    QRegularExpressionMatch match = re.match(str);
+    if(match.hasMatch()){
+        QStringList matches = match.capturedTexts();
+        int num;
+        if(matches.at(1).isEmpty())
+            num = 1;
+        else
+            num = matches.at(1).toInt();
+        QString s = matches.at(2);
+        if(s=="day" || s=="days"&&num!=1 || s=="daily"&&matches.at(1).isEmpty())
+            time.days += num;
+        else if(s=="week" || s=="weeks"&&num!=1 || s=="weekly"&&matches.at(1).isEmpty())
+            time.weeks += num;
+        else if(s=="month" || s=="months"&&num!=1 || s=="monthly"&&matches.at(1).isEmpty())
+            time.months += num;
+        else if(s=="year" || s=="years"&&num!=1 || s=="yearly"&&matches.at(1).isEmpty())
+            time.years += num;
+    }
+    return time;
 }
