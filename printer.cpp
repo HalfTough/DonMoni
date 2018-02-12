@@ -322,9 +322,9 @@ void Printer::printFileOpenError(const FileOpenException &foe){
     err << tr("Cannot open file: %1").arg(foe.getUrl()) << endl;
 }
 
-void Printer::printJsonParsingError(const JsonParsingException &jpe){
-    err << tr("Error parsing file: %1\nData might be not loaded properly").arg(jpe.getUrl())
-        << endl;
+void Printer::printJsonParsingError(const FileParsingException &jpe){
+    err << tr("Error parsing file: %1").arg(jpe.getUrl()) << endl
+        << tr("Data might be not loaded properly") << endl;
 }
 
 QString Printer::stringFromTime(Time time){

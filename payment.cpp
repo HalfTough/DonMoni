@@ -1,4 +1,5 @@
 #include "payment.h"
+#include "exceptions/fileexception.h"
 
 #include <QDebug> //TODO
 
@@ -17,15 +18,25 @@ Payment::Payment(double amount, QString currency, QDate date) : amount(amount, c
 }
 
 Payment::Payment(QJsonObject jobject){
+    bool parsingErr = false;
     QJsonValue jamount = jobject.value("amount");
-    if(jamount.isUndefined() || !jamount.isObject())
-        throw 6;
-    amount = Money(jamount.toObject());
-
+    if(!jamount.isObject())
+        throw JsonParsingException();
+    try{
+        amount = Money(jamount.toObject());
+    }
+    catch(const MoneyParsingException &mpe){
+        amount = mpe.getMoney();
+        parsingErr = true;
+    }
     QJsonValue jdate = jobject.value("date");
-    if(jdate.isUndefined() || !jdate.isString())
-        throw 6;
+    if(!jdate.isString())
+        throw JsonParsingException();
     date = QDate::fromString(jdate.toString(), Qt::ISODate);
+    if(date.isNull())
+        throw JsonParsingException();
+    if(parsingErr)
+        throw DonationParsingException(*this);
 }
 
 QJsonObject Payment::toJson() const{

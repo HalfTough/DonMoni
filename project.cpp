@@ -1,14 +1,28 @@
 #include "project.h"
 #include "exceptions/nopaymentsexception.h"
+#include "exceptions/fileexception.h"
 
 #include <QDebug> //TODO
 
-Project::Project(QString name) : name(name){
+Project::Project(const Project &a){
+    name = a.name;
+    payments = new QList<Payment*>();
+    recuring = new QList<RecurringDonation*>();
+    money = a.money;
+    for(Payment * p : *a.payments){
+        payments->push_back(new Payment(*p));
+    }
+    for(RecurringDonation *d : *a.recuring){
+        recuring->push_back(new RecurringDonation(*d));
+    }
+}
+
+Project::Project(const QString name) : name(name){
     payments = new QList<Payment*>();
     recuring = new QList<RecurringDonation*>();
 }
 
-Project::Project(QJsonObject jobject){
+Project::Project(const QJsonObject jobject){
     payments = new QList<Payment*>();
     recuring = new QList<RecurringDonation*>();
     bool parsingErr = false;
@@ -21,9 +35,20 @@ Project::Project(QJsonObject jobject){
         parsingErr = true;
     else{
         for(QJsonValue payment : jpayments.toArray()){
-            if(payment.isUndefined() || !payment.isObject())
-                throw this;
-            addPayment(new Payment(payment.toObject()));
+            if(!payment.isObject()){
+                parsingErr = true;;
+                continue;
+            }
+            try{
+                addPayment(new Payment(payment.toObject()));
+            }
+            catch(const DonationParsingException &dpe){
+                parsingErr = true;
+                addPayment(new Payment(dpe.getDonation()));
+            }
+            catch(const JsonParsingException &){
+                parsingErr = true;
+            }
         }
     }
     QJsonValue jrecur = jobject.value("recurring");
@@ -31,13 +56,24 @@ Project::Project(QJsonObject jobject){
         parsingErr = true;
     else{
         for(QJsonValue recur : jrecur.toArray()){
-            if(recur.isUndefined() || !recur.isObject())
-                throw this;
-            addRecur(new RecurringDonation(recur.toObject()));
+            if(!recur.isObject()){
+                parsingErr = true;
+                continue;
+            }
+            try{
+                addRecur(new RecurringDonation(recur.toObject()));
+            }
+            catch(const RecurParsingException &rpe){
+                addRecur(new RecurringDonation(rpe.getDonation()));
+                parsingErr = true;
+            }
+            catch(const JsonParsingException&){
+                parsingErr = true;
+            }
         }
     }
     if(parsingErr){
-        throw JsonParsingException();
+        throw ProjectParsingExeption(*this);
     }
 }
 

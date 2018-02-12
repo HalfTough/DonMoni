@@ -1,4 +1,5 @@
 #include "money.h"
+#include "exceptions/fileexception.h"
 
 QLocale Money::locale;
 QMap<QString,QString> Money::currencies;
@@ -16,12 +17,19 @@ Money::Money(double a, QString currency){
 
 Money::Money(const QJsonObject &jobject){
     initCurrencies();
+    bool parsingErr = false;
     for(QString key : jobject.keys()){
         QJsonValue val = jobject.value(key);
-        if(!val.isDouble())
-            throw this;
+        if(!val.isDouble() || val.toDouble()<=0){
+            parsingErr = true;
+            continue;
+        }
         add(val.toDouble(), key);
     }
+    if(amounts.empty())
+        throw JsonParsingException();
+    if(parsingErr)
+        throw MoneyParsingException(*this);
 }
 
 void Money::initCurrencies(){

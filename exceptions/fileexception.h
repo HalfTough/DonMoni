@@ -1,6 +1,7 @@
 #ifndef FILEEXCEPTION_H
 #define FILEEXCEPTION_H
 
+#include "../project.h"
 #include <QString>
 
 class FileException {
@@ -15,10 +16,41 @@ public:
     FileOpenException(const QString &url) : FileException(url){}
 };
 
-class JsonParsingException : public FileException{
+class FileParsingException : public FileException {
 public:
-    JsonParsingException() : FileException(QString()){}
-    JsonParsingException(const QString &url) : FileException(url){}
+    FileParsingException(const QString &url) : FileException(url){}
+};
+
+class JsonParsingException {
+
+};
+
+class MoneyParsingException : public JsonParsingException{
+    Money money;
+public:
+    MoneyParsingException(const Money money):money(money){}
+    Money getMoney() const { return money; }
+};
+
+class DonationParsingException : public JsonParsingException{
+    Payment donation;
+public:
+    DonationParsingException(const Payment &donation) : donation(donation){}
+    Payment getDonation() const { return donation; }
+};
+
+class RecurParsingException : public JsonParsingException{
+    RecurringDonation donation;
+public:
+    RecurParsingException(const RecurringDonation &donation) : donation(donation){}
+    RecurringDonation getDonation() const { return donation; }
+};
+
+class ProjectParsingExeption : public JsonParsingException{
+    Project project;
+public:
+    ProjectParsingExeption(const Project &project) : project(project){}
+    Project getProject() const { return project; }
 };
 
 #endif

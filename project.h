@@ -18,8 +18,9 @@ class Project {
     Money money;
 
 public:
-    Project(QString name);
-    Project(QJsonObject jobject);
+    Project(const Project &);
+    Project(const QString name);
+    Project(const QJsonObject jobject);
     ~Project();
     void addPayment(Money money, QDate date);
     void addPayment(double amount, QString currency=QString(), QDate date = QDate());

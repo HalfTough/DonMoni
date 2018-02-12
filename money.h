@@ -1,8 +1,6 @@
 #ifndef MONEY_H
 #define MONEY_H
 
-#include "exceptions/fileexception.h"
-
 #include <QJsonObject>
 #include <QLocale>
 #include <QMap>

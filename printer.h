@@ -74,7 +74,7 @@ public:
     void printProjectExists(const QString&);
     void printProjectDoesntExists(const QString&);
     void printFileOpenError(const FileOpenException &);
-    void printJsonParsingError(const JsonParsingException &);
+    void printJsonParsingError(const FileParsingException &);
     void printParseError();
     void printHelp();
 

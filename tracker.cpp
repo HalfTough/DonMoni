@@ -33,7 +33,7 @@ void Tracker::load(){
         throw FileOpenException(saveFile.fileName());
     QJsonDocument jdoc = QJsonDocument::fromJson(saveFile.readAll());
     if(!jdoc.isArray())
-        throw JsonParsingException(saveFile.fileName());
+        throw FileParsingException(saveFile.fileName());
     QJsonArray array = jdoc.array();
     for(QJsonValue project : array){
         if(!project.isObject()){
@@ -43,14 +43,18 @@ void Tracker::load(){
         try{
             addProject(new Project(project.toObject()));
         }
+        catch(const ProjectParsingExeption &ppe){
+            addProject(new Project(ppe.getProject()));
+            parsingErr = true;
+        }
         catch(const JsonParsingException &){
             //Does it even makes sence?
             //Kinda, but I'll take alternative ideas at halftough29A@gmail.com
-            throw JsonParsingException(saveFile.fileName());
+            parsingErr = true;
         }
     }
     if(parsingErr){
-        throw JsonParsingException(saveFile.fileName());
+        throw FileParsingException(saveFile.fileName());
     }
 }
 

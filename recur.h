@@ -12,20 +12,7 @@ struct Time{
     int days=0;
 
     Time(){}
-    Time(const QJsonObject &jobject){
-        QJsonValue v = jobject.value("years");
-        if(!v.isDouble())
-            throw this;
-        years = v.toInt();
-        v = jobject.value("months");
-        if(!v.isDouble())
-            throw this;
-        months = v.toInt();
-        v = jobject.value("days");
-        if(!v.isDouble())
-            throw this;
-        days = v.toInt();
-    }
+    Time(const QJsonObject &jobject);
 
     bool empty() const{ return !years && !months && !weeks && !days; }
     bool haveSameUnit(Time a) const{
@@ -56,6 +43,7 @@ class RecurringDonation{
     QDate next;
     Time step;
 public:
+    RecurringDonation(const RecurringDonation &);
     RecurringDonation(Money, Time, QDate=QDate());
     RecurringDonation(const QJsonObject &);
     Payment* getNextDueDonation();

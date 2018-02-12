@@ -30,8 +30,8 @@ int main(int argc, char **argv){
         tracker->load();
     }catch(const FileOpenException &foe){
         printer.printFileOpenError(foe);
-    }catch(const JsonParsingException &jpe){
-        printer.printJsonParsingError(jpe);
+    }catch(const FileParsingException &fpe){
+        printer.printJsonParsingError(fpe);
     }
     printer.setTracker(tracker);
     switch(parser.getAction()){
