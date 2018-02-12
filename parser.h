@@ -26,7 +26,7 @@ private:
     const QString fromPrefix = "from:";
     const QString toPrefix = "to:";
     const QString betweenPrefix = "between:";
-    const QString dayPrefix = "day:";
+    const QString onPrefix = "on:";
     const QString recurPrefix = "recur:";
     const QString maxPrefix = "max:";
     const QString minPrefix = "min:";

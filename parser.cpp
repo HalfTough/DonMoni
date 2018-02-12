@@ -123,8 +123,8 @@ bool Parser::parseAsDates(const QString &arg){
         }
         return true;
     }
-    if(arg.startsWith(dayPrefix)){
-        QDate d = checkDate(arg.mid(dayPrefix.size()));
+    if(arg.startsWith(onPrefix)){
+        QDate d = checkDate(arg.mid(onPrefix.size()));
         if(d.isNull())
             _action = error;
         else{
@@ -235,7 +235,7 @@ bool Parser::parseAsAction(const QString &arg){
 
 bool Parser::parseAsName(const QString &arg){
     if(arg.startsWith(namesPrefix) || arg.startsWith(fromPrefix) || arg.startsWith(toPrefix)
-            || arg.startsWith(betweenPrefix) || arg.startsWith(dayPrefix)
+            || arg.startsWith(betweenPrefix) || arg.startsWith(onPrefix)
             || arg.startsWith(minPrefix) || arg.startsWith(maxPrefix))
         return false;
     _name = arg;

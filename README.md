@@ -39,7 +39,8 @@ Note there is no space between value and currency.
 `max:<money>`  
 `from:<date>`  
 `to:<date>`  
-`between:<date>:<date>`
+`between:<date>:<date>`  
+`on:<date>`
 
 ## Recurring donations
 You can add recurring donations, by putting `recur:<time>` somwhere after `add`  

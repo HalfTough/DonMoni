@@ -17,6 +17,7 @@ public:
 
 class JsonParsingException : public FileException{
 public:
+    JsonParsingException() : FileException(QString()){}
     JsonParsingException(const QString &url) : FileException(url){}
 };
 

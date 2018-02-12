@@ -40,7 +40,14 @@ void Tracker::load(){
             parsingErr = true;
             continue;
         }
-        addProject(new Project(project.toObject()));
+        try{
+            addProject(new Project(project.toObject()));
+        }
+        catch(const JsonParsingException &){
+            //Does it even makes sence?
+            //Kinda, but I'll take alternative ideas at halftough29A@gmail.com
+            throw JsonParsingException(saveFile.fileName());
+        }
     }
     if(parsingErr){
         throw JsonParsingException(saveFile.fileName());

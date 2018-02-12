@@ -11,27 +11,33 @@ Project::Project(QString name) : name(name){
 Project::Project(QJsonObject jobject){
     payments = new QList<Payment*>();
     recuring = new QList<RecurringDonation*>();
+    bool parsingErr = false;
     QJsonValue jname = jobject.value("name");
     if(jname.isUndefined() || !jname.isString())
-        throw this;
-        //TODO
+        throw JsonParsingException();
     name = jname.toString();
     QJsonValue jpayments = jobject.value("payments");
-    if(jpayments.isUndefined() || !jpayments.isArray())
-        throw this;
-        //TODO
-    for(QJsonValue payment : jpayments.toArray()){
-        if(payment.isUndefined() || !payment.isObject())
-            throw this;
-        addPayment(new Payment(payment.toObject()));
+    if(!jpayments.isArray())
+        parsingErr = true;
+    else{
+        for(QJsonValue payment : jpayments.toArray()){
+            if(payment.isUndefined() || !payment.isObject())
+                throw this;
+            addPayment(new Payment(payment.toObject()));
+        }
     }
     QJsonValue jrecur = jobject.value("recurring");
-    if(jrecur.isUndefined() || !jrecur.isArray())
-        throw this;
-    for(QJsonValue recur : jrecur.toArray()){
-        if(recur.isUndefined() || !recur.isObject())
-            throw this;
-        addRecur(new RecurringDonation(recur.toObject()));
+    if(!jrecur.isArray())
+        parsingErr = true;
+    else{
+        for(QJsonValue recur : jrecur.toArray()){
+            if(recur.isUndefined() || !recur.isObject())
+                throw this;
+            addRecur(new RecurringDonation(recur.toObject()));
+        }
+    }
+    if(parsingErr){
+        throw JsonParsingException();
     }
 }
 
@@ -61,7 +67,13 @@ void Project::addPayment(Payment *payment){
     auto i = payments->rbegin();
     while(i!=payments->rend() && (*i)->getDate() > payment->getDate())
         i++;
-    payments->insert(i.base(), payment);
+    //If in given project there already is donation add to it instead of creating new one
+    if(i!=payments->rend() && (*i)->getDate() == payment->getDate()){
+        (*i)->add(payment->getAmount());
+    }
+    else{
+        payments->insert(i.base(), payment);
+    }
 }
 
 void Project::addRecur(RecurringDonation *donation){
