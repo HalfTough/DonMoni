@@ -16,11 +16,11 @@ void Printer::setTracker(Tracker *tr){
 }
 
 void Printer::printParseError(){
-    err << parseErrorMessage;
+    err << tr("Error parsing arguments") << endl;
 }
 
 void Printer::printHelp(){
-    out << helpMessage;
+    out << tr("Usage: donate [action] [args]") << endl;
 }
 
 //TODO Windows?

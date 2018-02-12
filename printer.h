@@ -27,8 +27,6 @@ class Printer{
     QString project = tr("Project");
     QString older = tr("Older");
     QString sum = tr("Sum");
-    QString parseErrorMessage = tr("Error parsing arguments");
-    QString helpMessage = tr("Usage:\ndonate [action] [args]");
     QString noProject = tr("%1: project not found");
     QString donations = tr("Donations:");
     QString recurringText = tr("Recurring donations:");
