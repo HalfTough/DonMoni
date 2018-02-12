@@ -33,7 +33,7 @@ Payment::Payment(QJsonObject jobject){
     if(!jdate.isString())
         throw JsonParsingException();
     date = QDate::fromString(jdate.toString(), Qt::ISODate);
-    if(date.isNull())
+    if(!date.isValid())
         throw JsonParsingException();
     if(parsingErr)
         throw DonationParsingException(*this);

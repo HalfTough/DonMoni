@@ -21,7 +21,7 @@ Parser::Parser(int argc, char **argv){
         _action = show;
     }
     //sprawdzamy czy sa wymagane argumety
-    if(_action == add && _name.isNull())
+    if((_action == add || _action==project) && _name.isNull())
         _action = error;
     if(_action == remove && _filter.isEmpty() && _name.isNull())
         _action = error;

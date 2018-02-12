@@ -47,7 +47,7 @@ RecurringDonation::RecurringDonation(const QJsonObject &jobject){
     if(!v.isString())
         throw JsonParsingException();
     next = QDate::fromString(v.toString(), Qt::ISODate);
-    if(next.isNull())
+    if(!next.isValid())
         throw JsonParsingException();
     v = jobject.value("step");
     if(!v.isObject())
