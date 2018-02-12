@@ -42,6 +42,13 @@ Note there is no space between value and currency.
 `between:<date>:<date>`  
 `on:<date>`
 
+## Dates
+`YYYY-MM-DD`  
+`MM-DD`  
+`tomorrow`  
+`yesterday`  
+`today`
+
 ## Recurring donations
 You can add recurring donations, by putting `recur:<time>` somwhere after `add`  
 `donate add OSM 20$ recur:monthly`  
