@@ -15,6 +15,6 @@ SET(Lang_files
 
 #QT5_CREATE_TRANSLATION(LangSrcs ${Lang_files})
 
-add_executable(donate main.cpp money.cpp parser.cpp filter.cpp recur.cpp tracker.cpp project.cpp payment.cpp printer.cpp ${LangSrcs})
+add_executable(donate main.cpp settings.cpp money.cpp parser.cpp filter.cpp recur.cpp tracker.cpp project.cpp payment.cpp printer.cpp ${LangSrcs})
 target_link_libraries(donate Qt5::Core ${CURSES_LIBRARIES})
 target_link_libraries(donate Qt5::Widgets ${CURSES_LIBRARIES})

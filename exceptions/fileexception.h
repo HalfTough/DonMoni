@@ -21,6 +21,17 @@ public:
     FileParsingException(const QString &url) : FileException(url){}
 };
 
+class SettingsParsingException{
+    int number;
+    QString line, file;
+public:
+    SettingsParsingException(QString file, QString line, int number)
+        : file(file), line(line), number(number){}
+    int getLineNumber() const { return number; }
+    QString getLine() const { return line; }
+    QString getFile() const { return file; }
+};
+
 class JsonParsingException {
 
 };

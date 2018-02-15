@@ -327,6 +327,11 @@ void Printer::printJsonParsingError(const FileParsingException &jpe){
         << tr("Data might be not loaded properly") << endl;
 }
 
+void Printer::printSettingsParsingError(const SettingsParsingException &spe){
+    err << tr("Error parsing config: %1").arg(spe.getFile()) << endl
+        << tr("at line %1; %2").arg(spe.getLineNumber()).arg(spe.getLine()) << endl;
+}
+
 QString Printer::stringFromTime(Time time){
     QString out;
     if(time.years)

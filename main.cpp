@@ -5,6 +5,7 @@
 
 #include "parser.h"
 #include "printer.h"
+#include "settings.h"
 
 #include <QDebug> //TODO
 
@@ -15,8 +16,16 @@ int main(int argc, char **argv){
     translator.load("donmoni_"+locale);
     app.installTranslator(&translator);
 
-    Parser parser(argc, argv);
     Printer printer(stdout, stderr);
+    try{
+        Settings::load();
+    }
+    catch(SettingsParsingException spe){
+        printer.printSettingsParsingError(spe);
+        return 1;
+    }
+    Parser parser(argc, argv);
+
     if(parser.getAction() == Parser::error){
         printer.printParseError();
         return 1;

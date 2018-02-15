@@ -73,6 +73,7 @@ public:
     void printProjectDoesntExists(const QString&);
     void printFileOpenError(const FileOpenException &);
     void printJsonParsingError(const FileParsingException &);
+    void printSettingsParsingError(const SettingsParsingException &);
     void printParseError();
     void printHelp();
 
