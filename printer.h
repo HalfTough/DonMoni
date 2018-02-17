@@ -32,10 +32,7 @@ class Printer{
     QString recurringText = tr("Recurring donations:");
     QString eachText = tr("each");
     QString noDonations = tr("Project has no donations");
-    QString noMatchingDonations = tr("No donations meeting criteria");
     QString deleted = tr("Projekt removed: %1");
-    QString deleted1Payment = tr("Donation removed");
-    QString deletedPayments = tr("%1 donations removed");
     QString projectExists = tr("%1: project already exists");
     QString projectDoesntExists = tr("%1: project doesn't exist");
     QString emptyProjectsString = tr("Projects with no donations:");

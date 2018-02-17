@@ -9,22 +9,36 @@
 
 #include <QDebug> //TODO
 
+void loadLocale(QApplication *app, QTranslator *translator){
+    QString locale;
+    if(Settings::getLanguage().isEmpty()){
+        locale = QLocale::system().name();
+    }
+    else{
+        locale = Settings::getLanguage();
+    }
+    translator->load("donmoni_"+locale);
+    app->installTranslator(translator);
+}
+
 int main(int argc, char **argv){
     QApplication app(argc, argv);
-    QString locale = QLocale::system().name();
     QTranslator translator;
-    translator.load("donmoni_"+locale);
-    app.installTranslator(&translator);
 
-    Printer printer(stdout, stderr);
     try{
         Settings::load();
     }
     catch(SettingsParsingException spe){
+        loadLocale(&app, &translator);
+        Printer printer(stdout, stderr);
         printer.printSettingsParsingError(spe);
         return 1;
     }
+
+    loadLocale(&app, &translator);
+
     Parser parser(argc, argv);
+    Printer printer(stdout, stderr);
 
     if(parser.getAction() == Parser::error){
         printer.printParseError();
