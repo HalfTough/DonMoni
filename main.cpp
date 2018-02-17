@@ -17,7 +17,10 @@ void loadLocale(QApplication *app, QTranslator *translator){
     else{
         locale = Settings::getLanguage();
     }
-    translator->load("donmoni_"+locale);
+    if(!translator->load("donmoni_"+locale)){
+        //If you fail lo load desired locale, try en_US
+        translator->load("donmoni_en_US");
+    }
     app->installTranslator(translator);
 }
 
