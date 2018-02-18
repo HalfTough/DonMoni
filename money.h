@@ -8,12 +8,8 @@
 #include <QTextStream>
 
 class Money{
-    enum CompareType { ignoreCurrencies, convertCurrencies };
-    static QLocale locale;
     static QMap<QString,QString> currencies;
-    static CompareType howCompare;
 	QMap<QString,double> amounts;
-    void initCurrencies();
 public:
     Money();
     Money(const QJsonObject&);
@@ -26,6 +22,9 @@ public:
 
     static QString currencyString(double val);
     static QString currencyString(double val, QString currency);
+
+    static void initCurrencies();
+    static QString symbolFromISO(QString);
 
     Money operator+(const Money &a);
     Money operator+=(const Money &a);

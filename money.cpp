@@ -1,10 +1,8 @@
 #include "money.h"
+#include "settings.h"
 #include "exceptions/fileexception.h"
 
-QLocale Money::locale;
 QMap<QString,QString> Money::currencies;
-Money::CompareType Money::howCompare = Money::ignoreCurrencies;
-
 
 Money::Money(){
     initCurrencies();
@@ -52,11 +50,9 @@ void Money::add(Money a){
 
 void Money::add(double a, QString cur){
     if(cur.isNull() || cur.isEmpty()){
-        cur = locale.currencySymbol(QLocale::CurrencySymbol);
+        cur = Settings::getCurrency();
     }
-    if( currencies.contains(cur) ){
-        cur = currencies[cur];
-    }
+    cur = symbolFromISO(cur);
     if(amounts.contains(cur)){
         amounts[cur] += a;
     }
@@ -94,12 +90,20 @@ QJsonObject Money::toJson() const{
 }
 
 QString Money::currencyString(double val){
-    return currencyString(val, locale.currencySymbol());
+    return currencyString(val, Settings::getCurrency());
 }
 
 QString Money::currencyString(double val, QString currency){
     int a = QString::number(qRound(val)).size();
     return QString::number(val, 'g', a+2)+" "+currency;
+}
+
+QString Money::symbolFromISO(QString iso){
+    QMap<QString,QString>::iterator a;
+    if( (a = currencies.find(iso))!=currencies.end() ){
+        return *a;
+    }
+    return iso;
 }
 
 Money Money::operator +(const Money &a){
@@ -123,8 +127,8 @@ Money Money::operator +=(const Money &a){
 
 //On ignoreCurrencies a is < than b only if each element of a is in b and is <= and at least one is smaller
 bool Money::operator <(const Money &a) const{
-    switch(howCompare){
-    case ignoreCurrencies:{
+    switch(Settings::getCompareMethod()){
+    case Settings::ignoreCurrencies:{
         QMapIterator<QString,double> i(amounts);
         bool k = true, oneSmaller=false;
         while(k && i.hasNext()){
@@ -138,15 +142,15 @@ bool Money::operator <(const Money &a) const{
         }
         return k && oneSmaller;
     }
-    case convertCurrencies:
-        throw convertCurrencies;
+    case Settings::convertCurrencies:
+        throw Settings::convertCurrencies;
     }
 }
 
 //On ignoreCurrencies a is <= than b only if each element of a is in b and is <=
 bool Money::operator <=(const Money &a) const{
-    switch(howCompare){
-    case ignoreCurrencies:{
+    switch(Settings::getCompareMethod()){
+    case Settings::ignoreCurrencies:{
         QMapIterator<QString,double> i(amounts);
         bool k = true;
         while(k && i.hasNext()){
@@ -157,15 +161,15 @@ bool Money::operator <=(const Money &a) const{
         }
         return k;
     }
-    case convertCurrencies:
-        throw convertCurrencies;
+    case Settings::convertCurrencies:
+        throw Settings::convertCurrencies;
     }
 }
 
 //On ignoreCurrencies a is > than b only if each element of b is in a and is >= and at least one is bigger
 bool Money::operator >(const Money &a) const{
-    switch(howCompare){
-    case ignoreCurrencies:{
+    switch(Settings::getCompareMethod()){
+    case Settings::ignoreCurrencies:{
         QMapIterator<QString,double> i(amounts);
         bool k = true, oneBigger = false;
         while(k && i.hasNext()){
@@ -190,15 +194,15 @@ bool Money::operator >(const Money &a) const{
         }
         return k && oneBigger;
     }
-    case convertCurrencies:
-        throw convertCurrencies;
+    case Settings::convertCurrencies:
+        throw Settings::convertCurrencies;
     }
 }
 
 //On ignoreCurrencies a is >= than b only if each element of b is in a
 bool Money::operator >=(const Money &a) const{
-    switch(howCompare){
-    case ignoreCurrencies:{
+    switch(Settings::getCompareMethod()){
+    case Settings::ignoreCurrencies:{
         QMapIterator<QString,double> i(amounts);
         bool k = true;
         while(k && i.hasNext()){
@@ -215,8 +219,8 @@ bool Money::operator >=(const Money &a) const{
         }
         return k;
     }
-    case convertCurrencies:
-        throw convertCurrencies;
+    case Settings::convertCurrencies:
+        throw Settings::convertCurrencies;
     }
 }
 

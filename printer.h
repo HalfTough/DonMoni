@@ -15,7 +15,6 @@ class Printer{
     QTextStream out, err;
     Tracker *tracker;
     Filter filter;
-    int minCol = 3;
     enum Timeframe {year, month, week, day};
     Timeframe timeframe = month;
     int timeInt = 1;

@@ -27,6 +27,7 @@ void loadLocale(QApplication *app, QTranslator *translator){
 int main(int argc, char **argv){
     QApplication app(argc, argv);
     QTranslator translator;
+    Money::initCurrencies();
 
     try{
         Settings::load();

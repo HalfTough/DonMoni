@@ -1,4 +1,6 @@
 #include "printer.h"
+#include "settings.h"
+
 #include <QTranslator>
 
 namespace ioctl{
@@ -157,7 +159,7 @@ void Printer::print(){
     sizes->push_front(projectW);
     //Przytnij tabelkę jeśli sie nie mieści, ale nie bardziej niż minCol
     bool isOlder = false;
-    if(sizesSum > width && moneyTable->size() > minCol){
+    if(sizesSum > width && moneyTable->size() > Settings::getMinUntutCols()){
         isOlder = true;
         int olderW = fieldWidth(older);
         QVector<Money> *sums = new QVector<Money>(moneyTable->at(0)->size());
@@ -170,7 +172,7 @@ void Printer::print(){
             vec = moneyTable->erase(vec);
             size = sizes->erase(size);
             olderW = std::max(olderW, fieldWidth(sums));
-        }while(sizesSum+olderW>width && moneyTable->size()-1 > minCol);
+        }while(sizesSum+olderW>width && moneyTable->size()-1 > Settings::getMinUntutCols());
         sizes->insert(1, olderW);
         moneyTable->push_front(sums);
     }
