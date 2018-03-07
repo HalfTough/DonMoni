@@ -8,7 +8,8 @@
 #include <QTextStream>
 
 class Money{
-    static QMap<QString,QString> currencies;
+    static QMap<QString,QString> mapISOSym;
+    static QMap<QString,QList<QString> > mapSymISO;
 	QMap<QString,double> amounts;
 public:
     Money();
@@ -18,13 +19,16 @@ public:
     void add(double, QString = QString());
     QString toString() const;
     QJsonObject toJson() const;
+    double toBase() const;
     bool isNull() const { return amounts.empty(); }
 
     static QString currencyString(double val);
     static QString currencyString(double val, QString currency);
 
     static void initCurrencies();
+    static bool isISO(QString);
     static QString symbolFromISO(QString);
+    static QString ISOFromSymbol(QString);
 
     Money operator+(const Money &a);
     Money operator+=(const Money &a);

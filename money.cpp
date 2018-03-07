@@ -1,8 +1,12 @@
+#include "currencies.h"
 #include "money.h"
 #include "settings.h"
 #include "exceptions/fileexception.h"
 
-QMap<QString,QString> Money::currencies;
+#include <QDebug>
+
+QMap<QString,QString> Money::mapISOSym;
+QMap<QString,QList<QString> > Money::mapSymISO;
 
 Money::Money(){
     initCurrencies();
@@ -31,17 +35,42 @@ Money::Money(const QJsonObject &jobject){
 }
 
 void Money::initCurrencies(){
-    if(!currencies.empty())
+    if(!mapISOSym.empty())
         return;
     QList<QLocale> allLocales = QLocale::matchingLocales(QLocale::AnyLanguage, QLocale::AnyScript, QLocale::AnyCountry);
     for(QLocale loc : allLocales){
         QString ISO = loc.currencySymbol(QLocale::CurrencyIsoCode);
         QString sym = loc.currencySymbol(QLocale::CurrencySymbol);
-        if(!currencies.contains(ISO)){
-            currencies.insert(ISO, sym);
+        if(!ISO.isEmpty() && !mapISOSym.contains(ISO)){
+            mapISOSym.insert(ISO, sym);
         }
     }
-    currencies.insert("BTC",QString("₿"));
+    mapISOSym["CHF"] = "Fr.";
+    mapISOSym["MVR"] = QString("Rf");
+    mapISOSym["IRR"] = QString("﷼");
+    mapISOSym["CNY"] = QString("元");
+    mapISOSym["BTC"] = QString("₿");
+
+    //Setting defaults for symbols – first one on the list, will be default one
+    mapSymISO["$"].push_front("USD");
+    mapSymISO["Br"].push_front("BYN");
+    mapSymISO["K"].push_front("MMK");
+    mapSymISO["L"].push_front("HNL");
+    mapSymISO["Rs"].push_front("PKR");
+    mapSymISO[QString("£")].push_front("GBP");
+
+    QMapIterator<QString,QString> a(mapISOSym);
+    while(a.hasNext()){
+        a.next();
+        if(!mapSymISO[a.value()].contains(a.key())){
+            mapSymISO[a.value()].push_back(a.key());
+        }
+    }
+    QMapIterator<QString,QList<QString> > b(mapSymISO);
+    //while(b.hasNext()){
+    //    b.next();
+    //    qDebug() << b.key() << ":" << b.value();
+    //}
 }
 
 void Money::add(Money a){
@@ -52,7 +81,9 @@ void Money::add(double a, QString cur){
     if(cur.isNull() || cur.isEmpty()){
         cur = Settings::getCurrency();
     }
-    cur = symbolFromISO(cur);
+    if(!isISO(cur)){
+        cur = ISOFromSymbol(cur);
+    }
     if(amounts.contains(cur)){
         amounts[cur] += a;
     }
@@ -68,12 +99,17 @@ QString Money::toString() const{
     }
     else{
         QMapIterator<QString,double> i(amounts);
-        while(i.hasNext()){
-            i.next();
-            str += currencyString(i.value(), i.key());
-            if(i.hasNext()){
-                str += ", ";
+        if(Settings::getPrintMethod() == Settings::ignoreCurrencies){
+            while(i.hasNext()){
+                i.next();
+                str += currencyString(i.value(), symbolFromISO(i.key()));
+                if(i.hasNext()){
+                    str += Settings::getCurrencySeparator();
+                }
             }
+        }
+        else{
+            str = currencyString(toBase(), Settings::getCurrency());
         }
     }
     return str;
@@ -89,21 +125,43 @@ QJsonObject Money::toJson() const{
     return jMoney;
 }
 
+double Money::toBase() const {
+    QMapIterator<QString,double> i(amounts);
+    double moneyInBase = 0;
+    while(i.hasNext()){
+        i.next();
+        moneyInBase += i.value()*(1/Currencies::getRatio(i.key()));
+    }
+    return moneyInBase;
+}
+
 QString Money::currencyString(double val){
     return currencyString(val, Settings::getCurrency());
 }
 
 QString Money::currencyString(double val, QString currency){
-    int a = QString::number(qRound(val)).size();
-    return QString::number(val, 'g', a+2)+" "+currency;
+    int a = QString::number(int(val)).size();
+    return QString::number(val, 'g', a+2)+Settings::getSymbolSeparotor()+currency;
+}
+
+bool Money::isISO(QString a){
+    return mapISOSym.contains(a);
 }
 
 QString Money::symbolFromISO(QString iso){
     QMap<QString,QString>::iterator a;
-    if( (a = currencies.find(iso))!=currencies.end() ){
+    if( (a = mapISOSym.find(iso))!=mapISOSym.end() ){
         return *a;
     }
     return iso;
+}
+
+QString Money::ISOFromSymbol(QString symbol){
+    QMap<QString,QList<QString> >::iterator a;
+    if( (a=mapSymISO.find(symbol)) != mapSymISO.end() ){
+        return a->first();
+    }
+    return symbol;
 }
 
 Money Money::operator +(const Money &a){
@@ -143,7 +201,7 @@ bool Money::operator <(const Money &a) const{
         return k && oneSmaller;
     }
     case Settings::convertCurrencies:
-        throw Settings::convertCurrencies;
+        return (toBase() < a.toBase());
     }
 }
 
@@ -162,7 +220,7 @@ bool Money::operator <=(const Money &a) const{
         return k;
     }
     case Settings::convertCurrencies:
-        throw Settings::convertCurrencies;
+        return (toBase() <= a.toBase());
     }
 }
 
@@ -195,7 +253,7 @@ bool Money::operator >(const Money &a) const{
         return k && oneBigger;
     }
     case Settings::convertCurrencies:
-        throw Settings::convertCurrencies;
+        return (toBase() > a.toBase());
     }
 }
 
@@ -220,7 +278,7 @@ bool Money::operator >=(const Money &a) const{
         return k;
     }
     case Settings::convertCurrencies:
-        throw Settings::convertCurrencies;
+        return (toBase() >= a.toBase());
     }
 }
 

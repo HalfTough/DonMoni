@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="pl_PL">
+<TS version="2.1" language="pl_PL">
 <context>
     <name>Printer</name>
     <message>
@@ -202,7 +202,7 @@ Data might be not loaded properly</source>
     <message>
         <location filename="../printer.cpp" line="328"/>
         <source>at line %1; %2</source>
-        <translation>w linii%1; %2</translation>
+        <translation>w linii %1; %2</translation>
     </message>
     <message numerus="yes">
         <location filename="../printer.cpp" line="334"/>
