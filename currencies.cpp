@@ -81,7 +81,12 @@ void Currencies::constructTable(){
     QJsonDocument jDocument = QJsonDocument::fromJson(file->readAll(), error);
     QJsonObject jRates = jDocument.object().value("rates").toObject();
     if(jRates.isEmpty()){
-        //TODO
+        if(!downloaded){
+            downloadExchange();
+        }
+        else{
+            //TODO
+        }
     }
     for(QString key : jRates.keys()){
         //TODO zabezpieczyć
