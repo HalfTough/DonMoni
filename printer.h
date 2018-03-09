@@ -12,66 +12,49 @@
 class Printer{
     Q_DECLARE_TR_FUNCTIONS(Printer)
 
-    QTextStream out, err;
-    Tracker *tracker;
-    Filter filter;
+    static QTextStream out, err;
     enum Timeframe {year, month, week, day};
     Timeframe timeframe = month;
     int timeInt = 1;
-    int line = 0;
-    QString months[12] = {tr("January"), tr("February"), tr("March"),
-                          tr("April"), tr("May"), tr("June"),
-                          tr("July"), tr("August"), tr("September"),
-                          tr("October"), tr("November"), tr("December")};
-    QString project = tr("Project");
-    QString older = tr("Older");
-    QString sum = tr("Sum");
-    QString noProject = tr("%1: project not found");
-    QString donations = tr("Donations:");
-    QString recurringText = tr("Recurring donations:");
-    QString eachText = tr("each");
-    QString noDonations = tr("Project has no donations");
-    QString deleted = tr("Projekt removed: %1");
-    QString projectExists = tr("%1: project already exists");
-    QString projectDoesntExists = tr("%1: project doesn't exist");
-    QString emptyProjectsString = tr("Projects with no donations:");
+    static int line; //TODO?
+    static QString months[];
 
     //TODO support
-    QString line1 = "\e[0m";
-    QString line2 = "\e[40m";
+    static QString lineClear;
+    static QStringList lineFormatting;
 
-    int getTermWidth();
-    int fieldWidth(Money) const;
-    int fieldWidth(QString) const;
-    int fieldWidth(QVector<Money>*) const;
-    int namesWidth(QMap<QString,Project*> *) const;
-    void printHeader(QList<int> *sizes, bool isOlder = false);
-    void printTable(QList<QVector<Money>*>*table, QList<int> *sizes, QMap<QString,Project*> *projects);
-    void printEmptyProjects(QList<Project *> *emptyProjects);
-    void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
-    void printMoney(Money, int space);
+    static int getTermWidth();
+    static int fieldWidth(Money);
+    static int fieldWidth(QString);
+    static int fieldWidth(QVector<Money>*);
+    static int namesWidth(QMap<QString,Project*> *);
+    static void printHeader(QList<int> *sizes, const Filter &filter, bool isOlder = false);
+    static void printTable(QList<QVector<Money>*>*table, QList<int> *sizes, QMap<QString,Project*> *projects);
+    static void printEmptyProjects(QList<Project *> *emptyProjects);
+    static void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
+    static void printMoney(Money, int space);
     //TODO move it maybe
-    void addToVector(QVector<Money>*, QVector<Money>*);
-    Money vectorSum(QVector<Money>*);
-    QDate getEarliestDate(QMap<QString,Project*> *projects) const;
-    QList <QVector<Money>*> * getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter) const;
+    static void addToVector(QVector<Money>*, QVector<Money>*);
+    static Money vectorSum(QVector<Money>*);
+    static QDate getEarliestDate(QMap<QString,Project*> *projects);
+    static QList <QVector<Money>*> * getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter);
+    Printer();
 
 public:
-    Printer(FILE* out, FILE* err, Tracker* = nullptr);
-    void setTracker(Tracker *);
-    void setFilter(const Filter &filter){ this->filter = filter; }
-    void print();
-    void printProjects();
-    void printDeleted(const QString&);
-    void printDeletedPayments(int);
-    void printProjectInfo(const QString&);
-    void printProjectExists(const QString&);
-    void printProjectDoesntExists(const QString&);
-    void printFileOpenError(const FileOpenException &);
-    void printJsonParsingError(const FileParsingException &);
-    void printSettingsParsingError(const SettingsParsingException &);
-    void printParseError();
-    void printHelp();
+    static void print(Tracker *tracker, const Filter &filter);
+    static void printProjects(Tracker *tracker, const Filter &filter);
+    static void printDeleted(const QString&);
+    static void printDeletedPayments(int);
+    static void printProjectInfo(Tracker *tracker, const QString&);
+    static void printProjectExists(const QString&);
+    static void printProjectDoesntExists(const QString&);
+    static void printFileOpenError(const FileOpenException &);
+    static void printJsonParsingError(const FileParsingException &);
+    static void printSettingsParsingError(const SettingsParsingException &);
+    static void printParseError();
+    static void printHelp();
+
+    static void setLineFormatting(QStringList lines){ lineFormatting = lines; }
 
     static QString stringFromTime(Time);
 };

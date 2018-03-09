@@ -32,14 +32,15 @@ int main(int argc, char **argv){
     QApplication app(argc, argv);
     QTranslator translator;
     Money::initCurrencies();
-
+    QStringList lines;
+    lines << "\e[0m" << "\e[40m";
+    Printer::setLineFormatting(lines);
     try{
         Settings::load();
     }
     catch(SettingsParsingException spe){
         loadLocale(&app, &translator);
-        Printer printer(stdout, stderr);
-        printer.printSettingsParsingError(spe);
+        Printer::printSettingsParsingError(spe);
         return 1;
     }
     loadLocale(&app, &translator);

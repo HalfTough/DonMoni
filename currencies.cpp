@@ -75,12 +75,11 @@ bool Currencies::isCurrenciesFileOld(){
 }
 
 void Currencies::constructTable(){
-    qDebug() << "constructing";
     file->open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonParseError *error = new QJsonParseError();
     QJsonDocument jDocument = QJsonDocument::fromJson(file->readAll(), error);
     QJsonObject jRates = jDocument.object().value("rates").toObject();
-    if(jRates.isEmpty()){
+    if(error->error != QJsonParseError::NoError || jRates.isEmpty()){
         if(!downloaded){
             downloadExchange();
         }

@@ -7,6 +7,8 @@
 #include <QObject>
 #include <QtNetwork/QNetworkReply>
 
+#include "printer.h"
+
 
 class Currencies : public QObject{
     Q_OBJECT
@@ -14,6 +16,7 @@ class Currencies : public QObject{
     QNetworkAccessManager *manager;
     QUrl url;
     QFile *file;
+    Printer *printer;
 
     static QString fileName;
     static QMap<QString, double> table;
@@ -24,6 +27,7 @@ class Currencies : public QObject{
 public:
     Currencies();
     void initTable();
+    void setPrinter(Printer *printer){ this->printer = printer; }
     static bool wereCurrenciesDownloaded(){ return downloaded; }
     static double getRatio(QString ISO);
 public slots:

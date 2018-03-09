@@ -9,13 +9,15 @@ namespace ioctl{
 
 #include <QDebug>
 
-Printer::Printer(FILE *out, FILE *err, Tracker *tracker) : out(out), err(err), tracker(tracker){
-
-}
-
-void Printer::setTracker(Tracker *tr){
-    tracker = tr;
-}
+QTextStream Printer::out(stdout);
+QTextStream Printer::err(stderr);
+QString Printer::months[12] = {tr("January"), tr("February"), tr("March"),
+                          tr("April"), tr("May"), tr("June"),
+                          tr("July"), tr("August"), tr("September"),
+                          tr("October"), tr("November"), tr("December")};
+QString Printer::lineClear("\e[0m");
+QStringList Printer::lineFormatting;
+int Printer::line = 0;
 
 void Printer::printParseError(){
     err << tr("Error parsing arguments") << endl;
@@ -45,20 +47,20 @@ Money Printer::vectorSum(QVector<Money> *a){
     return sum;
 }
 
-int Printer::fieldWidth(Money money) const{
+int Printer::fieldWidth(Money money){
     return money.toString().size()+1;
 }
-int Printer::fieldWidth(QString name) const{
+int Printer::fieldWidth(QString name){
     return name.size()+1;
 }
-int Printer::fieldWidth(QVector<Money> *vec) const{
+int Printer::fieldWidth(QVector<Money> *vec){
     Money sum;
     for(Money a : *vec)
         sum += a;
     return sum.toString().size()+1;
 }
 
-int Printer::namesWidth(QMap<QString,Project*> *projects) const{
+int Printer::namesWidth(QMap<QString,Project*> *projects){
     int longest=0;
     for(Project* p : *projects){
         if(p->getName().size() > longest)
@@ -67,7 +69,7 @@ int Printer::namesWidth(QMap<QString,Project*> *projects) const{
     return longest+1;
 }
 
-QDate Printer::getEarliestDate(QMap<QString,Project*> *projects) const{
+QDate Printer::getEarliestDate(QMap<QString,Project*> *projects){
     QDate earliest = QDate::currentDate();
     for(Project *project : *projects){
         if(!project->empty() && project->getEarliestDate() < earliest)
@@ -78,7 +80,7 @@ QDate Printer::getEarliestDate(QMap<QString,Project*> *projects) const{
     return earliest;
 }
 
-QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter) const {
+QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter) {
     QList <QVector<Money>*> *table = new QList <QVector<Money>*>();
     QDate from = filter.getFrom();
     QDate to = filter.getTo();
@@ -110,7 +112,7 @@ QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *project
     return table;
 }
 
-void Printer::print(){
+void Printer::print(Tracker *tracker, const Filter &filter){
     QMap<QString,Project*> *projects = tracker->matchingProjects(filter);
     if(projects->empty()){
         out << tr("No projects meeting criteria") << endl;
@@ -140,7 +142,7 @@ void Printer::print(){
         }
         auto i=moneyTable->rbegin();
         //Wielkość kolumny sum
-        sizes->push_back( sizesSum = std::max(fieldWidth(*i), fieldWidth(sum)) );
+        sizes->push_back( sizesSum = std::max(fieldWidth(*i), fieldWidth(tr("Sum"))) );
         i++; //Przeskakujemy kolumnę sum
         //Wielkości kolumn miesięcy
         for(; i!=moneyTable->rend(); i++){
@@ -154,14 +156,14 @@ void Printer::print(){
     }
 
     //Wielkość nazw projektów
-    int projectW = std::max(fieldWidth(project), namesWidth(projects));
+    int projectW = std::max(fieldWidth(tr("Project")), namesWidth(projects));
     sizesSum += projectW;
     sizes->push_front(projectW);
     //Przytnij tabelkę jeśli sie nie mieści, ale nie bardziej niż minCol
     bool isOlder = false;
     if(sizesSum > width && moneyTable->size() > Settings::getMinUntutCols()){
         isOlder = true;
-        int olderW = fieldWidth(older);
+        int olderW = fieldWidth(tr("Older"));
         QVector<Money> *sums = new QVector<Money>(moneyTable->at(0)->size());
         auto size = sizes->begin(); size++;
         auto vec = moneyTable->begin();
@@ -178,7 +180,7 @@ void Printer::print(){
     }
 
     if(!projects->empty()){
-        printHeader(sizes, isOlder);
+        printHeader(sizes, filter, isOlder);
         printTable(moneyTable, sizes, projects);
     }
     if(!emptyProjects->empty()){
@@ -193,56 +195,56 @@ void Printer::print(){
     delete emptyProjects;
 }
 
-void Printer::printHeader(QList<int> *sizes, bool isOlder){
-    out << ((line++%2)?line2:line1);
+void Printer::printHeader(QList<int> *sizes, const Filter &filter, bool isOlder){
+    out << lineFormatting[line++%lineFormatting.size()];
     auto size = sizes->begin();
-    printString(project, *size++);
+    printString(tr("Project"), *size++);
     int month = filter.getTo().month()-1; //TODO timeframe
     if(filter.getTo().isNull()){
         month = QDate::currentDate().month()-1;
     }
     month = ((month-sizes->size()+3+(isOlder?1:0))%12+12)%12;
     if(isOlder){
-        printString(older, *size++, QTextStream::AlignRight);
+        printString(tr("Older"), *size++, QTextStream::AlignRight);
     }
     while(size!=sizes->end()-1){
         printString(months[month],*size++, QTextStream::AlignRight);
         if(++month==12)
             month=0;
     }
-    printString(sum, *size, QTextStream::AlignRight);
-    out << line1 << endl;
+    printString(tr("Sum"), *size, QTextStream::AlignRight);
+    out << lineClear << endl;
 }
 
 void Printer::printTable(QList<QVector<Money> *> *table, QList<int> *sizes, QMap<QString,Project*> *projects){
     int i=0;
     for(Project *project : *projects){
-        out << ((line++%2)?line2:line1);
+        out << lineFormatting[line++%lineFormatting.size()];
         auto size = sizes->begin();
         printString(project->getName(), *size);
         size++;
         for(auto vec = table->begin(); vec!=table->end(); vec++, size++){
             printMoney((*vec)->at(i), *size);
         }
-        out << line1 << endl;
+        out << lineClear << endl;
         i++;
     }
 
     //Wypisanie sum, tylko jeśli jest więcej niż jeden projekt
     if(table->first()->size() > 1){
-        out << ((line++%2)?line2:line1);
+        out << lineFormatting[line++%lineFormatting.size()];
         auto size = sizes->begin();
         //auto vec = table->begin();
-        printString(sum, *size++);
+        printString(tr("Sum"), *size++);
         for(auto vec : *table){
             printMoney(vectorSum(vec), *size++);
         }
-        out << line1 << endl;
+        out << lineClear << endl;
     }
 }
 
 void Printer::printEmptyProjects(QList<Project *> *emptyProjects){
-    out << emptyProjectsString << endl;
+    out << tr("Projects with no donations:") << endl;
     for(Project *project : *emptyProjects){
         out << project->getName() << endl;
     }
@@ -260,7 +262,7 @@ void Printer::printMoney(Money money, int space ){
     printString(money.toString(), space, QTextStream::AlignRight);
 }
 
-void Printer::printProjects(){
+void Printer::printProjects(Tracker *tracker, const Filter &filter){
     QMap<QString,Project*> *projects = tracker->matchingProjects(filter);
     for(Project*project : *projects){
         out << project->getName() << endl;
@@ -269,7 +271,7 @@ void Printer::printProjects(){
 }
 
 void Printer::printDeleted(const QString &name){
-    out << deleted.arg(name) << endl;
+    out << tr("Projekt removed: %1").arg(name) << endl;
 }
 
 void Printer::printDeletedPayments(int a){
@@ -281,26 +283,26 @@ void Printer::printDeletedPayments(int a){
     }
 }
 
-void Printer::printProjectInfo(const QString &name){
+void Printer::printProjectInfo(Tracker *tracker, const QString &name){
     Project *project = tracker->getProject(name);
     if(!project){
-        out << noProject.arg(name) << endl;
+        out << tr("%1: project not found").arg(name) << endl;
         return;
     }
     out << project->getName() << endl;
     auto payments = project->getPayments();
     if(payments->empty()){
-        out << noDonations << endl;
+        out << tr("Project has no donations") << endl;
         return;
     }
-    out << donations << endl;
+    out << tr("Donations:") << endl;
     for(Payment* payment : *payments){
         out << payment->getDate().toString(Qt::ISODate) << QString(": ") << payment->getAmount() << endl;
     }
-    out << sum << ": " << project->getMoney() << endl;
+    out << tr("Sum") << ": " << project->getMoney() << endl;
     auto recurring = project->getRecurring();
     if(!recurring->empty()){
-        out << recurringText << endl;
+        out << tr("Recurring donations:") << endl;
         for(RecurringDonation *donation : *recurring){
             out << tr("%1 each %2. Next: %3").arg(donation->getMoney().toString())
                    .arg(stringFromTime(donation->getTime())).arg(donation->getNext().toString(Qt::ISODate)) << endl;
@@ -309,11 +311,11 @@ void Printer::printProjectInfo(const QString &name){
 }
 
 void Printer::printProjectExists(const QString &name){
-    err << projectExists.arg(name) << endl;
+    err << tr("%1: project already exists").arg(name) << endl;
 }
 
 void Printer::printProjectDoesntExists(const QString &name){
-    err << projectDoesntExists.arg(name) << endl;
+    err << tr("%1: project doesn't exist").arg(name) << endl;
 }
 
 void Printer::printFileOpenError(const FileOpenException &foe){

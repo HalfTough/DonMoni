@@ -7,14 +7,13 @@
 
 void MainProgram::run(){
     Parser parser(argc, argv);
-    Printer printer(stdout, stderr);
 
     if(parser.getAction() == Parser::error){
-        printer.printParseError();
+        Printer::printParseError();
         exitApp(1);
     }
     if(parser.getAction() == Parser::help){
-        printer.printHelp();
+        Printer::printHelp();
         exitApp(0);
     }
 
@@ -22,16 +21,14 @@ void MainProgram::run(){
     try{
         tracker->load();
     }catch(const FileOpenException &foe){
-        printer.printFileOpenError(foe);
+        Printer::printFileOpenError(foe);
     }catch(const FileParsingException &fpe){
-        printer.printJsonParsingError(fpe);
+        Printer::printJsonParsingError(fpe);
     }
-    printer.setTracker(tracker);
 
     switch(parser.getAction()){
     case Parser::show:
-        printer.setFilter(parser.getFilter());
-        printer.print();
+        Printer::print(tracker, parser.getFilter());
         break;
     case Parser::add:
         if(parser.hasAmount()){
@@ -44,7 +41,7 @@ void MainProgram::run(){
         }
         else{
             if(tracker->hasProject(parser.getName())){
-                printer.printProjectExists(parser.getName());
+                Printer::printProjectExists(parser.getName());
                 exitApp(1);
             }
             tracker->addProject(parser.getName());
@@ -55,17 +52,17 @@ void MainProgram::run(){
         //Filter can be empty only if name is set and we are removing project
         if(parser.getFilter().isEmpty()){
             if( tracker->removeProject(parser.getName()) ){
-                printer.printDeleted(parser.getName());
+                Printer::printDeleted(parser.getName());
                 tracker->save();
             }
             else{
-                printer.printProjectDoesntExists(parser.getName());
+                Printer::printProjectDoesntExists(parser.getName());
                 exitApp(1);
             }
         }
         else{
             int pc = tracker->removePayments(parser.getFilter());
-            printer.printDeletedPayments(pc);
+            Printer::printDeletedPayments(pc);
             if(pc){
                 tracker->save();
             }
@@ -74,11 +71,10 @@ void MainProgram::run(){
         }
         break;
     case Parser::project:
-        printer.printProjectInfo(parser.getName());
+        Printer::printProjectInfo(tracker, parser.getName());
         break;
     case Parser::projects:
-        printer.setFilter(parser.getFilter());
-        printer.printProjects();
+        Printer::printProjects(tracker, parser.getFilter());
         break;
     case Parser::modify:
         throw Parser::modify;
