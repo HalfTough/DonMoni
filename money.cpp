@@ -136,7 +136,7 @@ double Money::toBase() const {
 }
 
 QString Money::currencyString(double val){
-    return currencyString(val, Settings::getCurrency());
+    return currencyString(val, Money::symbolFromISO(Settings::getCurrency()));
 }
 
 QString Money::currencyString(double val, QString currency){

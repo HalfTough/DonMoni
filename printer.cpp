@@ -322,14 +322,26 @@ void Printer::printFileOpenError(const FileOpenException &foe){
     err << tr("Cannot open file: %1").arg(foe.getUrl()) << endl;
 }
 
+void Printer::printFileOpenError(const QString &file, const QString &error){
+    err << tr("Cannot open file \"%1\": %2").arg(file).arg(error) << endl;
+}
+
 void Printer::printJsonParsingError(const FileParsingException &jpe){
     err << tr("Error parsing file: %1").arg(jpe.getUrl()) << endl
         << tr("Data might be not loaded properly") << endl;
 }
 
+void Printer::printJsonParsingError(const QString &file, const QString &error){
+    err << tr("Error parsing file \"%1\": %2").arg(file).arg(error) << endl;
+}
+
 void Printer::printSettingsParsingError(const SettingsParsingException &spe){
     err << tr("Error parsing config: %1").arg(spe.getFile()) << endl
         << tr("at line %1; %2").arg(spe.getLineNumber()).arg(spe.getLine()) << endl;
+}
+
+void Printer::printNetworkError(QString error){
+    err << tr("Network error: %1").arg(error) << endl;
 }
 
 QString Printer::stringFromTime(Time time){

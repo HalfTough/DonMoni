@@ -37,14 +37,16 @@ void Currencies::downloadExchange(){
 }
 
 void Currencies::replyFinished(QNetworkReply *reply){
-    qDebug() << "reply finished";
     if(reply->error() != QNetworkReply::NoError ){
-        //TODO
-        throw NetworkException();
+        Printer::printNetworkError(reply->errorString());
+        QCoreApplication::exit(1);
+        return;
     }
-    if( !file->open(QIODevice::WriteOnly | QIODevice::Text) )
-        throw FileOpenException(file->fileName());
-        //TODO
+    if( !file->open(QIODevice::WriteOnly | QIODevice::Text) ){
+        Printer::printFileOpenError(file->fileName(), file->errorString());
+        QCoreApplication::exit(1);
+        return;
+    }
     QTextStream out(file);
     out << reply->readAll();
     file->close();
@@ -79,13 +81,15 @@ void Currencies::constructTable(){
     QJsonParseError *error = new QJsonParseError();
     QJsonDocument jDocument = QJsonDocument::fromJson(file->readAll(), error);
     QJsonObject jRates = jDocument.object().value("rates").toObject();
-    if(error->error != QJsonParseError::NoError || jRates.isEmpty()){
+    if(error->error != QJsonParseError::NoError){
         if(!downloaded){
+            file->close();
             downloadExchange();
+            return;
         }
-        else{
-            //TODO
-        }
+        Printer::printJsonParsingError(file->fileName(), error->errorString());
+        QCoreApplication::exit(1);
+        return;
     }
     for(QString key : jRates.keys()){
         //TODO zabezpieczyć

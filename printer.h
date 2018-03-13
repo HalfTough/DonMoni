@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QCoreApplication>
 #include <QLibraryInfo>
+#include <QNetworkReply>
 
 class Printer{
     Q_DECLARE_TR_FUNCTIONS(Printer)
@@ -49,9 +50,12 @@ public:
     static void printProjectExists(const QString&);
     static void printProjectDoesntExists(const QString&);
     static void printFileOpenError(const FileOpenException &);
+    static void printFileOpenError(const QString &file, const QString &error);
     static void printJsonParsingError(const FileParsingException &);
+    static void printJsonParsingError(const QString &file, const QString &error);
     static void printSettingsParsingError(const SettingsParsingException &);
     static void printParseError();
+    static void printNetworkError(QString);
     static void printHelp();
 
     static void setLineFormatting(QStringList lines){ lineFormatting = lines; }
