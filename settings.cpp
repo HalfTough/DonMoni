@@ -2,8 +2,11 @@
 #include "exceptions/fileexception.h"
 
 #include <QDir>
+#include <QRegularExpression>
 #include <QTextStream>
 #include <QStandardPaths>
+
+#include "printer.h"
 
 #include <QDebug>
 
@@ -46,6 +49,7 @@ void Settings::load(){
             }
         }
     }
+    Printer::setLineFormatting(rowColoring);
 }
 
 bool Settings::parseSetting(QString name, QString value){
@@ -86,7 +90,11 @@ bool Settings::parseSetting(QString name, QString value){
         else
             return false;
     }else if(name == "row_coloring"){
-        throw Settings::rowColoring;
+        QStringList rows = value.split(';');
+        rowColoring.clear();
+        for(QString row : rows){
+            rowColoring.append(terminalFormatFromSetting(row));
+        }
     }else if(name == "min_uncut_cols"){
         int a = value.toInt();
         if(a>0 || value=="0")
@@ -152,4 +160,117 @@ QString Settings::getCurrency(){
     else{
         return defaultCurrency;
     }
+}
+
+QString Settings::terminalFormatFromSetting(const QString &row){
+    qDebug() << row;
+    QString format;
+    Attributes attributes = none;
+    QString color = "\e[39m";
+    QString back = "\e[49m";
+    for(QString attr : row.split(',')){
+        if(attr == "bold")
+            attributes = Attributes(attributes|bold);
+        else if(attr == "dim")
+            attributes = Attributes(attributes|dim);
+        else if(attr == "italic")
+            attributes = Attributes(attributes|italic);
+        else if(attr == "underline")
+            attributes = Attributes(attributes|underline);
+        else if(attr == "blink")
+            attributes = Attributes(attributes|blink);
+        else if(attr == "invert")
+            attributes = Attributes(attributes|invert);
+        else if(attr == "hidden")
+            attributes = Attributes(attributes|hidden);
+        else if(attr == "black")
+            color = "\e[30m";
+        else if(attr == "red")
+            color = "\e[31m";
+        else if(attr == "green")
+            color = "\e[32m";
+        else if(attr == "yellow")
+            color = "\e[33m";
+        else if(attr == "blue")
+            color = "\e[34m";
+        else if(attr == "magenta")
+            color = "\e[35m";
+        else if(attr == "cyan")
+            color = "\e[36m";
+        else if(attr == "gray")
+            color = "\e[37m";
+        else if(attr == "back:black")
+            back = "\e[40m";
+        else if(attr == "back:red")
+            back = "\e[41m";
+        else if(attr == "back:green")
+            back = "\e[42m";
+        else if(attr == "back:yellow")
+            back = "\e[43m";
+        else if(attr == "back:blue")
+            back = "\e[44m";
+        else if(attr == "back:magenta")
+            back = "\e[45m";
+        else if(attr == "back:cyan")
+            back = "\e[46m";
+        else if(attr == "back:gray")
+            back = "\e[47m";
+        else if(attr.startsWith("color")){
+            QString tmp = attr.mid(5);
+            bool ok;
+            int number = tmp.toInt(&ok);
+            if(ok && number <256 && number>=0){
+                color = "\e[38;5;"+QString::number(number)+"m";
+            }
+            else{
+                return QString();
+            }
+        }
+        else if(attr.startsWith("back:color")){
+            QString tmp = attr.mid(10);
+            bool ok;
+            int number = tmp.toInt(&ok);
+            if(ok && number <256 && number>=0){
+                back = "\e[48;5;"+QString::number(number)+"m";
+            }
+            else{
+                return QString();
+            }
+        }
+        else if(attr.startsWith("#")){
+            QRegularExpression re("^\\#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$");
+            QRegularExpressionMatch match = re.match(attr);
+            if(match.hasMatch() && match.capturedTexts().size() == 4){
+                color = QString("\x1b[38;2;%1;%2;%3m").arg( match.capturedTexts()[1].toInt(0, 16) ).arg( match.capturedTexts()[2].toInt(0, 16) ).arg( match.capturedTexts()[3].toInt(0, 16) );
+            }
+            else
+                return QString();
+        }
+        else if(attr.startsWith("back:#")){
+            QRegularExpression re("^\\#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$");
+            QRegularExpressionMatch match = re.match(attr.mid(5));
+            if(match.hasMatch() && match.capturedTexts().size() == 4){
+                back = QString("\x1b[48;2;%1;%2;%3m").arg( match.capturedTexts()[1].toInt(0, 16) ).arg( match.capturedTexts()[2].toInt(0, 16) ).arg( match.capturedTexts()[3].toInt(0, 16) );
+            }
+            else
+                return QString();
+        }
+    }
+    if(attributes==none)
+        format = "\e[0m";
+    if(attributes&bold)
+        format += "\e[1m";
+    if(attributes&dim)
+        format += "\e[2m";
+    if(attributes&italic)
+        format += "\e[3m";
+    if(attributes&underline)
+        format += "\e[4m";
+    if(attributes&blink)
+        format += "\e[5m";
+    if(attributes&invert)
+        format += "\e[7m";
+    if(attributes&hidden)
+        format += "\e[8m";
+    return format+color+back;
 }

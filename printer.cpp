@@ -15,6 +15,10 @@ QString Printer::months[12] = {tr("January"), tr("February"), tr("March"),
                           tr("April"), tr("May"), tr("June"),
                           tr("July"), tr("August"), tr("September"),
                           tr("October"), tr("November"), tr("December")};
+QString Printer::shortMonths[12] = {tr("Jan"), tr("Feb"), tr("Mar"),
+                                    tr("Apr"), tr("May"), tr("June"),
+                                    tr("July"), tr("Aug"), tr("Sep"),
+                                    tr("Oct"), tr("Nov"), tr("Dec")};
 QString Printer::lineClear("\e[0m");
 QStringList Printer::lineFormatting;
 int Printer::line = 0;
@@ -137,8 +141,10 @@ void Printer::print(Tracker *tracker, const Filter &filter){
     //TODO timeframe
     {
         int m = filter.getTo().month()-1;
+        int y = filter.getTo().year();
         if(filter.getTo().isNull()){
             m = QDate::currentDate().month()-1;
+            y = QDate::currentDate().year();
         }
         auto i=moneyTable->rbegin();
         //Wielkość kolumny sum
@@ -146,11 +152,18 @@ void Printer::print(Tracker *tracker, const Filter &filter){
         i++; //Przeskakujemy kolumnę sum
         //Wielkości kolumn miesięcy
         for(; i!=moneyTable->rend(); i++){
-            int colSize = std::max(fieldWidth(*i), fieldWidth(months[m]));
+            int colSize;
+            if(QDate::currentDate().year() == y){
+                colSize = std::max(fieldWidth(*i), fieldWidth(months[m]));
+            }
+            else{
+                colSize = std::max(fieldWidth(*i), fieldWidth(shortMonths[m]+" "+QString::number(y)));
+            }
             sizesSum += colSize;
             sizes->push_front(colSize);
             if(!m--){
                 m=11;
+                y--;
             }
         }
     }
@@ -200,17 +213,30 @@ void Printer::printHeader(QList<int> *sizes, const Filter &filter, bool isOlder)
     auto size = sizes->begin();
     printString(tr("Project"), *size++);
     int month = filter.getTo().month()-1; //TODO timeframe
+    int y = filter.getTo().year();
     if(filter.getTo().isNull()){
         month = QDate::currentDate().month()-1;
+        y = QDate::currentDate().year();
     }
+    //correcting year
+    if(month < (sizes->size()-4))
+        y -= (sizes->size()-3-(isOlder?1:0)-month-1)/12+1;
+    //correcting month
     month = ((month-sizes->size()+3+(isOlder?1:0))%12+12)%12;
     if(isOlder){
         printString(tr("Older"), *size++, QTextStream::AlignRight);
     }
     while(size!=sizes->end()-1){
-        printString(months[month],*size++, QTextStream::AlignRight);
-        if(++month==12)
+        if(QDate::currentDate().year() == y){
+            printString(months[month],*size++, QTextStream::AlignRight);
+        }
+        else{
+            printString(shortMonths[month]+" "+QString::number(y),*size++, QTextStream::AlignRight);
+        }
+        if(++month==12){
             month=0;
+            y++;
+        }
     }
     printString(tr("Sum"), *size, QTextStream::AlignRight);
     out << lineClear << endl;

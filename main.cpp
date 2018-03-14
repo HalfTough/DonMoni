@@ -32,9 +32,6 @@ int main(int argc, char **argv){
     QApplication app(argc, argv);
     QTranslator translator;
     Money::initCurrencies();
-    QStringList lines;
-    lines << "\e[0m" << "\e[40m";
-    Printer::setLineFormatting(lines);
     try{
         Settings::load();
     }

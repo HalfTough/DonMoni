@@ -19,6 +19,7 @@ class Printer{
     int timeInt = 1;
     static int line; //TODO?
     static QString months[];
+    static QString shortMonths[];
 
     //TODO support
     static QString lineClear;

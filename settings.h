@@ -7,6 +7,7 @@ class Settings{
 public:
     enum Currencies { convertCurrencies, ignoreCurrencies };
     enum Timeframe { year, month, week, day };
+    enum Attributes { none=0, bold=1, dim=2, italic=4, underline=8, blink=16, invert=32, hidden=64 };
 private:
     Settings();
     static QString configFileName;
@@ -37,6 +38,7 @@ public:
     static QString getCurrencySeparator(){ return currencySeparator; }
     static int getExchangeTime(){ return exchangeTime; }
     static QString getExchangeServer(){ return exchangeServer; }
+    static QString terminalFormatFromSetting(const QString &);
 };
 
 #endif
