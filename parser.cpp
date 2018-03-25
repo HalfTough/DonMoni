@@ -48,6 +48,11 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
         return name;
     case remove:
         return ArgumentType(name|filter);
+    case rename:
+        if(_newName.isEmpty())
+            return name;
+        else
+            return none;
     case modify:
         throw modify;
         //TODO
@@ -218,7 +223,11 @@ bool Parser::parseAsAction(const QString &arg){
         _action = projects;
         return true;
     }
-    if(arg == "modify"){
+    if(arg == "rename"){
+        _action = rename;
+        return true;
+    }
+    if(arg == "modify" || arg =="edit"){
         _action = modify;
         return true;
     }
@@ -238,7 +247,12 @@ bool Parser::parseAsName(const QString &arg){
             || arg.startsWith(betweenPrefix) || arg.startsWith(onPrefix)
             || arg.startsWith(minPrefix) || arg.startsWith(maxPrefix))
         return false;
-    _name = arg;
+    if(_name.isEmpty())
+        _name = arg;
+    else if(_action==rename && _newName.isEmpty())
+        _newName = arg;
+    else
+        return false;
     return true;
 }
 

@@ -92,6 +92,14 @@ bool Tracker::removeProject(const QString &name){
     return true;
 }
 
+bool Tracker::renameProject(const QString &name, const QString &newName){
+    auto project = projects->find(name);
+    if(project == projects->end())
+        return false;
+    (*project)->rename(newName);
+    return true;
+}
+
 int Tracker::removePayments(const Filter &filter){
     int count = 0;
     for(Project *project : *projects){

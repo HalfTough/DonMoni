@@ -10,7 +10,7 @@
 
 class Parser{
 public:
-    enum Action { null=0, show, add, remove, project, projects, modify, version, help, error };
+    enum Action { null=0, show, add, remove, project, projects, rename, modify, version, help, error };
 private:
     enum ArgumentType { action=1, name=2, amount=4, date=8,
                         names=16, dfrom=32, dto=64, day=128, between=256,
@@ -36,7 +36,7 @@ private:
     bool _hasAmount = false, _hasDate=false;
     Money _amount;
     QDate _date;
-    QString _name;
+    QString _name, _newName;
     Time recurTime;
 
     bool parseAsNames(const QString &arg);
@@ -58,6 +58,7 @@ public:
     Action getAction(){ return _action; }
     Filter getFilter(){ return _filter; }
     QString getName() const{ return _name; }
+    QString getNewName() const{return _newName; }
     bool hasRecurTime() const{ return !(recurTime.empty()); }
     Time getRecurTime() const{ return recurTime; }
     bool hasAmount() const{ return _hasAmount; }

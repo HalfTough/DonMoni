@@ -70,6 +70,15 @@ void MainProgram::run(){
                 exitApp(1);
         }
         break;
+    case Parser::rename:
+        if(tracker->renameProject(parser.getName(), parser.getNewName()) ){
+            tracker->save();
+        }
+        else{
+            Printer::printProjectDoesntExists(parser.getName());
+            exitApp(1);
+        }
+        break;
     case Parser::project:
         Printer::printProjectInfo(tracker, parser.getName());
         break;
@@ -79,10 +88,11 @@ void MainProgram::run(){
     case Parser::modify:
         throw Parser::modify;
     }
-    exitApp(0);
+    exitApp(ext);
 }
 
 void MainProgram::exitApp(int ret){
+    ext = ret;
     if(ret){
         QCoreApplication::exit(ret);
     }

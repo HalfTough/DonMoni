@@ -119,6 +119,10 @@ void Project::addRecur(RecurringDonation *donation){
     recuring->push_back(donation);
 }
 
+void Project::rename(const QString &name){
+    this->name = name;
+}
+
 int Project::removePayments(const Filter &filter){
     int count = 0;
     if(filter.hasNames() && !filter.hasName(name))

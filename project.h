@@ -26,6 +26,7 @@ public:
     void addPayment(double amount, QString currency=QString(), QDate date = QDate());
     void addPayment(Payment *);
     void addRecur(RecurringDonation *);
+    void rename(const QString &name);
     int removePayments(const Filter &filter);
     void checkForRecurringDonations();
     bool empty() const;

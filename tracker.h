@@ -22,6 +22,7 @@ public:
     void add(QString name, Money amount, QDate date = QDate());
     void addRecur(QString name, Money amount, Time time, QDate date = QDate());
     bool removeProject(const QString &name);
+    bool renameProject(const QString &name, const QString &newName);
     int removePayments(const Filter &filter);
     void checkForRecurringDonations();
     bool empty() const;
