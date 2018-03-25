@@ -28,6 +28,9 @@ Shows all projects matching filters
 ## Removing payments
 `donate remove <filters>`
 
+## Renaming projects
+`donate rename <oldname> <newname>`
+
 ## Money
 `<value>[currency]`  
 Examples: 5, 15USD, 3.52$  
