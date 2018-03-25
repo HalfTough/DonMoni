@@ -28,6 +28,7 @@ public:
     void addRecur(RecurringDonation *);
     void rename(const QString &name);
     int removePayments(const Filter &filter);
+    int modifyPayments(const Filter &filter, const Money &money, const QDate &date);
     void checkForRecurringDonations();
     bool empty() const;
     bool matches(const Filter &filter) const;

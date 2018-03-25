@@ -108,6 +108,14 @@ int Tracker::removePayments(const Filter &filter){
     return count;
 }
 
+int Tracker::modifyPayments(const Filter &filter, const Money &money, const QDate &date){
+    int count = 0;
+    for(Project *project : *projects){
+        count += project->modifyPayments(filter, money, date);
+    }
+    return count;
+}
+
 void Tracker::checkForRecurringDonations(){
     for(Project *project: *projects){
         project->checkForRecurringDonations();

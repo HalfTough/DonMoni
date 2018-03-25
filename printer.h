@@ -57,6 +57,7 @@ public:
     static void printProjects(Tracker *tracker, const Filter &filter);
     static void printDeleted(const QString&);
     static void printDeletedPayments(int);
+    static void printModifiedPayments(int);
     static void printProjectInfo(Tracker *tracker, const QString&);
     static void printProjectExists(const QString&);
     static void printProjectDoesntExists(const QString&);

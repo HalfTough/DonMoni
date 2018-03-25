@@ -14,6 +14,8 @@ public:
     Payment( double amount, QString currency=QString(), QDate date=QDate() );
     Payment(QJsonObject jobject);
     void add(const Money &money){ amount += money; }
+    void setMoney(const Money &money){ amount=money; }
+    void setDate(const QDate &newDate){ date = newDate; }
     Money getAmount() const { return amount; }
     QDate getDate() const { return date; }
     QJsonObject toJson() const;

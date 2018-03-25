@@ -7,7 +7,7 @@ Little CLI application that helps you monitor and manage donations you make.
 `donate add <project>`  
 Adds empty project.
 
-`donate add <project> <payment> [date]`  
+`donate add <project> <amount> [date]`  
 Adds payment to the project at date. If no date is specified current date is used. If project of given name doesn't exist, it will be automatically created. 
 
 ## Showing donations
@@ -30,6 +30,9 @@ Shows all projects matching filters
 
 ## Renaming projects
 `donate rename <oldname> <newname>`
+
+## Modifying projects
+`donate modify <filters> [amount] [date]
 
 ## Money
 `<value>[currency]`  

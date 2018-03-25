@@ -19,7 +19,7 @@ bool Filter::isEmpty() const{
 }
 
 bool Filter::matchesDate(const QDate &a) const{
-    if( (from.isNull() || a>from) && (to.isNull() || a<to))
+    if( (from.isNull() || a>=from) && (to.isNull() || a<=to))
         return true;
     return false;
 }

@@ -126,7 +126,7 @@ void Project::rename(const QString &name){
 int Project::removePayments(const Filter &filter){
     int count = 0;
     if(filter.hasNames() && !filter.hasName(name))
-        return 0;
+        return count;
 
     for(auto i = payments->begin(); i!=payments->end();){
         if( filter.matchesDate((*i)->getDate())
@@ -141,8 +141,26 @@ int Project::removePayments(const Filter &filter){
     return count;
 }
 
+int Project::modifyPayments(const Filter &filter, const Money &money, const QDate &date){
+    int count = 0;
+    if(filter.hasNames() && !filter.hasName(name))
+        return count;
+    for(auto i = payments->begin(); i!=payments->end();i++){
+        if( filter.matchesDate((*i)->getDate())
+                && filter.matchesMoney((*i)->getAmount()) ){
+            count++;
+            if(!money.isNull()){
+                (*i)->setMoney(money);
+            }
+            if(!date.isNull()){
+                (*i)->setDate(date);
+            }
+        }
+    }
+    return count;
+}
+
 void Project::checkForRecurringDonations(){
-    qDebug() << "checking" << name;
     for(RecurringDonation *rec : *recuring){
         while( Payment*donation = rec->getNextDueDonation() ){
             addPayment(donation);

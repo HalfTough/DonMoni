@@ -25,6 +25,8 @@ Parser::Parser(int argc, char **argv){
         _action = error;
     if(_action == remove && _filter.isEmpty() && _name.isNull())
         _action = error;
+    if(_action == modify && (_filter.isEmpty() || (_amount.isNull() && _date.isNull()) ))
+        _action = error;
     //Sprawdzamy wykluczające się argumenty
     if(_action == remove && !_name.isNull() && !_filter.isEmpty())
         _action = error;
@@ -54,8 +56,7 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
         else
             return none;
     case modify:
-        throw modify;
-        //TODO
+        return ArgumentType(filter|amount|date);
     case version:
     case help:
         return none;

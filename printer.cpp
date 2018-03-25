@@ -526,10 +526,19 @@ void Printer::printDeleted(const QString &name){
 
 void Printer::printDeletedPayments(int a){
     if(!a){
-        out << tr("No donations meeting criteria") << endl;
+        err << tr("No donations meeting criteria") << endl;
     }
     else{
         out << tr("%n donation(s) removed", "", a) << endl;
+    }
+}
+
+void Printer::printModifiedPayments(int a){
+    if(!a){
+        err << tr("No donations meeting criteria") << endl;
+    }
+    else{
+        out << tr("%n donation(s) modified", "", a) << endl;
     }
 }
 

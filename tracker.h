@@ -24,6 +24,7 @@ public:
     bool removeProject(const QString &name);
     bool renameProject(const QString &name, const QString &newName);
     int removePayments(const Filter &filter);
+    int modifyPayments(const Filter &filter, const Money &money, const QDate &date);
     void checkForRecurringDonations();
     bool empty() const;
     bool hasProject(QString name) const;

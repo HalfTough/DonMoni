@@ -79,14 +79,23 @@ void MainProgram::run(){
             exitApp(1);
         }
         break;
+    case Parser::modify:{
+        int num = tracker->modifyPayments(parser.getFilter(), parser.getAmount(), parser.getDate());
+        Printer::printModifiedPayments(num);
+        if(num){
+            tracker->save();
+        }
+        else{
+            exitApp(1);
+        }
+        break;
+    }
     case Parser::project:
         Printer::printProjectInfo(tracker, parser.getName());
         break;
     case Parser::projects:
         Printer::printProjects(tracker, parser.getFilter());
         break;
-    case Parser::modify:
-        throw Parser::modify;
     }
     exitApp(ext);
 }
