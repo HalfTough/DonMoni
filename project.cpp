@@ -180,13 +180,37 @@ QDate Project::getEarliestDate() const{
     payments->at(0)->getDate();
 }
 
-Money Project::getFromMonth(int year, int month, QDate from, QDate to) const {
+Money Project::getFromYear(const QDate &date, const QDate &min, const QDate &max) const {
+    Money sum;
+    for(Payment* payment : *payments){
+        if(payment->getDate().year()==date.year()
+                && (min.isNull() || payment->getDate()>=min)
+                && (max.isNull() || payment->getDate()<=max)){
+            sum += payment->getAmount();
+        }
+    }
+    return sum;
+}
+
+Money Project::getFromMonth(const QDate &date, const QDate &min, const QDate &max) const {
     Money sum;
     //TODO optymalizacja?
     for(Payment* payment : *payments){
-        if(payment->getDate().year()==year && payment->getDate().month()==month
-                && (from.isNull() || payment->getDate()>=from)
-                && (to.isNull() || payment->getDate()<=to)){
+        if(payment->getDate().year()==date.year() && payment->getDate().month()==date.month()
+                && (min.isNull() || payment->getDate()>=min)
+                && (max.isNull() || payment->getDate()<=max)){
+            sum += payment->getAmount();
+        }
+    }
+    return sum;
+}
+
+Money Project::getFromDay(const QDate &date, const QDate &min, const QDate &max) const {
+    Money sum;
+    for(Payment* payment : *payments){
+        if(payment->getDate()==date
+                && (min.isNull() || payment->getDate()>=min)
+                && (max.isNull() || payment->getDate()<=max)){
             sum += payment->getAmount();
         }
     }

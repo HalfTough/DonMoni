@@ -1,7 +1,15 @@
-#ifndef SETTENGS_H
+#ifndef SETTINGS_H
 #define SETTINGS_H
 
 #include <QString>
+
+struct TimeShift{
+    enum ShiftType { start, end, number };
+    ShiftType type = end;
+    int value = 1;
+    void set(ShiftType type){this->type = type; if(type==number) value = 1;}
+    void set(int num){type = number; value = num;}
+};
 
 class Settings{
 public:
@@ -21,10 +29,13 @@ private:
     static int exchangeTime;
 	static QStringList rowColoring;
     static int minUncutCols;
-    static Timeframe defaultTimeframe;
+    static Timeframe timeframe;
+    static short weekStart;
     static int timeInterval;
+    static TimeShift timeShift;
     static QString symbolSeparator;
     static QString currencySeparator;
+    static QString datesSeparator;
 
     static bool parseSetting(QString , QString);
 public:
@@ -34,8 +45,13 @@ public:
     static Currencies getCompareMethod(){ return compareMoney; }
     static Currencies getPrintMethod(){ return printMoney; }
     static int getMinUntutCols(){ return minUncutCols; }
+    static Timeframe getTimeframe(){ return timeframe; }
+    static short getWeekStart(){ return weekStart; }
+    static int getTimeInterval(){ return timeInterval; }
+    static TimeShift getTimeShift(){ return timeShift; }
     static QString getSymbolSeparotor(){ return symbolSeparator; }
     static QString getCurrencySeparator(){ return currencySeparator; }
+    static QString getDateSeparator(){ return datesSeparator; }
     static int getExchangeTime(){ return exchangeTime; }
     static QString getExchangeServer(){ return exchangeServer; }
     static QString terminalFormatFromSetting(const QString &);

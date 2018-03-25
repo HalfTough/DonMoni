@@ -35,7 +35,9 @@ public:
     QList<RecurringDonation*> *getRecurring() const { return recuring; }
     QString getName() const {return name;}
     Money getMoney() const { return money; }
-    Money getFromMonth(int year,int month, QDate from=QDate(), QDate to=QDate()) const;
+    Money getFromYear(const QDate &date, const QDate &min=QDate(), const QDate &max=QDate()) const;
+    Money getFromMonth(const QDate &date, const QDate &min=QDate(), const QDate &max=QDate()) const;
+    Money getFromDay(const QDate &date, const QDate &min=QDate(), const QDate &max=QDate()) const;
     QJsonObject toJson() const;
 
 };

@@ -136,13 +136,13 @@ QMap<QString,Project*>* Tracker::matchingProjects(const Filter &filter) const{
 }
 
 
-Money Tracker::getSumFrom(int year, int month) const {
-    Money sum;
-    for(Project *project : *projects){
-        sum += project->getFromMonth(year, month);
-    }
-    return sum;
-}
+//Money Tracker::getSumFrom(int year, int month) const {
+//    Money sum;
+//    for(Project *project : *projects){
+//        sum += project->getFromMonth(year, month);
+//    }
+//    return sum;
+//}
 
 QJsonArray Tracker::toJson() const{
     QJsonArray array;

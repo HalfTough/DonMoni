@@ -33,6 +33,7 @@ void Currencies::downloadExchange(){
     manager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished, this, &Currencies::replyFinished);
     downloaded = true;
+    qDebug() << "downloadin";
     QNetworkReply *reply = manager->get(QNetworkRequest(url));
 }
 

@@ -1,6 +1,6 @@
 #include "printer.h"
-#include "settings.h"
 
+#include <QDate>
 #include <QTranslator>
 
 namespace ioctl{
@@ -15,13 +15,10 @@ QString Printer::months[12] = {tr("January"), tr("February"), tr("March"),
                           tr("April"), tr("May"), tr("June"),
                           tr("July"), tr("August"), tr("September"),
                           tr("October"), tr("November"), tr("December")};
-QString Printer::shortMonths[12] = {tr("Jan"), tr("Feb"), tr("Mar"),
-                                    tr("Apr"), tr("May"), tr("June"),
-                                    tr("July"), tr("Aug"), tr("Sep"),
-                                    tr("Oct"), tr("Nov"), tr("Dec")};
 QString Printer::lineClear("\e[0m");
 QStringList Printer::lineFormatting;
 int Printer::line = 0;
+int Printer::allCols = 0;
 
 void Printer::printParseError(){
     err << tr("Error parsing arguments") << endl;
@@ -63,7 +60,6 @@ int Printer::fieldWidth(QVector<Money> *vec){
         sum += a;
     return sum.toString().size()+1;
 }
-
 int Printer::namesWidth(QMap<QString,Project*> *projects){
     int longest=0;
     for(Project* p : *projects){
@@ -71,6 +67,73 @@ int Printer::namesWidth(QMap<QString,Project*> *projects){
             longest = p->getName().size();
     }
     return longest+1;
+}
+
+QString Printer::getHeader(const QDate &date){
+    QString sep = Settings::getDateSeparator();
+
+    switch (Settings::getTimeframe()) {
+    case Settings::year:{
+        QString ret = date.toString("yyyy");
+        if(Settings::getTimeInterval()>1)
+            ret+=sep+date.addYears(Settings::getTimeInterval()-1).toString("yyyy");
+        return ret;
+    }
+    case Settings::month:{
+        if(Settings::getTimeInterval()>1){
+            QDate end = date.addMonths(Settings::getTimeInterval()-1);
+            if(date.year()==end.year()){
+                QString ret = date.toString("MMM")+sep+end.toString("MMM");
+                if(date.year() != QDate::currentDate().year()){
+                    ret += date.toString(" yyyy");
+                }
+                return ret;
+            }
+            else{
+                QString ret = date.toString("MMMyyyy")+sep+end.toString("MMM");
+                if(end.year()!=QDate::currentDate().year()){
+                    ret+=end.toString("yyyy");
+                }
+                return ret;
+            }
+        }
+        else{
+            if(QDate::currentDate().year() == date.year()){
+                //return date.toString("MMMM");
+                return months[date.month()-1];
+            }
+            else{
+                return date.toString("MMM yyyy");
+            }
+        }
+    }
+    case Settings::week:{
+        QString ret = date.toString("dd.MM");
+        if(date.year()!=QDate::currentDate().year())
+            ret += date.toString(".yyyy");
+        QDate end=date.addDays(7*Settings::getTimeInterval()-1);
+        ret+=sep+end.toString("dd.MM");
+        if(end.year()!=QDate::currentDate().year())
+            ret += end.toString(".yyyy");
+        return ret;
+    }
+    case Settings::day:{
+        QString ret = date.toString("dd.MM");
+        if(date.year()!=QDate::currentDate().year())
+            ret += date.toString(".yyyy");
+        if(Settings::getTimeInterval()>1){
+            QDate end=date.addDays(Settings::getTimeInterval()-1);
+            ret+=sep+end.toString("dd.MM");
+            if(end.year()!=QDate::currentDate().year())
+                ret += end.toString(".yyyy");
+        }
+        return ret;
+    }
+    }
+}
+
+int Printer::getColumnSize(const QDate &date, QVector<Money> *i){
+    return std::max(fieldWidth(i), fieldWidth(getHeader(date)));
 }
 
 QDate Printer::getEarliestDate(QMap<QString,Project*> *projects){
@@ -84,8 +147,50 @@ QDate Printer::getEarliestDate(QMap<QString,Project*> *projects){
     return earliest;
 }
 
-QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter) {
+QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter, const QDate &start) {
     QList <QVector<Money>*> *table = new QList <QVector<Money>*>();
+    QDate to = filter.getTo();
+    if(!to.isValid()){
+        to = QDate::currentDate();
+    }
+    QDate iDat = start;
+
+    auto lastCol = new QVector<Money>(projects->size(), Money());
+    while(iDat <= to){
+        auto col = new QVector<Money>();
+        int i=0, a=1;
+        for(Project *project : *projects){
+            Money mon;
+            switch(Settings::getTimeframe()){
+            case Settings::year:
+                for(int j=0; j<Settings::getTimeInterval(); j++){
+                    mon += project->getFromYear(iDat.addYears(j), filter.getFrom(), filter.getTo());
+                }
+                break;
+            case Settings::month:
+                for(int j=0; j<Settings::getTimeInterval(); j++){
+                    mon += project->getFromMonth(iDat.addMonths(j),filter.getFrom(),to);
+                }
+                break;
+            case Settings::week:
+                a=7;
+            case Settings::day:
+                for(int j=0; j<Settings::getTimeInterval()*a; j++){
+                    mon += project->getFromDay(iDat.addDays(j), filter.getFrom(),to);
+                }
+            }
+            col->push_back(mon);
+            (*lastCol)[i] += mon;
+            i++;
+        }
+        iDat = dateStep(iDat, true);
+        table->push_back(col);
+    }
+    table->push_back(lastCol);
+    return table;
+}
+
+void Printer::adjustStartEndDate(const Filter &filter, QMap<QString,Project*> *projects, QDate &start, QDate &end){
     QDate from = filter.getFrom();
     QDate to = filter.getTo();
     if(from.isNull()){
@@ -94,26 +199,156 @@ QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *project
     if(to.isNull()){
         to = QDate::currentDate();
     }
-    int m = from.month(),y=from.year();
+    int fdow, ldow;
 
-    auto lastCol = new QVector<Money>(projects->size(), Money());
-    while(y<to.year() || y==to.year() && m<=to.month()){
-        auto col = new QVector<Money>();
-        int i=0;
-        for(Project *project : *projects){
-            Money mon = project->getFromMonth(y,m,from,to);
-            col->push_back(mon);
-            (*lastCol)[i] += mon;
-            i++;
+    start = from;
+    end = to;
+    //Putting start at the start of the week and end and the end if needed
+    if(Settings::getTimeframe() == Settings::week){
+        if(Settings::getWeekStart()){
+            fdow = Settings::getWeekStart();
         }
-        table->push_back(col);
-        if(++m>12){
-            m=1;
-            y++;
+        else{
+            fdow = to.dayOfWeek()+1;
+            if(fdow==8) fdow = 1;
+        }
+        ldow = fdow-1;
+        if(!ldow) ldow=7;
+
+        start = toStartOfWeek(from, fdow);
+        end = toEndOfWeek(to, ldow);
+    }
+
+    if(Settings::getTimeInterval() > 1){
+        TimeShift ts = Settings::getTimeShift();
+        switch(ts.type){
+        case TimeShift::start:
+            switch(Settings::getTimeframe()){
+            case Settings::year:{
+                int shift = Settings::getTimeInterval()-( (to.year()-from.year()+1)%Settings::getTimeInterval() );
+                if(shift == Settings::getTimeInterval())
+                    shift = 0;
+                end = to.addYears(shift);
+                break;
+            }
+            case Settings::month:{
+                int shift = Settings::getTimeInterval() - ((diffMonths(from,to)+1)%Settings::getTimeInterval());
+                if(shift == Settings::getTimeInterval())
+                    shift = 0;
+                end = to.addMonths(shift);
+                break;
+            }
+            case Settings::week:{
+                int weeks = (start.daysTo(end)+1)/7;
+                int shift = Settings::getTimeInterval() - weeks%Settings::getTimeInterval();
+                if(shift == Settings::getTimeInterval())
+                    shift = 0;
+                end = end.addDays(7*shift);
+                break;
+            }
+            case Settings::day:{
+                int sfift = Settings::getTimeInterval()-(from.daysTo(to)%Settings::getTimeInterval());
+                if(sfift==Settings::getTimeInterval()) sfift=0;
+                end = to.addDays(sfift);
+            }
+            }
+            break;
+        case TimeShift::end:
+            switch(Settings::getTimeframe()){
+            case Settings::year:{
+                int shift = Settings::getTimeInterval()-( (to.year()-from.year()+1)%Settings::getTimeInterval() );
+                if(shift == Settings::getTimeInterval())
+                    shift = 0;
+                start = from.addYears(-shift);
+                break;
+            }
+            case Settings::month:{
+                int shift = Settings::getTimeInterval() - ((diffMonths(from,to)+1)%Settings::getTimeInterval());
+                if(shift == Settings::getTimeInterval())
+                    shift = 0;
+                start = from.addMonths(-shift);
+                break;
+            }
+            case Settings::week:{
+                int weeks = (start.daysTo(end)+1)/7;
+                int shift = Settings::getTimeInterval() - weeks%Settings::getTimeInterval();
+                if(shift == Settings::getTimeInterval())
+                    shift = 0;
+                start = start.addDays(-7*shift);
+                break;
+            }
+            case Settings::day:
+                int sfift = Settings::getTimeInterval()-(from.daysTo(to)%Settings::getTimeInterval());
+                if(sfift==Settings::getTimeInterval()) sfift=0;
+                start = from.addDays(-sfift);
+            }
+            break;
+        case TimeShift::number:
+            QDate sDate(1,1,1);
+            switch(Settings::getTimeframe()){
+            case Settings::year:{
+                int shift = (from.year()- ts.value)%Settings::getTimeInterval();
+                if(shift==Settings::getTimeInterval()) shift=0;
+                start = from.addYears(-shift);
+                break;
+            }
+            case Settings::month:{
+                int shift = (diffMonths(sDate, from) -ts.value+1 ) % Settings::getTimeInterval();
+                start = from.addMonths(-shift);
+                break;
+            }
+            case Settings::week:{
+                int weeks = ( toStartOfWeek(sDate,fdow).daysTo(start)+1)/7-1+ts.value;
+                int shift = Settings::getTimeInterval() - weeks%Settings::getTimeInterval();
+                if(shift == Settings::getTimeInterval())
+                    shift = 0;
+                start = start.addDays(-7*shift);
+                break;
+            }
+            case Settings::day:{
+                int shift = (sDate.daysTo(from) -ts.value+1) % Settings::getTimeInterval();
+                start = from.addDays(-shift);
+                break;
+            }
+            }
         }
     }
-    table->push_back(lastCol);
-    return table;
+}
+
+int Printer::diffMonths(const QDate &from, const QDate &to){
+    return (to.year()-from.year())*12 + to.month()-from.month();
+}
+
+//Używane w print do zmiany daty
+QDate Printer::dateStep(const QDate &date, int a){
+    switch(Settings::getTimeframe()){
+    case Settings::year:
+        return date.addYears(a*Settings::getTimeInterval());
+    case Settings::month:
+        return date.addMonths(a*Settings::getTimeInterval());
+    case Settings::week:
+        return date.addDays(a*7*Settings::getTimeInterval());
+    case Settings::day:
+        return date.addDays(a*Settings::getTimeInterval());
+    }
+}
+
+QDate Printer::toStartOfWeek(const QDate &date, int start){
+    if( date.dayOfWeek() >= start ){
+        return date.addDays(-(date.dayOfWeek()-start));
+    }
+    else{
+        return date.addDays(-(date.dayOfWeek()+7-start));
+    }
+}
+
+QDate Printer::toEndOfWeek(const QDate &date, int end){
+    if( date.dayOfWeek() <= end ){
+        return date.addDays(end-date.dayOfWeek());
+    }
+    else{
+        return date.addDays(7-end+date.dayOfWeek());
+    }
 }
 
 void Printer::print(Tracker *tracker, const Filter &filter){
@@ -135,43 +370,31 @@ void Printer::print(Tracker *tracker, const Filter &filter){
     int width = getTermWidth();
 
     QList<int> *sizes = new QList<int>();
-    QList<QVector<Money>* > *moneyTable = getMoneyTable(projects, filter);
+    QDate startDate, endDate;
+    adjustStartEndDate(filter, projects, startDate, endDate);
+    QList<QVector<Money>* > *moneyTable = getMoneyTable(projects, filter, startDate);
+    allCols = moneyTable->size()-1;
     int sizesSum = 0;
 
-    //TODO timeframe
     {
-        int m = filter.getTo().month()-1;
-        int y = filter.getTo().year();
-        if(filter.getTo().isNull()){
-            m = QDate::currentDate().month()-1;
-            y = QDate::currentDate().year();
-        }
-        auto i=moneyTable->rbegin();
-        //Wielkość kolumny sum
-        sizes->push_back( sizesSum = std::max(fieldWidth(*i), fieldWidth(tr("Sum"))) );
-        i++; //Przeskakujemy kolumnę sum
+        QDate iDate = startDate;
+        auto i = moneyTable->begin();
         //Wielkości kolumn miesięcy
-        for(; i!=moneyTable->rend(); i++){
-            int colSize;
-            if(QDate::currentDate().year() == y){
-                colSize = std::max(fieldWidth(*i), fieldWidth(months[m]));
-            }
-            else{
-                colSize = std::max(fieldWidth(*i), fieldWidth(shortMonths[m]+" "+QString::number(y)));
-            }
+        for(; i+1!=moneyTable->end(); i++){
+            int colSize = getColumnSize(iDate, *i);
             sizesSum += colSize;
-            sizes->push_front(colSize);
-            if(!m--){
-                m=11;
-                y--;
-            }
+            sizes->push_back(colSize);
+            iDate = dateStep(iDate, 1);
         }
+        int sizeTotal = std::max(fieldWidth(*i), fieldWidth(tr("Total")));
+        sizesSum += sizeTotal;
+        sizes->push_back( sizeTotal );
     }
 
-    //Wielkość nazw projektów
     int projectW = std::max(fieldWidth(tr("Project")), namesWidth(projects));
     sizesSum += projectW;
     sizes->push_front(projectW);
+
     //Przytnij tabelkę jeśli sie nie mieści, ale nie bardziej niż minCol
     bool isOlder = false;
     if(sizesSum > width && moneyTable->size() > Settings::getMinUntutCols()){
@@ -193,7 +416,7 @@ void Printer::print(Tracker *tracker, const Filter &filter){
     }
 
     if(!projects->empty()){
-        printHeader(sizes, filter, isOlder);
+        printHeader(sizes, startDate, endDate, isOlder);
         printTable(moneyTable, sizes, projects);
     }
     if(!emptyProjects->empty()){
@@ -208,37 +431,38 @@ void Printer::print(Tracker *tracker, const Filter &filter){
     delete emptyProjects;
 }
 
-void Printer::printHeader(QList<int> *sizes, const Filter &filter, bool isOlder){
+void Printer::printHeader(QList<int> *sizes, const QDate &start, const QDate &end, bool isOlder){
     out << lineFormatting[line++%lineFormatting.size()];
     auto size = sizes->begin();
     printString(tr("Project"), *size++);
-    int month = filter.getTo().month()-1; //TODO timeframe
-    int y = filter.getTo().year();
-    if(filter.getTo().isNull()){
-        month = QDate::currentDate().month()-1;
-        y = QDate::currentDate().year();
+
+    QDate iDate = start;
+    if(isOlder){
+        int diff = allCols-(sizes->size() - 3);
+        switch(Settings::getTimeframe()){
+        case Settings::year:
+            iDate = iDate.addYears(diff*Settings::getTimeInterval());
+            break;
+        case Settings::month:
+            iDate = iDate.addMonths(diff*Settings::getTimeInterval());
+            break;
+        case Settings::week:
+            iDate = iDate.addDays(7*diff*Settings::getTimeInterval());
+            break;
+        case Settings::day:
+            iDate = iDate.addDays(diff*Settings::getTimeInterval());
+            break;
+        }
     }
-    //correcting year
-    if(month < (sizes->size()-4))
-        y -= (sizes->size()-3-(isOlder?1:0)-month-1)/12+1;
-    //correcting month
-    month = ((month-sizes->size()+3+(isOlder?1:0))%12+12)%12;
+
     if(isOlder){
         printString(tr("Older"), *size++, QTextStream::AlignRight);
     }
     while(size!=sizes->end()-1){
-        if(QDate::currentDate().year() == y){
-            printString(months[month],*size++, QTextStream::AlignRight);
-        }
-        else{
-            printString(shortMonths[month]+" "+QString::number(y),*size++, QTextStream::AlignRight);
-        }
-        if(++month==12){
-            month=0;
-            y++;
-        }
+        printString(getHeader(iDate),*size++, QTextStream::AlignRight);
+        iDate = dateStep(iDate, true);
     }
-    printString(tr("Sum"), *size, QTextStream::AlignRight);
+    printString(tr("Total"), *size, QTextStream::AlignRight);
     out << lineClear << endl;
 }
 

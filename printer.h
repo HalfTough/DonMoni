@@ -3,12 +3,16 @@
 
 #include "filter.h"
 #include "tracker.h"
+#include "settings.h"
+#include "money.h"
 #include "exceptions/fileexception.h"
 
-#include <QTextStream>
 #include <QCoreApplication>
+#include <QList>
+#include <QTextStream>
 #include <QLibraryInfo>
 #include <QNetworkReply>
+#include <QVector>
 
 class Printer{
     Q_DECLARE_TR_FUNCTIONS(Printer)
@@ -18,9 +22,8 @@ class Printer{
     Timeframe timeframe = month;
     int timeInt = 1;
     static int line; //TODO?
+    static int allCols; //TODO?
     static QString months[];
-    static QString shortMonths[];
-
     //TODO support
     static QString lineClear;
     static QStringList lineFormatting;
@@ -30,7 +33,9 @@ class Printer{
     static int fieldWidth(QString);
     static int fieldWidth(QVector<Money>*);
     static int namesWidth(QMap<QString,Project*> *);
-    static void printHeader(QList<int> *sizes, const Filter &filter, bool isOlder = false);
+    static QString getHeader(const QDate&);
+    static int getColumnSize(const QDate&, QVector<Money> *);
+    static void printHeader(QList<int> *sizes, const QDate &start, const QDate &end, bool isOlder = false);
     static void printTable(QList<QVector<Money>*>*table, QList<int> *sizes, QMap<QString,Project*> *projects);
     static void printEmptyProjects(QList<Project *> *emptyProjects);
     static void printString(const QString &string, int space, QTextStream::FieldAlignment align=QTextStream::AlignLeft);
@@ -39,7 +44,12 @@ class Printer{
     static void addToVector(QVector<Money>*, QVector<Money>*);
     static Money vectorSum(QVector<Money>*);
     static QDate getEarliestDate(QMap<QString,Project*> *projects);
-    static QList <QVector<Money>*> * getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter);
+    static QList <QVector<Money>*> * getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter, const QDate &start);
+    static void adjustStartEndDate(const Filter &, QMap<QString,Project*> *projects, QDate &start, QDate &end);
+    static int diffMonths(const QDate &from, const QDate &to);
+    static QDate dateStep(const QDate&, int a = 1);
+    static QDate toStartOfWeek(const QDate &, int start);
+    static QDate toEndOfWeek(const QDate &, int end);
     Printer();
 
 public:

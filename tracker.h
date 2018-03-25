@@ -30,7 +30,7 @@ public:
     QMap<QString,Project*> *getProjects() const { return projects; }
     QMap<QString,Project*> *matchingProjects(const Filter &filter) const;
     Money getMoney() const { return money; }
-    Money getSumFrom(int year, int month) const;
+    //Money getSumFrom(int year, int month) const;
     QJsonArray toJson() const;
 };
 

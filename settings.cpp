@@ -20,10 +20,13 @@ QString Settings::exchangeServer = "https://api.fixer.io/";
 int Settings::exchangeTime = 1;
 QStringList Settings::rowColoring = QStringList({"\e[0m", "\e[40m"});
 int Settings::minUncutCols = 3;
-Settings::Timeframe Settings::defaultTimeframe = Settings::month;
+Settings::Timeframe Settings::timeframe = Settings::month;
+short Settings::weekStart = 1;
 int Settings::timeInterval = 1;
+TimeShift Settings::timeShift;
 QString Settings::symbolSeparator = " ";
 QString Settings::currencySeparator = ", ";
+QString Settings::datesSeparator = "-";
 
 void Settings::load(){
     QStringList paths = QStandardPaths::standardLocations( QStandardPaths::ConfigLocation);
@@ -103,13 +106,13 @@ bool Settings::parseSetting(QString name, QString value){
             return false;
     }else if(name == "default_timeframe"){
         if(value=="year")
-            defaultTimeframe = year;
+            timeframe = year;
         else if(value=="month")
-            defaultTimeframe = month;
+            timeframe = month;
         else if(value=="week")
-            defaultTimeframe = week;
+            timeframe = week;
         else if(value=="day")
-            defaultTimeframe = day;
+            timeframe = day;
         else
             return false;
     }else if(name == "time_interval"){
@@ -118,7 +121,43 @@ bool Settings::parseSetting(QString name, QString value){
             timeInterval = a;
         else
             return false;
-    }else if(name == "symbol_separator"){
+    }else if(name == "week_start"){
+        if(value == "monday" || value == "mon")
+            weekStart = 1;
+        else if(value == "tuesday" || value == "tue")
+            weekStart = 2;
+        else if(value == "wednesday" || value == "wed")
+            weekStart = 3;
+        else if(value == "thursday" || value =="thu")
+            weekStart = 4;
+        else if(value == "friday" || value == "fri")
+            weekStart = 5;
+        else if(value == "saturday" || value == "sat")
+            weekStart = 6;
+        else if(value == "sunday" || value == "sun")
+            weekStart = 7;
+        else if(value == "moving")
+            weekStart = 0;
+        else
+            return false;
+    }
+    else if(name == "time_shift"){
+        if(value == "start")
+            timeShift.set(TimeShift::start);
+        else if(value == "end")
+            timeShift.set(TimeShift::end);
+        else{
+            bool ok;
+            int v = value.toInt(&ok);
+            if(ok){
+                timeShift.set(v);
+            }
+            else{
+                return false;
+            }
+        }
+    }
+    else if(name == "symbol_separator"){
         if(value == "space")
             symbolSeparator = " ";
         else if(value == "none")
