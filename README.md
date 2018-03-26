@@ -47,6 +47,9 @@ Note there is no space between value and currency.
 `to:<date>`  
 `between:<date>:<date>`  
 `on:<date>`
+Newer filter overrides an older one so  
+`donate show names:project from:today form:2017-01-01`  
+will show payments from project starting at 2017-01-01 and from:today will be ignored
 
 ## Dates
 `YYYY-MM-DD`  

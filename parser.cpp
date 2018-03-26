@@ -291,14 +291,21 @@ QDate Parser::checkDate(QString str) const {
 }
 
 Money Parser::checkAmount(QString str) const {
-    QRegularExpression re("^(\\d+(\\.\\d+)?)(.*)$");
-    QRegularExpressionMatch match = re.match(str);
-    if(match.hasMatch()){
-        double amount = match.capturedTexts()[1].toDouble();
-        QString currency = match.capturedTexts()[3];
-        return Money(amount, currency);
+    QStringList list = str.split(',');
+    Money total;
+    for(QString part : list){
+        QRegularExpression re("^(\\d+(\\.\\d+)?)(.*)$");
+        QRegularExpressionMatch match = re.match(part);
+        if(match.hasMatch()){
+            double amount = match.capturedTexts()[1].toDouble();
+            QString currency = match.capturedTexts()[3];
+            total.add(amount, currency);
+        }
+        else{
+            return Money();
+        }
     }
-    return Money();
+    return total;
 }
 
 Time Parser::checkTime(QString str) const {
