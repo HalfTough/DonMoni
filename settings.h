@@ -13,6 +13,7 @@ struct TimeShift{
 
 class Settings{
 public:
+    enum ShowTo { untilLast, untilToday, untilTodayForce };
     enum Currencies { convertCurrencies, ignoreCurrencies };
     enum Timeframe { year, month, week, day };
     enum Attributes { none=0, bold=1, dim=2, italic=4, underline=8, blink=16, invert=32, hidden=64 };
@@ -29,6 +30,7 @@ private:
     static int exchangeTime;
 	static QStringList rowColoring;
     static int minUncutCols;
+    static ShowTo showTo;
     static Timeframe timeframe;
     static short weekStart;
     static int timeInterval;
@@ -45,6 +47,7 @@ public:
     static Currencies getCompareMethod(){ return compareMoney; }
     static Currencies getPrintMethod(){ return printMoney; }
     static int getMinUntutCols(){ return minUncutCols; }
+    static ShowTo getShowTo(){ return showTo; }
     static Timeframe getTimeframe(){ return timeframe; }
     static short getWeekStart(){ return weekStart; }
     static int getTimeInterval(){ return timeInterval; }

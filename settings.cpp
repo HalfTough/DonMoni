@@ -20,6 +20,7 @@ QString Settings::exchangeServer = "https://api.fixer.io/";
 int Settings::exchangeTime = 1;
 QStringList Settings::rowColoring = QStringList({"\e[0m", "\e[40m"});
 int Settings::minUncutCols = 3;
+Settings::ShowTo Settings::showTo = Settings::untilToday;
 Settings::Timeframe Settings::timeframe = Settings::month;
 short Settings::weekStart = 1;
 int Settings::timeInterval = 1;
@@ -102,6 +103,15 @@ bool Settings::parseSetting(QString name, QString value){
         int a = value.toInt();
         if(a>0 || value=="0")
             minUncutCols = a;
+        else
+            return false;
+    }else if(name == "show_to"){
+        if(value == "last")
+            showTo = untilLast;
+        else if(value == "today")
+            showTo = untilToday;
+        else if(value == "force_today")
+            showTo = untilTodayForce;
         else
             return false;
     }else if(name == "default_timeframe"){

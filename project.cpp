@@ -168,11 +168,11 @@ void Project::checkForRecurringDonations(){
     }
 }
 
-bool Project::empty() const{
+bool Project::empty() const {
     return payments->empty();
 }
 
-bool Project::matches(const Filter &filter) const{
+bool Project::matches(const Filter &filter) const {
     if(filter.isEmpty())
         return true;
     if(filter.hasNames() && !filter.hasName(name))
@@ -195,11 +195,18 @@ bool Project::matches(const Filter &filter) const{
     return true;
 }
 
-QDate Project::getEarliestDate() const{
+QDate Project::getEarliestDate() const {
     if(payments->empty()){
         throw NoPaymentsException();
     }
     payments->at(0)->getDate();
+}
+
+QDate Project::getLatestDate() const {
+    if(payments->empty()){
+        throw NoPaymentsException();
+    }
+    return payments->last()->getDate();
 }
 
 Money Project::getFromYear(const QDate &date, const QDate &min, const QDate &max) const {

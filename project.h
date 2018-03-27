@@ -33,6 +33,7 @@ public:
     bool empty() const;
     bool matches(const Filter &filter) const;
     QDate getEarliestDate() const;
+    QDate getLatestDate() const;
     QList<Payment*> *getPayments() const { return payments; }
     QList<RecurringDonation*> *getRecurring() const { return recuring; }
     QString getName() const {return name;}

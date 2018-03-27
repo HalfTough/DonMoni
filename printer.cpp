@@ -191,32 +191,24 @@ QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *project
 }
 
 void Printer::adjustStartEndDate(const Filter &filter, QMap<QString,Project*> *projects, QDate &start, QDate &end){
-    QDate from = filter.getFrom();
-    QDate to = filter.getTo();
-    if(from.isNull()){
-        from = getEarliestDate(projects);
-    }
-    if(to.isNull()){
-        to = QDate::currentDate();
-    }
     int fdow, ldow;
 
-    start = from;
-    end = to;
+    start = filter.getFrom();
+    end = filter.getTo();
     //Putting start at the start of the week and end and the end if needed
     if(Settings::getTimeframe() == Settings::week){
         if(Settings::getWeekStart()){
             fdow = Settings::getWeekStart();
         }
         else{
-            fdow = to.dayOfWeek()+1;
+            fdow = filter.getTo().dayOfWeek()+1;
             if(fdow==8) fdow = 1;
         }
         ldow = fdow-1;
         if(!ldow) ldow=7;
 
-        start = toStartOfWeek(from, fdow);
-        end = toEndOfWeek(to, ldow);
+        start = toStartOfWeek(start, fdow);
+        end = toEndOfWeek(end, ldow);
     }
 
     if(Settings::getTimeInterval() > 1){
@@ -225,17 +217,17 @@ void Printer::adjustStartEndDate(const Filter &filter, QMap<QString,Project*> *p
         case TimeShift::start:
             switch(Settings::getTimeframe()){
             case Settings::year:{
-                int shift = Settings::getTimeInterval()-( (to.year()-from.year()+1)%Settings::getTimeInterval() );
+                int shift = Settings::getTimeInterval()-( (end.year()-start.year()+1)%Settings::getTimeInterval() );
                 if(shift == Settings::getTimeInterval())
                     shift = 0;
-                end = to.addYears(shift);
+                end = end.addYears(shift);
                 break;
             }
             case Settings::month:{
-                int shift = Settings::getTimeInterval() - ((diffMonths(from,to)+1)%Settings::getTimeInterval());
+                int shift = Settings::getTimeInterval() - ((diffMonths(start,end)+1)%Settings::getTimeInterval());
                 if(shift == Settings::getTimeInterval())
                     shift = 0;
-                end = to.addMonths(shift);
+                end = end.addMonths(shift);
                 break;
             }
             case Settings::week:{
@@ -247,26 +239,26 @@ void Printer::adjustStartEndDate(const Filter &filter, QMap<QString,Project*> *p
                 break;
             }
             case Settings::day:{
-                int sfift = Settings::getTimeInterval()-(from.daysTo(to)%Settings::getTimeInterval());
+                int sfift = Settings::getTimeInterval()-(start.daysTo(end)%Settings::getTimeInterval());
                 if(sfift==Settings::getTimeInterval()) sfift=0;
-                end = to.addDays(sfift);
+                end = end.addDays(sfift);
             }
             }
             break;
         case TimeShift::end:
             switch(Settings::getTimeframe()){
             case Settings::year:{
-                int shift = Settings::getTimeInterval()-( (to.year()-from.year()+1)%Settings::getTimeInterval() );
+                int shift = Settings::getTimeInterval()-( (end.year()-start.year()+1)%Settings::getTimeInterval() );
                 if(shift == Settings::getTimeInterval())
                     shift = 0;
-                start = from.addYears(-shift);
+                start = start.addYears(-shift);
                 break;
             }
             case Settings::month:{
-                int shift = Settings::getTimeInterval() - ((diffMonths(from,to)+1)%Settings::getTimeInterval());
+                int shift = Settings::getTimeInterval() - ((diffMonths(filter.getFrom(),filter.getTo())+1)%Settings::getTimeInterval());
                 if(shift == Settings::getTimeInterval())
                     shift = 0;
-                start = from.addMonths(-shift);
+                start = start.addMonths(-shift);
                 break;
             }
             case Settings::week:{
@@ -278,23 +270,23 @@ void Printer::adjustStartEndDate(const Filter &filter, QMap<QString,Project*> *p
                 break;
             }
             case Settings::day:
-                int sfift = Settings::getTimeInterval()-(from.daysTo(to)%Settings::getTimeInterval());
+                int sfift = Settings::getTimeInterval()-(start.daysTo(end)%Settings::getTimeInterval());
                 if(sfift==Settings::getTimeInterval()) sfift=0;
-                start = from.addDays(-sfift);
+                start = start.addDays(-sfift);
             }
             break;
         case TimeShift::number:
             QDate sDate(1,1,1);
             switch(Settings::getTimeframe()){
             case Settings::year:{
-                int shift = (from.year()- ts.value)%Settings::getTimeInterval();
+                int shift = (start.year()- ts.value)%Settings::getTimeInterval();
                 if(shift==Settings::getTimeInterval()) shift=0;
-                start = from.addYears(-shift);
+                start = start.addYears(-shift);
                 break;
             }
             case Settings::month:{
-                int shift = (diffMonths(sDate, from) -ts.value+1 ) % Settings::getTimeInterval();
-                start = from.addMonths(-shift);
+                int shift = (diffMonths(sDate, start) -ts.value+1 ) % Settings::getTimeInterval();
+                start = start.addMonths(-shift);
                 break;
             }
             case Settings::week:{
@@ -306,8 +298,8 @@ void Printer::adjustStartEndDate(const Filter &filter, QMap<QString,Project*> *p
                 break;
             }
             case Settings::day:{
-                int shift = (sDate.daysTo(from) -ts.value+1) % Settings::getTimeInterval();
-                start = from.addDays(-shift);
+                int shift = (sDate.daysTo(start) -ts.value+1) % Settings::getTimeInterval();
+                start = start.addDays(-shift);
                 break;
             }
             }
@@ -367,12 +359,15 @@ void Printer::print(Tracker *tracker, const Filter &filter){
             i++;
     }
 
+    Filter fil = filter.adjustFromTo(projects);
+    qDebug() << fil.getFrom() << fil.getTo();
+
     int width = getTermWidth();
 
     QList<int> *sizes = new QList<int>();
     QDate startDate, endDate;
-    adjustStartEndDate(filter, projects, startDate, endDate);
-    QList<QVector<Money>* > *moneyTable = getMoneyTable(projects, filter, startDate);
+    adjustStartEndDate(fil, projects, startDate, endDate);
+    QList<QVector<Money>* > *moneyTable = getMoneyTable(projects, fil, startDate);
     allCols = moneyTable->size()-1;
     int sizesSum = 0;
 
