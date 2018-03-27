@@ -360,7 +360,6 @@ void Printer::print(Tracker *tracker, const Filter &filter){
     }
 
     Filter fil = filter.adjustFromTo(projects);
-    qDebug() << fil.getFrom() << fil.getTo();
 
     int width = getTermWidth();
 
