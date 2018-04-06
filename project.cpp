@@ -210,14 +210,14 @@ bool Project::matches(const Filter &filter) const {
 
 QDate Project::getEarliestDate() const {
     if(payments->empty()){
-        throw NoPaymentsException();
+        return QDate();
     }
     payments->at(0)->getDate();
 }
 
 QDate Project::getLatestDate() const {
     if(payments->empty()){
-        throw NoPaymentsException();
+        return QDate();
     }
     return payments->last()->getDate();
 }
