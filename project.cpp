@@ -1,9 +1,6 @@
 #include "printer.h"
 #include "project.h"
-#include "exceptions/nopaymentsexception.h"
 #include "exceptions/fileexception.h"
-
-#include <QDebug> //TODO
 
 Project::Project(const Project &a){
     name = a.name;

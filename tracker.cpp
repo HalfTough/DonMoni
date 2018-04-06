@@ -5,7 +5,7 @@
 #include <QStandardPaths>
 
 #include "tracker.h"
-#include "exceptions/nopaymentsexception.h"
+//#include "exceptions/nopaymentsexception.h"
 #include "exceptions/fileexception.h"
 
 Tracker::Tracker(){
