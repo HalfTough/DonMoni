@@ -8,6 +8,7 @@
 Parser::Parser(int argc, char **argv){
     QStringList args;
     for(int i=1; i<argc; i++){
+        QString t = QString(argv[i]);
         args << QString(argv[i]);
     }
     _action = null;

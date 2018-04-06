@@ -5,6 +5,8 @@
 
 #include "payment.h"
 
+class Project;
+
 struct Time{
     int years=0;
     int months=0;
@@ -39,9 +41,12 @@ struct Time{
 };
 
 class RecurringDonation{
+    Project *parent;
     Money money;
     QDate next;
     Time step;
+
+    friend class Project;
 public:
     RecurringDonation(const RecurringDonation &);
     RecurringDonation(Money, Time, QDate=QDate());
@@ -50,6 +55,7 @@ public:
     Money getMoney() const { return money; }
     Time getTime() const { return step; }
     QDate getNext() const { return next; }
+    Project *getParent() const { return parent; }
     QJsonObject toJson() const;
 };
 

@@ -1,3 +1,4 @@
+#include "printer.h"
 #include "project.h"
 #include "exceptions/nopaymentsexception.h"
 #include "exceptions/fileexception.h"
@@ -117,6 +118,7 @@ void Project::addRecur(RecurringDonation *donation){
         addPayment(payment);
     }
     recuring->push_back(donation);
+    donation->parent = this;
 }
 
 void Project::rename(const QString &name){
@@ -133,6 +135,17 @@ int Project::removePayments(const Filter &filter){
                 && filter.matchesMoney((*i)->getAmount()) ){
             count++;
             i = payments->erase(i);
+        }
+        else{
+            i++;
+        }
+    }
+    for(auto i = recuring->begin(); i!=recuring->end();){
+        if( filter.matchesDate( (*i)->getNext() )
+            && filter.matchesMoney((*i)->getMoney())
+                && Printer::askRemoveRecuring(*i)){
+            count++;
+            i = recuring->erase(i);
         }
         else{
             i++;

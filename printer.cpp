@@ -10,6 +10,7 @@ namespace ioctl{
 #include <QDebug>
 
 QTextStream Printer::out(stdout);
+QTextStream Printer::in(stdin);
 QTextStream Printer::err(stderr);
 QString Printer::months[12] = {tr("January"), tr("February"), tr("March"),
                           tr("April"), tr("May"), tr("June"),
@@ -595,6 +596,17 @@ void Printer::printSettingsParsingError(const SettingsParsingException &spe){
 
 void Printer::printNetworkError(QString error){
     err << tr("Network error: %1").arg(error) << endl;
+}
+
+bool Printer::askRemoveRecuring(RecurringDonation *rec){
+    QString odp;
+    out << tr("Remove recuring payment from %1").arg(rec->getParent()->getName()) << endl;
+    out << tr("%1 each %2. Next: %3").arg(rec->getMoney().toString())
+           .arg(stringFromTime(rec->getTime())).arg(rec->getNext().toString(Qt::ISODate)) << endl;
+    out << tr("[y/n] ");
+    out.flush();
+    in >> odp;
+    return (odp == "y" || odp == "yes");
 }
 
 QString Printer::stringFromTime(Time time){

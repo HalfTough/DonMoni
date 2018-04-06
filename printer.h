@@ -17,7 +17,7 @@
 class Printer{
     Q_DECLARE_TR_FUNCTIONS(Printer)
 
-    static QTextStream out, err;
+    static QTextStream out, in, err;
     enum Timeframe {year, month, week, day};
     Timeframe timeframe = month;
     int timeInt = 1;
@@ -69,6 +69,8 @@ public:
     static void printParseError();
     static void printNetworkError(QString);
     static void printHelp();
+
+    static bool askRemoveRecuring(RecurringDonation *rec);
 
     static void setLineFormatting(QStringList lines){ lineFormatting = lines; }
 

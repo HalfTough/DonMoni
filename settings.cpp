@@ -41,6 +41,7 @@ void Settings::load(){
         while(!in.atEnd()){
             lineNumber++;
             QString line = in.readLine();
+            line.replace(QRegularExpression("^\\s+"),"").replace(QRegularExpression("\\s+$"), "").replace(QRegularExpression("\\s*=\\s"),"=");
             if(line.startsWith('#') || line.isEmpty()){
                 continue;
             }
