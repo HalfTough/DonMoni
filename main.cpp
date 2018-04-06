@@ -8,7 +8,6 @@
 #include "printer.h"
 #include "settings.h"
 #include "currencies.h"
-#include "exceptions/networkexception.h"
 #include "exceptions/fileexception.h"
 
 #include <QDebug> //TODO

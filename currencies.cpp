@@ -2,7 +2,6 @@
 #include "settings.h"
 
 #include "exceptions/fileexception.h"
-#include "exceptions/networkexception.h"
 
 #include <QApplication>
 #include <QDateTime>
