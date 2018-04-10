@@ -12,6 +12,7 @@
 
 QString Settings::configFileName = "donate.conf";
 
+QString Settings::profile = "budget";
 QString Settings::language = "";
 QString Settings::defaultCurrency = "";
 Settings::Currencies Settings::compareMoney = Settings::ignoreCurrencies;
@@ -60,34 +61,16 @@ void Settings::load(){
 bool Settings::parseSetting(QString name, QString value){
     if(name == "language"){
         language = value;
+    }else if(name == "profile"){
+        setProfile(value);
     }else if(name == "default_currency"){
-        if(value.contains(' '))
-            return false;
-        if(Money::isISO(value)){
-            Settings::defaultCurrency = Money::ISOFromSymbol(value);
-        }
-        else{
-            Settings::defaultCurrency = value;
-        }
+        return setCurrency(value);
     }else if(name == "compare_money"){
-        if(value=="ignore_currencies")
-            compareMoney = ignoreCurrencies;
-        else if( value == "convert_currencies")
-            compareMoney = convertCurrencies;
-        else
-            return false;
+        return setCompareMoney(value);
     }else if(name == "print_money"){
-        if(value == "leave_currencies")
-            printMoney = ignoreCurrencies;
-        else if(value == "convert_currencies")
-            printMoney = convertCurrencies;
-        else
-            return false;
+        return setPrintMoney(value);
     }else if(name == "exchange_server"){
-        if(value.startsWith('"') && value.endsWith('"'))
-            exchangeServer = value.mid(1, value.size()-2);
-        else
-            exchangeServer = value;
+        setExchangeServer(value);
     }else if(name == "exchange_time"){
         int a = value.toInt();
         if(a>0)
@@ -101,72 +84,18 @@ bool Settings::parseSetting(QString name, QString value){
             rowColoring.append(terminalFormatFromSetting(row));
         }
     }else if(name == "min_uncut_cols"){
-        int a = value.toInt();
-        if(a>0 || value=="0")
-            minUncutCols = a;
-        else
-            return false;
+        return setMinUncutCol(value);
     }else if(name == "show_to"){
-        if(value == "last")
-            showTo = untilLast;
-        else if(value == "today")
-            showTo = untilToday;
-        else if(value == "force_today")
-            showTo = untilTodayForce;
-        else
-            return false;
+        return setShowTo(value);
     }else if(name == "default_timeframe"){
-        if(value=="year")
-            timeframe = year;
-        else if(value=="month")
-            timeframe = month;
-        else if(value=="week")
-            timeframe = week;
-        else if(value=="day")
-            timeframe = day;
-        else
-            return false;
+        return setTimeframe(value);
     }else if(name == "time_interval"){
-        int a = value.toInt();
-        if(a>0)
-            timeInterval = a;
-        else
-            return false;
+        return setTimeInterval(value);
     }else if(name == "week_start"){
-        if(value == "monday" || value == "mon")
-            weekStart = 1;
-        else if(value == "tuesday" || value == "tue")
-            weekStart = 2;
-        else if(value == "wednesday" || value == "wed")
-            weekStart = 3;
-        else if(value == "thursday" || value =="thu")
-            weekStart = 4;
-        else if(value == "friday" || value == "fri")
-            weekStart = 5;
-        else if(value == "saturday" || value == "sat")
-            weekStart = 6;
-        else if(value == "sunday" || value == "sun")
-            weekStart = 7;
-        else if(value == "moving")
-            weekStart = 0;
-        else
-            return false;
+        return setWeekStart(value);
     }
     else if(name == "time_shift"){
-        if(value == "start")
-            timeShift.set(TimeShift::start);
-        else if(value == "end")
-            timeShift.set(TimeShift::end);
-        else{
-            bool ok;
-            int v = value.toInt(&ok);
-            if(ok){
-                timeShift.set(v);
-            }
-            else{
-                return false;
-            }
-        }
+        return setTimeShift(value);
     }
     else if(name == "symbol_separator"){
         if(value == "space")
@@ -323,4 +252,149 @@ QString Settings::terminalFormatFromSetting(const QString &row){
     if(attributes&hidden)
         format += "\e[8m";
     return format+color+back;
+}
+
+bool Settings::setProfile(const QString &value){
+    if(value.startsWith('"') && value.endsWith('"'))
+        profile = value.mid(1, value.size()-2);
+    else if(value.contains('"'))
+        return false;
+    else
+        profile = value;
+    return true;
+}
+
+bool Settings::setCurrency(const QString &value){
+    if(value.contains(' '))
+        return false;
+    if(Money::isSymbol(value)){
+        Settings::defaultCurrency = Money::ISOFromSymbol(value);
+    }
+    else{
+        Settings::defaultCurrency = value;
+    }
+    return true;
+}
+
+bool Settings::setCompareMoney(const QString &value){
+    if(value=="ignore_currencies")
+        compareMoney = ignoreCurrencies;
+    else if( value == "convert_currencies")
+        compareMoney = convertCurrencies;
+    else
+        return false;
+    return true;
+}
+
+bool Settings::setPrintMoney(const QString &value){
+    if(value == "leave_currencies")
+        printMoney = ignoreCurrencies;
+    else if(value == "convert_currencies")
+        printMoney = convertCurrencies;
+    else
+        return false;
+    return true;
+}
+
+bool Settings::setExchangeServer(const QString &value){
+    if(value.startsWith('"') && value.endsWith('"'))
+        exchangeServer = value.mid(1, value.size()-2);
+    else if(value.contains('"'))
+        return false;
+    else
+        exchangeServer = value;
+    return true;
+}
+
+bool Settings::setMinUncutCol(const QString &value){
+    int a = value.toInt();
+    if(a>0 || value=="0")
+        minUncutCols = a;
+    else
+        return false;
+    return true;
+}
+
+bool Settings::setShowTo(const QString &value){
+    if(value == "last")
+        showTo = untilLast;
+    else if(value == "today")
+        showTo = untilToday;
+    else if(value == "force_today")
+        showTo = untilTodayForce;
+    else
+        return false;
+    return true;
+}
+
+bool Settings::setTimeframe(const QString &value){
+    if(value=="year")
+        timeframe = year;
+    else if(value=="month")
+        timeframe = month;
+    else if(value=="week")
+        timeframe = week;
+    else if(value=="day")
+        timeframe = day;
+    else
+        return false;
+    return true;
+}
+
+bool Settings::setTimeInterval(const QString &value){
+    int a = value.toInt();
+    if(a>0){
+        timeInterval = a;
+        return true;
+    }
+    else
+        return false;
+}
+
+bool Settings::setWeekStart(const QString &value){
+    if(value == "monday" || value == "mon")
+        weekStart = 1;
+    else if(value == "tuesday" || value == "tue")
+        weekStart = 2;
+    else if(value == "wednesday" || value == "wed")
+        weekStart = 3;
+    else if(value == "thursday" || value =="thu")
+        weekStart = 4;
+    else if(value == "friday" || value == "fri")
+        weekStart = 5;
+    else if(value == "saturday" || value == "sat")
+        weekStart = 6;
+    else if(value == "sunday" || value == "sun")
+        weekStart = 7;
+    else if(value == "moving")
+        weekStart = 0;
+    else{
+        bool isNum;
+        int a = value.toInt(&isNum);
+        if(isNum && a>0 && a<=7){
+            weekStart = a;
+        }
+        else{
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Settings::setTimeShift(const QString &value){
+    if(value == "start")
+        timeShift.set(TimeShift::start);
+    else if(value == "end")
+        timeShift.set(TimeShift::end);
+    else{
+        bool ok;
+        int v = value.toInt(&ok);
+        if(ok){
+            timeShift.set(v);
+        }
+        else{
+            return false;
+        }
+    }
+    return true;
 }

@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "settings.h"
 
 #include <QRegularExpression>
 #include <QStringList>
@@ -22,11 +23,10 @@ Parser::Parser(int argc, char **argv){
         _action = show;
     }
     //sprawdzamy czy sa wymagane argumety
-    if((_action == add || _action==project) && _name.isNull())
-        _action = error;
-    if(_action == remove && _filter.isEmpty() && _name.isNull())
-        _action = error;
-    if(_action == modify && (_filter.isEmpty() || (_amount.isNull() && _date.isNull()) ))
+    if(((_action == add || _action==project) && _name.isNull())
+        || (_action == remove && _filter.isEmpty() && _name.isNull())
+        || (_action == modify && (_filter.isEmpty() || (_amount.isNull() && _date.isNull()) ))
+        || !_setting.isEmpty()  )
         _action = error;
     //Sprawdzamy wykluczające się argumenty
     if(_action == remove && !_name.isNull() && !_filter.isEmpty())
@@ -34,30 +34,32 @@ Parser::Parser(int argc, char **argv){
 }
 
 Parser::ArgumentType Parser::getAcceptableTypes() const{
+    if(!_setting.isEmpty())
+        return setting_value;
     switch(_action){
     case null:
-        return ArgumentType(action|filter);
+        return ArgumentType(action|filter|setting);
     case show:
     case projects:
-        return filter;
+        return ArgumentType(filter|setting);
     case add:
         if(_name.isNull())
-            return name;
+            return ArgumentType(name);
         else if(!_hasAmount)
             return amount;
         else
-            return ArgumentType(date|recur);
+            return ArgumentType(date|recur|setting);
     case project:
         return name;
     case remove:
-        return ArgumentType(name|filter);
+        return ArgumentType(name|filter|setting);
     case rename:
         if(_newName.isEmpty())
             return name;
         else
             return none;
     case modify:
-        return ArgumentType(filter|amount|date);
+        return ArgumentType(filter|amount|date|setting);
     case version:
     case help:
         return none;
@@ -66,6 +68,10 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
 
 void Parser::parseArgument(QString arg, ArgumentType acceptableTypes){
     if(acceptableTypes&names && parseAsNames(arg))
+        return;
+    else if(acceptableTypes&setting && parseAsSetting(arg))
+        return;
+    else if(acceptableTypes&setting_value && parseAsSettingValue(arg))
         return;
     else if(acceptableTypes&dates && parseAsDates(arg))
         return;
@@ -93,6 +99,72 @@ bool Parser::parseAsNames(const QString &arg){
         return false;
     QStringList list = arg.mid(namesPrefix.size()).split(',');
     _filter.addNames(list);
+    return true;
+}
+
+bool Parser::parseAsSetting(const QString &arg){
+    if(arg==settCurrency || arg==settCompare || arg==settPrint || arg==settExchangeServer
+            || arg==settMinCol || arg==settShowTo || arg==settTimeframe || arg==settInterval
+            || arg==settWeekStart || arg==settShift || arg==settProfile || arg==settProfileShort){
+        _setting = arg;
+        return true;
+    }
+    else if(arg.startsWith("--")){
+        _action = error;
+        return true;
+    }
+    return false;
+}
+
+bool Parser::parseAsSettingValue(const QString &arg){
+    if(_setting==settProfile || _setting==settProfileShort){
+        if(!Settings::setProfile(arg))
+            _action = error;
+    }
+    else if(_setting==settCurrency){
+        if(!Settings::setCurrency(arg))
+            _action = error;
+    }
+    else if(_setting==settCompare){
+        if(!Settings::setCompareMoney(arg))
+            _action = error;
+    }
+    else if(_setting==settPrint){
+        if(!Settings::setPrintMoney(arg))
+            _action = error;
+    }
+    else if(_setting==settExchangeServer){
+        if(!Settings::setExchangeServer(arg))
+            _action = error;
+    }
+    else if(_setting==settMinCol){
+        if(!Settings::setMinUncutCol(arg))
+            _action = error;
+    }
+    else if(_setting==settShowTo){
+        if(!Settings::setShowTo(arg))
+            _action = error;
+    }
+    else if(_setting==settTimeframe){
+        if(!Settings::setTimeframe(arg))
+            _action = error;
+    }
+    else if(_setting==settInterval){
+        if(!Settings::setTimeInterval(arg))
+            _action = error;
+    }
+    else if(_setting==settWeekStart){
+        if(!Settings::setWeekStart(arg))
+            _action = error;
+    }
+    else if(_setting==settShift){
+        if(!Settings::setTimeShift(arg))
+            _action = error;
+    }
+    else{
+        return false;
+    }
+    _setting = QString();
     return true;
 }
 

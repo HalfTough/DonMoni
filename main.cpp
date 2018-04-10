@@ -41,8 +41,10 @@ int main(int argc, char **argv){
     }
     loadLocale(&app, &translator);
 
+    Parser *parser = new Parser(argc, argv);
+
+    MainProgram *mainProgram = new MainProgram(parser);
     Currencies *currencies = new Currencies();
-    MainProgram *mainProgram = new MainProgram(argc, argv);
     QObject::connect(currencies, &Currencies::initingFinished, mainProgram, &MainProgram::run);
 
     currencies->initTable();

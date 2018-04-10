@@ -20,6 +20,8 @@ private:
                         filter=names+dates+money,
                         noprefix=action+name+amount+date,
                         recur=2048,
+                        setting=4096,
+                        setting_value=8192,
                         none=0 };
 
     const QString namesPrefix = "names:";
@@ -30,6 +32,18 @@ private:
     const QString recurPrefix = "recur:";
     const QString maxPrefix = "max:";
     const QString minPrefix = "min:";
+    const QString settProfile = "--profile";
+    const QString settProfileShort = "-p";
+    const QString settCurrency = "--currency";
+    const QString settCompare = "--compare";
+    const QString settPrint = "--print";
+    const QString settExchangeServer = "--exchange_server";
+    const QString settMinCol = "--min_uncut_col";
+    const QString settShowTo = "--show_to";
+    const QString settTimeframe = "--timeframe";
+    const QString settInterval = "--interval";
+    const QString settWeekStart = "--week_start";
+    const QString settShift = "--shift";
 
     Filter _filter;
     Action _action;
@@ -38,8 +52,11 @@ private:
     QDate _date;
     QString _name, _newName;
     Time recurTime;
+    QString _setting;
 
     bool parseAsNames(const QString &arg);
+    bool parseAsSetting(const QString &arg);
+    bool parseAsSettingValue(const QString &arg);
     bool parseAsDates(const QString &arg);
     bool parseAsRecur(const QString &arg);
     bool parseAsMoney(const QString &arg);

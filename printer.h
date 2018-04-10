@@ -67,7 +67,8 @@ public:
     static void printJsonParsingError(const QString &file, const QString &error);
     static void printSettingsParsingError(const SettingsParsingException &);
     static void printParseError();
-    static void printNetworkError(QString);
+    static void printNetworkError(const QString &);
+    static void printConvertWarning(const QString &from, const QString &to);
     static void printHelp();
 
     static bool askRemoveRecuring(RecurringDonation *rec);

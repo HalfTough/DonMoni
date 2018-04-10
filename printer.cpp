@@ -150,6 +150,7 @@ QDate Printer::getEarliestDate(QMap<QString,Project*> *projects){
 
 QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *projects, const Filter &filter, const QDate &start) {
     QList <QVector<Money>*> *table = new QList <QVector<Money>*>();
+
     QDate to = filter.getTo();
     if(!to.isValid()){
         to = QDate::currentDate();
@@ -360,8 +361,12 @@ void Printer::print(Tracker *tracker, const Filter &filter){
             i++;
     }
 
-    Filter fil = filter.adjustFromTo(projects);
+    if(projects->isEmpty()){
+        printEmptyProjects(emptyProjects);
+        return;
+    }
 
+    Filter fil = filter.adjustFromTo(projects);
     int width = getTermWidth();
 
     QList<int> *sizes = new QList<int>();
@@ -370,7 +375,6 @@ void Printer::print(Tracker *tracker, const Filter &filter){
     QList<QVector<Money>* > *moneyTable = getMoneyTable(projects, fil, startDate);
     allCols = moneyTable->size()-1;
     int sizesSum = 0;
-
     {
         QDate iDate = startDate;
         auto i = moneyTable->begin();
@@ -385,6 +389,8 @@ void Printer::print(Tracker *tracker, const Filter &filter){
         sizesSum += sizeTotal;
         sizes->push_back( sizeTotal );
     }
+
+
 
     int projectW = std::max(fieldWidth(tr("Project")), namesWidth(projects));
     sizesSum += projectW;
@@ -594,8 +600,12 @@ void Printer::printSettingsParsingError(const SettingsParsingException &spe){
         << tr("at line %1; %2").arg(spe.getLineNumber()).arg(spe.getLine()) << endl;
 }
 
-void Printer::printNetworkError(QString error){
+void Printer::printNetworkError(const QString &error){
     err << tr("Network error: %1").arg(error) << endl;
+}
+
+void Printer::printConvertWarning(const QString &from, const QString &to){
+    err << tr("Unable to convert from %1 to %2").arg(from).arg(to) << endl;
 }
 
 bool Printer::askRemoveRecuring(RecurringDonation *rec){

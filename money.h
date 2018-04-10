@@ -27,6 +27,7 @@ public:
 
     static void initCurrencies();
     static bool isISO(QString);
+    static bool isSymbol(QString);
     static QString symbolFromISO(QString);
     static QString ISOFromSymbol(QString);
 

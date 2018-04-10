@@ -130,7 +130,10 @@ double Money::toBase() const {
     double moneyInBase = 0;
     while(i.hasNext()){
         i.next();
-        moneyInBase += i.value()*(1/Currencies::getRatio(i.key()));
+        double ratio = Currencies::getRatio(i.key());
+        if(ratio){
+            moneyInBase += i.value()*(1/ratio);
+        }
     }
     return moneyInBase;
 }
@@ -141,11 +144,15 @@ QString Money::currencyString(double val){
 
 QString Money::currencyString(double val, QString currency){
     int a = QString::number(int(val)).size();
-    return QString::number(val, 'g', a+2)+Settings::getSymbolSeparotor()+currency;
+    return QString::number(val, 'g', a+2)+Settings::getSymbolSeparotor()+symbolFromISO(currency);
 }
 
 bool Money::isISO(QString a){
     return mapISOSym.contains(a);
+}
+
+bool Money::isSymbol(QString a){
+    return mapSymISO.contains(a);
 }
 
 QString Money::symbolFromISO(QString iso){

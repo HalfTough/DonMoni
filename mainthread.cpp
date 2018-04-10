@@ -6,13 +6,13 @@
 #include <QDebug>
 
 void MainProgram::run(){
-    Parser parser(argc, argv);
 
-    if(parser.getAction() == Parser::error){
+
+    if(parser->getAction() == Parser::error){
         Printer::printParseError();
         exitApp(1);
     }
-    if(parser.getAction() == Parser::help){
+    if(parser->getAction() == Parser::help){
         Printer::printHelp();
         exitApp(0);
     }
@@ -26,42 +26,42 @@ void MainProgram::run(){
         Printer::printJsonParsingError(fpe);
     }
 
-    switch(parser.getAction()){
+    switch(parser->getAction()){
     case Parser::show:
-        Printer::print(tracker, parser.getFilter());
+        Printer::print(tracker, parser->getFilter());
         break;
     case Parser::add:
-        if(parser.hasAmount()){
-            if(parser.hasRecurTime()){ //Adding recurring donation
-                tracker->addRecur(parser.getName(), parser.getAmount(), parser.getRecurTime(), parser.getDate());
+        if(parser->hasAmount()){
+            if(parser->hasRecurTime()){ //Adding recurring donation
+                tracker->addRecur(parser->getName(), parser->getAmount(), parser->getRecurTime(), parser->getDate());
             }
             else{ //Adding donation
-                tracker->add(parser.getName(), parser.getAmount(), parser.getDate());
+                tracker->add(parser->getName(), parser->getAmount(), parser->getDate());
             }
         }
         else{
-            if(tracker->hasProject(parser.getName())){
-                Printer::printProjectExists(parser.getName());
+            if(tracker->hasProject(parser->getName())){
+                Printer::printProjectExists(parser->getName());
                 exitApp(1);
             }
-            tracker->addProject(parser.getName());
+            tracker->addProject(parser->getName());
         }
         tracker->save();
         break;
     case Parser::remove:
         //Filter can be empty only if name is set and we are removing project
-        if(parser.getFilter().isEmpty()){
-            if( tracker->removeProject(parser.getName()) ){
-                Printer::printDeleted(parser.getName());
+        if(parser->getFilter().isEmpty()){
+            if( tracker->removeProject(parser->getName()) ){
+                Printer::printDeleted(parser->getName());
                 tracker->save();
             }
             else{
-                Printer::printProjectDoesntExists(parser.getName());
+                Printer::printProjectDoesntExists(parser->getName());
                 exitApp(1);
             }
         }
         else{
-            int pc = tracker->removePayments(parser.getFilter());
+            int pc = tracker->removePayments(parser->getFilter());
             Printer::printDeletedPayments(pc);
             if(pc){
                 tracker->save();
@@ -71,16 +71,16 @@ void MainProgram::run(){
         }
         break;
     case Parser::rename:
-        if(tracker->renameProject(parser.getName(), parser.getNewName()) ){
+        if(tracker->renameProject(parser->getName(), parser->getNewName()) ){
             tracker->save();
         }
         else{
-            Printer::printProjectDoesntExists(parser.getName());
+            Printer::printProjectDoesntExists(parser->getName());
             exitApp(1);
         }
         break;
     case Parser::modify:{
-        int num = tracker->modifyPayments(parser.getFilter(), parser.getAmount(), parser.getDate());
+        int num = tracker->modifyPayments(parser->getFilter(), parser->getAmount(), parser->getDate());
         Printer::printModifiedPayments(num);
         if(num){
             tracker->save();
@@ -91,10 +91,10 @@ void MainProgram::run(){
         break;
     }
     case Parser::project:
-        Printer::printProjectInfo(tracker, parser.getName());
+        Printer::printProjectInfo(tracker, parser->getName());
         break;
     case Parser::projects:
-        Printer::printProjects(tracker, parser.getFilter());
+        Printer::printProjects(tracker, parser->getFilter());
         break;
     }
     exitApp(ext);

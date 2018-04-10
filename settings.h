@@ -20,6 +20,7 @@ public:
 private:
     Settings();
     static QString configFileName;
+    static QString profile;
     static QString language;
     //if user gives currency symbol, convert it to ISO, if user gives unknown currency
     //leave name given by user
@@ -42,6 +43,7 @@ private:
     static bool parseSetting(QString , QString);
 public:
     static void load();
+    static QString getProfile(){ return profile; }
     static QString getLanguage();
     static QString getCurrency();
     static Currencies getCompareMethod(){ return compareMoney; }
@@ -58,6 +60,18 @@ public:
     static int getExchangeTime(){ return exchangeTime; }
     static QString getExchangeServer(){ return exchangeServer; }
     static QString terminalFormatFromSetting(const QString &);
+
+    static bool setProfile(const QString &value);
+    static bool setCurrency(const QString &value);
+    static bool setCompareMoney(const QString &value);
+    static bool setPrintMoney(const QString &value);
+    static bool setExchangeServer(const QString &value);
+    static bool setMinUncutCol(const QString &value);
+    static bool setShowTo(const QString &value);
+    static bool setTimeframe(const QString &value);
+    static bool setTimeInterval(const QString &value);
+    static bool setWeekStart(const QString &value);
+    static bool setTimeShift(const QString &value);
 };
 
 #endif

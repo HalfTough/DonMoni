@@ -13,13 +13,13 @@
 
 #include <QDebug>
 
-QString Currencies::fileName = "currencies";
+QString Currencies::fileName = "currencies_";
 QMap<QString, double> Currencies::table;
 bool Currencies::downloaded = false;
 
 Currencies::Currencies(){
     QDir dir(QStandardPaths::standardLocations(QStandardPaths::DataLocation )[0]);
-    file = new QFile(dir.filePath(fileName));
+    file = new QFile(dir.filePath(fileName+Settings::getCurrency()));
     QString server = Settings::getExchangeServer();
     if(!server.endsWith('/')){
         server += '/';
@@ -95,6 +95,7 @@ void Currencies::constructTable(){
         //TODO zabezpieczyć
         table.insert(key, jRates.value(key).toDouble());
     }
+    table.insert(Settings::getCurrency(), 1);
     emit initingFinished();
 }
 

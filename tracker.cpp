@@ -5,7 +5,7 @@
 #include <QStandardPaths>
 
 #include "tracker.h"
-//#include "exceptions/nopaymentsexception.h"
+#include "settings.h"
 #include "exceptions/fileexception.h"
 
 Tracker::Tracker(){
@@ -14,7 +14,7 @@ Tracker::Tracker(){
 
 void Tracker::save(){
     QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
-    QFile saveFile(dir.filePath(projectsFile));
+    QFile saveFile(dir.filePath(Settings::getProfile()));
     if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
         throw FileOpenException(saveFile.fileName());
     QJsonDocument jdoc(toJson());
@@ -26,7 +26,7 @@ void Tracker::load(){
     //We try to parse file, even if there were some errors and throw exception after we're done
     bool parsingErr = false;
     QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
-    QFile saveFile(dir.filePath(projectsFile));
+    QFile saveFile(dir.filePath(Settings::getProfile()));
     if(!saveFile.exists())
         return;
     if (!saveFile.open(QIODevice::ReadOnly | QIODevice::Text))

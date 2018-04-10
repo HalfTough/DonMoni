@@ -3,15 +3,17 @@
 
 #include <QThread>
 
+#include "parser.h"
+
 
 class MainProgram : public QObject{
     Q_OBJECT
 
-    int argc, ext=0;
-    char **argv;
+    int ext=0;
+    Parser *parser;
     void exitApp(int ret);
 public:
-    MainProgram(int argc, char **argv, QObject *parent = Q_NULLPTR) :QObject(parent), argc(argc),argv(argv){
+    MainProgram(Parser *parser, QObject *parent = Q_NULLPTR) :QObject(parent), parser(parser){
     }
     int getExitCode(){ return ext; }
 public slots:

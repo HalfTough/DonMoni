@@ -10,7 +10,6 @@
 class Tracker{
     QMap<QString,Project*> *projects;
     Money money;
-    QString projectsFile = "projects";
     
 public:
     Tracker();
