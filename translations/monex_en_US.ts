@@ -4,75 +4,142 @@
 <context>
     <name>Printer</name>
     <message>
-        <location filename="../printer.cpp" line="28"/>
+        <location filename="../printer.cpp" line="25"/>
         <source>Error parsing arguments</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../printer.cpp" line="32"/>
-        <source>Usage: donate [action] [args]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="308"/>
-        <source>No projects meeting criteria</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message numerus="yes">
-        <location filename="../printer.cpp" line="502"/>
         <source>%n donation(s) removed</source>
-        <translation>
+        <translation type="vanished">
             <numerusform>Donation removed</numerusform>
             <numerusform>%n donations removed</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="527"/>
-        <source>%1 each %2. Next: %3</source>
+        <location filename="../printer.cpp" line="395"/>
+        <location filename="../printer.cpp" line="438"/>
+        <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../printer.cpp" line="498"/>
+        <source>Categories with no payments:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="525"/>
+        <source>Category removed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../printer.cpp" line="533"/>
+        <source>%n payment(s) removed</source>
+        <translation type="unfinished">
+            <numerusform>Payment removed</numerusform>
+            <numerusform>%n payments removed</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
         <location filename="../printer.cpp" line="542"/>
-        <source>Cannot open file: %1</source>
-        <translation type="unfinished"></translation>
+        <source>%n payment(s) modified</source>
+        <translation type="unfinished">
+            <numerusform>Payments modified</numerusform>
+            <numerusform>%n payments modified</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="546"/>
-        <source>Cannot open file &quot;%1&quot;: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="550"/>
-        <source>Error parsing file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="551"/>
-        <source>Data might be not loaded properly</source>
+        <location filename="../printer.cpp" line="549"/>
+        <source>%1: category not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../printer.cpp" line="555"/>
+        <source>Category has no payments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="558"/>
+        <source>Payments:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="565"/>
+        <source>Recurring payments:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="567"/>
+        <location filename="../printer.cpp" line="614"/>
+        <source>%1 each %2. Next: %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="574"/>
+        <source>%1: category already exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="578"/>
+        <source>%1: category doesn&apos;t exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="582"/>
+        <source>Cannot open file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="586"/>
+        <source>Cannot open file &quot;%1&quot;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="590"/>
+        <source>Error parsing file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="591"/>
+        <source>Data might be not loaded properly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="595"/>
         <source>Error parsing file &quot;%1&quot;: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="559"/>
+        <location filename="../printer.cpp" line="599"/>
         <source>Error parsing config: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="560"/>
+        <location filename="../printer.cpp" line="600"/>
         <source>at line %1; %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="564"/>
+        <location filename="../printer.cpp" line="604"/>
         <source>Network error: %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../printer.cpp" line="608"/>
+        <source>Unable to convert from %1 to %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="613"/>
+        <source>Remove recuring payment from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../printer.cpp" line="616"/>
+        <source>[y/n] </source>
+        <translation type="unfinished"></translation>
+    </message>
     <message numerus="yes">
-        <location filename="../printer.cpp" line="570"/>
+        <location filename="../printer.cpp" line="625"/>
         <source>%n year(s)</source>
         <translation>
             <numerusform>year</numerusform>
@@ -80,13 +147,13 @@
         </translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="572"/>
-        <location filename="../printer.cpp" line="574"/>
+        <location filename="../printer.cpp" line="627"/>
+        <location filename="../printer.cpp" line="629"/>
         <source>and</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../printer.cpp" line="572"/>
+        <location filename="../printer.cpp" line="627"/>
         <source>%n month(s)</source>
         <translation>
             <numerusform>month</numerusform>
@@ -94,7 +161,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../printer.cpp" line="574"/>
+        <location filename="../printer.cpp" line="629"/>
         <source>%n day(s)</source>
         <translation>
             <numerusform>day</numerusform>
@@ -102,180 +169,89 @@
         </translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="14"/>
+        <location filename="../printer.cpp" line="15"/>
         <source>January</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="14"/>
+        <location filename="../printer.cpp" line="15"/>
         <source>February</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="14"/>
+        <location filename="../printer.cpp" line="15"/>
         <source>March</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="15"/>
+        <location filename="../printer.cpp" line="16"/>
         <source>April</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="15"/>
-        <location filename="../printer.cpp" line="19"/>
+        <location filename="../printer.cpp" line="16"/>
         <source>May</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="15"/>
-        <location filename="../printer.cpp" line="19"/>
+        <location filename="../printer.cpp" line="16"/>
         <source>June</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="16"/>
-        <location filename="../printer.cpp" line="20"/>
+        <location filename="../printer.cpp" line="17"/>
         <source>July</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="16"/>
+        <location filename="../printer.cpp" line="17"/>
         <source>August</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="16"/>
+        <location filename="../printer.cpp" line="17"/>
         <source>September</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="17"/>
+        <location filename="../printer.cpp" line="18"/>
         <source>October</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="17"/>
+        <location filename="../printer.cpp" line="18"/>
         <source>November</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="17"/>
+        <location filename="../printer.cpp" line="18"/>
         <source>December</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="18"/>
-        <source>Jan</source>
+        <location filename="../printer.cpp" line="29"/>
+        <source>Usage: monex [action] [args]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="18"/>
-        <source>Feb</source>
+        <location filename="../printer.cpp" line="351"/>
+        <location filename="../printer.cpp" line="530"/>
+        <location filename="../printer.cpp" line="539"/>
+        <source>No payments meeting criteria</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="18"/>
-        <source>Mar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="19"/>
-        <source>Apr</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="20"/>
-        <source>Aug</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="20"/>
-        <source>Sep</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="21"/>
-        <source>Oct</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="21"/>
-        <source>Nov</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="21"/>
-        <source>Dec</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="340"/>
-        <location filename="../printer.cpp" line="435"/>
+        <location filename="../printer.cpp" line="388"/>
+        <location filename="../printer.cpp" line="466"/>
+        <location filename="../printer.cpp" line="489"/>
+        <location filename="../printer.cpp" line="562"/>
         <source>Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../printer.cpp" line="356"/>
         <location filename="../printer.cpp" line="403"/>
-        <source>Project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="366"/>
-        <location filename="../printer.cpp" line="427"/>
+        <location filename="../printer.cpp" line="460"/>
         <source>Older</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="458"/>
-        <location filename="../printer.cpp" line="522"/>
-        <source>Sum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="509"/>
-        <source>%1: project not found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="518"/>
-        <source>Donations:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="525"/>
-        <source>Recurring donations:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="515"/>
-        <source>Project has no donations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="499"/>
-        <source>No donations meeting criteria</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="494"/>
-        <source>Projekt removed: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="534"/>
-        <source>%1: project already exists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="538"/>
-        <source>%1: project doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../printer.cpp" line="467"/>
-        <source>Projects with no donations:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

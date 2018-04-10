@@ -26,7 +26,7 @@ void Printer::printParseError(){
 }
 
 void Printer::printHelp(){
-    out << tr("Usage: donate [action] [args]") << endl;
+    out << tr("Usage: monex [action] [args]") << endl;
 }
 
 //TODO Windows?
@@ -348,7 +348,7 @@ QDate Printer::toEndOfWeek(const QDate &date, int end){
 void Printer::print(Tracker *tracker, const Filter &filter){
     QMap<QString,Project*> *projects = tracker->matchingProjects(filter);
     if(projects->empty()){
-        out << tr("No projects meeting criteria") << endl;
+        out << tr("No payments meeting criteria") << endl;
         return;
     }
     QList<Project *> *emptyProjects = new QList<Project*>();
@@ -392,7 +392,7 @@ void Printer::print(Tracker *tracker, const Filter &filter){
 
 
 
-    int projectW = std::max(fieldWidth(tr("Project")), namesWidth(projects));
+    int projectW = std::max(fieldWidth(tr("Name")), namesWidth(projects));
     sizesSum += projectW;
     sizes->push_front(projectW);
 
@@ -435,7 +435,7 @@ void Printer::print(Tracker *tracker, const Filter &filter){
 void Printer::printHeader(QList<int> *sizes, const QDate &start, const QDate &end, bool isOlder){
     out << lineFormatting[line++%lineFormatting.size()];
     auto size = sizes->begin();
-    printString(tr("Project"), *size++);
+    printString(tr("Name"), *size++);
 
     QDate iDate = start;
     if(isOlder){
@@ -486,7 +486,7 @@ void Printer::printTable(QList<QVector<Money> *> *table, QList<int> *sizes, QMap
         out << lineFormatting[line++%lineFormatting.size()];
         auto size = sizes->begin();
         //auto vec = table->begin();
-        printString(tr("Sum"), *size++);
+        printString(tr("Total"), *size++);
         for(auto vec : *table){
             printMoney(vectorSum(vec), *size++);
         }
@@ -495,7 +495,7 @@ void Printer::printTable(QList<QVector<Money> *> *table, QList<int> *sizes, QMap
 }
 
 void Printer::printEmptyProjects(QList<Project *> *emptyProjects){
-    out << tr("Projects with no donations:") << endl;
+    out << tr("Categories with no payments:") << endl;
     for(Project *project : *emptyProjects){
         out << project->getName() << endl;
     }
@@ -522,47 +522,47 @@ void Printer::printProjects(Tracker *tracker, const Filter &filter){
 }
 
 void Printer::printDeleted(const QString &name){
-    out << tr("Projekt removed: %1").arg(name) << endl;
+    out << tr("Category removed: %1").arg(name) << endl;
 }
 
 void Printer::printDeletedPayments(int a){
     if(!a){
-        err << tr("No donations meeting criteria") << endl;
+        err << tr("No payments meeting criteria") << endl;
     }
     else{
-        out << tr("%n donation(s) removed", "", a) << endl;
+        out << tr("%n payment(s) removed", "", a) << endl;
     }
 }
 
 void Printer::printModifiedPayments(int a){
     if(!a){
-        err << tr("No donations meeting criteria") << endl;
+        err << tr("No payments meeting criteria") << endl;
     }
     else{
-        out << tr("%n donation(s) modified", "", a) << endl;
+        out << tr("%n payment(s) modified", "", a) << endl;
     }
 }
 
 void Printer::printProjectInfo(Tracker *tracker, const QString &name){
     Project *project = tracker->getProject(name);
     if(!project){
-        out << tr("%1: project not found").arg(name) << endl;
+        out << tr("%1: category not found").arg(name) << endl;
         return;
     }
     out << project->getName() << endl;
     auto payments = project->getPayments();
     if(payments->empty()){
-        out << tr("Project has no donations") << endl;
+        out << tr("Category has no payments") << endl;
         return;
     }
-    out << tr("Donations:") << endl;
+    out << tr("Payments:") << endl;
     for(Payment* payment : *payments){
         out << payment->getDate().toString(Qt::ISODate) << QString(": ") << payment->getAmount() << endl;
     }
-    out << tr("Sum") << ": " << project->getMoney() << endl;
+    out << tr("Total") << ": " << project->getMoney() << endl;
     auto recurring = project->getRecurring();
     if(!recurring->empty()){
-        out << tr("Recurring donations:") << endl;
+        out << tr("Recurring payments:") << endl;
         for(RecurringDonation *donation : *recurring){
             out << tr("%1 each %2. Next: %3").arg(donation->getMoney().toString())
                    .arg(stringFromTime(donation->getTime())).arg(donation->getNext().toString(Qt::ISODate)) << endl;
@@ -571,11 +571,11 @@ void Printer::printProjectInfo(Tracker *tracker, const QString &name){
 }
 
 void Printer::printProjectExists(const QString &name){
-    err << tr("%1: project already exists").arg(name) << endl;
+    err << tr("%1: category already exists").arg(name) << endl;
 }
 
 void Printer::printProjectDoesntExists(const QString &name){
-    err << tr("%1: project doesn't exist").arg(name) << endl;
+    err << tr("%1: category doesn't exist").arg(name) << endl;
 }
 
 void Printer::printFileOpenError(const FileOpenException &foe){
