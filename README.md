@@ -1,38 +1,38 @@
-# Donation Monitor
+# MonEx
 
-Little CLI application that helps you monitor and manage donations you make.
+Little CLI application that helps you monitor and manage your expenses.
 
 # Usage
 ## Adding new projects/payments
-`donate add <project>`  
+`monex add <project>`  
 Adds empty project.
 
-`donate add <project> <amount> [date]`  
+`monex add <project> <amount> [date]`  
 Adds payment to the project at date. If no date is specified current date is used. If project of given name doesn't exist, it will be automatically created. 
 
-## Showing donations
-`donate [show] [filters]`  
-Shows donations devided by month and project
+## Showing table
+`monex [show] [filters]`  
+Shows payments devided by month and name
 
 ## Detailed info about project
-`donate project <project>`  
+`monex project <project>`  
 Shows all payments from given project
 
 ## Showing projects
-`donate projects [filters]`  
+`monex projects [filters]`  
 Shows all projects matching filters
 
 ## Removing projects
-`donate remove <project>`
+`monex remove <project>`
 
 ## Removing payments
-`donate remove <filters>`
+`monex remove <filters>`
 
 ## Renaming projects
-`donate rename <oldname> <newname>`
+`monex rename <oldname> <newname>`
 
 ## Modifying projects
-`donate modify <filters> [amount] [date]
+`monex modify <filters> [amount] [date]
 
 ## Money
 `<value>[currency]`  
@@ -48,7 +48,7 @@ Note there is no space between value and currency.
 `between:<date>:<date>`  
 `on:<date>`
 Newer filter overrides an older one so  
-`donate show names:project from:today form:2017-01-01`  
+`monex show names:project from:today form:2017-01-01`  
 will show payments from project starting at 2017-01-01 and from:today will be ignored
 
 ## Dates
@@ -58,12 +58,12 @@ will show payments from project starting at 2017-01-01 and from:today will be ig
 `yesterday`  
 `today`
 
-## Recurring donations
-You can add recurring donations, by putting `recur:<time>` somwhere after `add`  
-`donate add OSM 20$ recur:monthly`  
+## Recurring payments
+You can add recurring payments, by putting `recur:<time>` somwhere after `add`  
+`monex add OSM 20$ recur:monthly`  
 will add 20$ to project OSM each month, starting today.  
-`donate add Krita 5 05-02 recur:2weeks`  
+`monex add Krita 5 05-02 recur:2weeks`  
 will add 5 of your default currency to project Krita every two weeks, statring on may 02.  
 
-Recurring time can be more complicated
-`donate add Wikipedia 10$ recur:1month,week`
+Recurring time can be more complicated if you need it to be
+`monex add Wikipedia 10$ recur:1month,week`

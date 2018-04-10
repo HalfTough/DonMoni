@@ -19,6 +19,9 @@ bool Currencies::downloaded = false;
 
 Currencies::Currencies(){
     QDir dir(QStandardPaths::standardLocations(QStandardPaths::DataLocation )[0]);
+    if(!dir.exists()){
+        bool s = dir.mkpath(".");
+    }
     file = new QFile(dir.filePath(fileName+Settings::getCurrency()));
     QString server = Settings::getExchangeServer();
     if(!server.endsWith('/')){

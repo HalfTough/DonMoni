@@ -10,7 +10,7 @@
 
 #include <QDebug>
 
-QString Settings::configFileName = "donate.conf";
+QString Settings::configFileName = "monex.conf";
 
 QString Settings::profile = "budget";
 QString Settings::language = "";
@@ -277,9 +277,9 @@ bool Settings::setCurrency(const QString &value){
 }
 
 bool Settings::setCompareMoney(const QString &value){
-    if(value=="ignore_currencies")
+    if(value=="ignore")
         compareMoney = ignoreCurrencies;
-    else if( value == "convert_currencies")
+    else if( value == "convert")
         compareMoney = convertCurrencies;
     else
         return false;
@@ -287,9 +287,9 @@ bool Settings::setCompareMoney(const QString &value){
 }
 
 bool Settings::setPrintMoney(const QString &value){
-    if(value == "leave_currencies")
+    if(value == "mixed")
         printMoney = ignoreCurrencies;
-    else if(value == "convert_currencies")
+    else if(value == "convert")
         printMoney = convertCurrencies;
     else
         return false;
