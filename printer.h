@@ -70,6 +70,7 @@ public:
     static void printNetworkError(const QString &);
     static void printConvertWarning(const QString &from, const QString &to);
     static void printHelp();
+    static void printVersion();
 
     static bool askRemoveRecuring(RecurringDonation *rec);
 

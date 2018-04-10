@@ -16,6 +16,10 @@ void MainProgram::run(){
         Printer::printHelp();
         exitApp(0);
     }
+    if(parser->getAction() == Parser::version){
+        Printer::printVersion();
+        exitApp(0);
+    }
 
     Tracker *tracker = new Tracker();
     try{

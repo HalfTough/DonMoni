@@ -29,6 +29,10 @@ void Printer::printHelp(){
     out << tr("Usage: monex [action] [args]") << endl;
 }
 
+void Printer::printVersion(){
+    out << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH << endl;
+}
+
 //TODO Windows?
 int Printer::getTermWidth(){
     struct ioctl::winsize w;
