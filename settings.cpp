@@ -32,6 +32,7 @@ QString Settings::datesSeparator = "-";
 
 void Settings::load(){
     QStringList paths = QStandardPaths::standardLocations( QStandardPaths::ConfigLocation);
+    qDebug() << paths;
     for(auto path = paths.rbegin(); path!=paths.rend(); path++){
         QDir dir(*path);
         QFile configFile(dir.filePath(configFileName));

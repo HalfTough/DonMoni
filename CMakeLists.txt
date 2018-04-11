@@ -23,3 +23,5 @@ target_link_libraries(monex Qt5::Network ${CURSES_LIBRARIES})
 add_definitions( -DVERSION_MAJOR=${MonEx_VERSION_MAJOR} )
 add_definitions( -DVERSION_MINOR=${MonEx_VERSION_MINOR} )
 add_definitions( -DVERSION_PATCH=${MonEx_VERSION_PATCH} )
+
+install(TARGETS monex DESTINATION bin)

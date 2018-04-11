@@ -67,3 +67,15 @@ will add 5 of your default currency to project Krita every two weeks, statring o
 
 Recurring time can be more complicated if you need it to be
 `monex add Wikipedia 10$ recur:1month,week`
+
+## Config
+MonEx will read config from `/etc/xdg/monex.conf` and `/home/gurtos/.config/monex.conf`. The letter will override the firs one. On top of that, you can pass some of the settings as arguments
+
+Example [config file](https://github.com/HalfTough/MonEx/blob/master/config/monex.conf).
+
+### List of settings
+| in file | as argument | values |
+|---|---|---|
+|language|-|language in "en_US" format|
+|profile|--profile, -p|string|
+|compare_money|--compare|`ignore`,`convert`|
