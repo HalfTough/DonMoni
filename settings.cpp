@@ -8,8 +8,6 @@
 
 #include "printer.h"
 
-#include <QDebug>
-
 QString Settings::configFileName = "monex.conf";
 
 QString Settings::profile = "budget";
@@ -32,7 +30,6 @@ QString Settings::datesSeparator = "-";
 
 void Settings::load(){
     QStringList paths = QStandardPaths::standardLocations( QStandardPaths::ConfigLocation);
-    qDebug() << paths;
     for(auto path = paths.rbegin(); path!=paths.rend(); path++){
         QDir dir(*path);
         QFile configFile(dir.filePath(configFileName));
@@ -143,7 +140,6 @@ QString Settings::getCurrency(){
 }
 
 QString Settings::terminalFormatFromSetting(const QString &row){
-    qDebug() << row;
     QString format;
     Attributes attributes = none;
     QString color = "\e[39m";

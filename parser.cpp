@@ -105,7 +105,8 @@ bool Parser::parseAsNames(const QString &arg){
 bool Parser::parseAsSetting(const QString &arg){
     if(arg==settCurrency || arg==settCompare || arg==settPrint || arg==settExchangeServer
             || arg==settMinCol || arg==settShowTo || arg==settTimeframe || arg==settInterval
-            || arg==settWeekStart || arg==settShift || arg==settProfile || arg==settProfileShort){
+            || arg==settWeekStart || arg==settShift || arg==settProfile || arg==settProfileShort
+            || arg==settTimeframeShort){
         _setting = arg;
         return true;
     }
@@ -145,7 +146,7 @@ bool Parser::parseAsSettingValue(const QString &arg){
         if(!Settings::setShowTo(arg))
             _action = error;
     }
-    else if(_setting==settTimeframe){
+    else if(_setting==settTimeframe || _setting==settTimeframeShort){
         if(!Settings::setTimeframe(arg))
             _action = error;
     }

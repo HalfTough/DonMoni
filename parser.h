@@ -38,9 +38,10 @@ private:
     const QString settCompare = "--compare";
     const QString settPrint = "--print";
     const QString settExchangeServer = "--exchange_server";
-    const QString settMinCol = "--min_uncut_col";
+    const QString settMinCol = "--min_uncut_cols";
     const QString settShowTo = "--show_to";
     const QString settTimeframe = "--timeframe";
+    const QString settTimeframeShort = "-t";
     const QString settInterval = "--interval";
     const QString settWeekStart = "--week_start";
     const QString settShift = "--shift";

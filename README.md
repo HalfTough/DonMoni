@@ -76,6 +76,45 @@ Example [config file](https://github.com/HalfTough/MonEx/blob/master/config/mone
 ### List of settings
 | in file | as argument | values |
 |---|---|---|
-|language|-|language in "en_US" format|
-|profile|--profile, -p|string|
-|compare_money|--compare|`ignore`,`convert`|
+|language| - | language in "en_US" format |
+|profile|--profile, -p| string |
+|default_currency|--currency| string |
+|compare_money|--compare| `ignore``convert` |
+|print_money|--print| `mixed` `convert` |
+|exchange_server| - | url |
+|exchange_time| - | integer > 0 |
+|row_coloring| - | see [#coloring](coloring) |
+|min_uncut_cols|--min_uncut_cols | integer >= 0 |
+|show_to|--show_to| `last` `today` `force_today` |
+|default_timeframe|--timeframe, -t| `year` `month` `week` `day` |
+|time_inverval|--interval| interes > 0 |
+|week_start|--week_start| `monday` `tuesday` `...` `mon` `tue` `...` 0<integer<=7 |
+|time_shift|--shift| `start` `end` integer |
+|symbol_separator| - | `space` `none` string |
+|currency_separator| - | `comma` `none` `space` string |
+
+###coloring
+You can change look of the output using `row_coloring` setting.  
+You can use instructions:
+| attribute |
+|---|
+| bold |
+| dim |
+| italic |
+| underline |
+| blink |
+| invert |
+| hidden |
+
+You can color using terminal defaults
+| black | red | green | yellow | blue | magenta | cyan | gray |
+For 256 colors use
+| color255 |
+and replace 255 with number of color
+
+For true color use
+| color#ffffff |
+and replace #ffffff with your color
+
+To set background color use
+| back:<color> |
