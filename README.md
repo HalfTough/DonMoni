@@ -93,7 +93,7 @@ Example [config file](https://github.com/HalfTough/MonEx/blob/master/config/mone
 |symbol_separator| - | `space` `none` string |
 |currency_separator| - | `comma` `none` `space` string |
 
-###coloring
+### Coloring
 You can change look of the output using `row_coloring` setting.  
 You can use instructions:
 | attribute |
