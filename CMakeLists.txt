@@ -9,13 +9,12 @@ find_package(Qt5Network)
 find_package(Qt5Widgets)
 find_package(Qt5LinguistTools)
 
-#add_custom_target(translations ALL DEPENDS ${QM_FILES})
 SET(Lang_files
   translations/monex_pl_PL.ts
   translations/monex_en_US.ts
 )
 
-#QT5_CREATE_TRANSLATION(LangSrcs ${Lang_files})
+QT5_CREATE_TRANSLATION(LangSrcs ${Lang_files})
 
 add_executable(monex main.cpp mainthread.cpp settings.cpp currencies.cpp money.cpp parser.cpp filter.cpp recur.cpp tracker.cpp project.cpp payment.cpp printer.cpp ${LangSrcs})
 target_link_libraries(monex Qt5::Core ${CURSES_LIBRARIES})
