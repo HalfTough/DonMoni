@@ -96,6 +96,7 @@ Example [config file](https://github.com/HalfTough/MonEx/blob/master/config/mone
 ### Coloring
 You can change look of the output using `row_coloring` setting.  
 You can use instructions:
+
 | attribute |
 |---|
 | bold |
@@ -107,14 +108,22 @@ You can use instructions:
 | hidden |
 
 You can color using terminal defaults
+
 | black | red | green | yellow | blue | magenta | cyan | gray |
+
 For 256 colors use
+
 | color255 |
+
 and replace 255 with number of color
 
 For true color use
+
 | color#ffffff |
+
 and replace #ffffff with your color
 
 To set background color use
+
 | back:<color> |
+
