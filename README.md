@@ -2,7 +2,33 @@
 
 Little CLI application that helps you monitor and manage your expenses.
 
-# Usage
+# Instalation
+1. Download or clone this project  
+`git clone https://github.com/HalfTough/MonEx`
+2. `cd MonEx`
+3. `mkdir build`
+4. `cd build`
+5. `cmake ..`  
+6. `make`
+7. `sudo make install`
+
+# Basic Usage
+Let's say you want to keep a track of how much you spend on everything that's unhealthy. You bought package of cigarettes for 10$ and cola for 1$.  
+`monex add cigaretes 10$`  
+if "$" is yous default currency, you can skip it  
+`monex add cola 1`
+
+Now running `monex` will show a little table
+
+`Name        April Total
+cigarettes    10$   10$
+cola           1$    1$
+Total         11$   11$
+`
+
+If you want to add a payment for a date different than today, you can do it by adding date after amount  
+`monex add cigarettes 10 2018-03-25`
+
 ## Adding new projects/payments
 `monex add <project>`  
 Adds empty project.
