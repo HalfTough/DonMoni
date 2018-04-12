@@ -20,9 +20,9 @@ if "$" is yous default currency, you can skip it
 
 Now running `monex` will show a little table
 
-`Name        April Total
-cigarettes    10$   10$
-cola           1$    1$
+`Name        April Total  
+cigarettes    10$   10$  
+cola           1$    1$  
 Total         11$   11$
 `
 
