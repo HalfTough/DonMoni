@@ -7,15 +7,10 @@ namespace ioctl{
     #include <sys/ioctl.h>
 }
 
-#include <QDebug>
-
 QTextStream Printer::out(stdout);
 QTextStream Printer::in(stdin);
 QTextStream Printer::err(stderr);
-QString Printer::months[12] = {tr("January"), tr("February"), tr("March"),
-                          tr("April"), tr("May"), tr("June"),
-                          tr("July"), tr("August"), tr("September"),
-                          tr("October"), tr("November"), tr("December")};
+QString Printer::months[12];
 QString Printer::lineClear("\e[0m");
 QStringList Printer::lineFormatting;
 int Printer::line = 0;
@@ -350,6 +345,18 @@ QDate Printer::toEndOfWeek(const QDate &date, int end){
 }
 
 void Printer::print(Tracker *tracker, const Filter &filter){
+    months[0] = tr("January");
+    months[1] = tr("February");
+    months[2] = tr("March");
+    months[3] = tr("April");
+    months[4] = tr("May");
+    months[5] = tr("June");
+    months[6] = tr("July");
+    months[7] = tr("August");
+    months[8] = tr("September");
+    months[9] = tr("October");
+    months[10] = tr("November");
+    months[11] = tr("December");
     QMap<QString,Project*> *projects = tracker->matchingProjects(filter);
     if(projects->empty()){
         out << tr("No payments meeting criteria") << endl;

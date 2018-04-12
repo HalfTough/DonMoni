@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QLocale>
+#include <QStandardPaths>
 #include <QTextStream>
 #include <QTranslator>
 
@@ -20,9 +21,16 @@ void loadLocale(QApplication *app, QTranslator *translator){
     else{
         locale = Settings::getLanguage();
     }
-    if(!translator->load("monex_"+locale)){
-        //If you fail lo load desired locale, try en_US
-        translator->load("monex_en_US");
+    QStringList paths;
+    paths << QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+    paths.push_front(QString()); //Null String will be interpreted as current dir by translator->load()
+    auto path = paths.begin();
+    for(; path!=paths.end() && translator->isEmpty(); path++){
+        translator->load("monex."+locale,*path);
+    }
+    //If you fail lo load desired locale, try en_US
+    for(path = paths.begin(); translator->isEmpty() && path!=paths.end(); path++){
+        translator->load("monex.en_US", *path);
     }
     app->installTranslator(translator);
 }
