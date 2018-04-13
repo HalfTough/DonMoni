@@ -68,7 +68,7 @@ Shows all projects matching filters
 `monex rename <oldname> <newname>`
 
 ## Modifying payments
-`monex modify <filters> [amount] [date]
+`monex modify <filters> [amount] [date]`
 
 ## Money
 `<value>[currency]`  
