@@ -131,7 +131,7 @@ Example [config file](https://github.com/HalfTough/MonEx/blob/master/config/mone
 |language| - | language in "en_US" format |
 |profile|--profile, -p| string |
 |default_currency|--currency| string |
-|compare_money|--compare| `ignore``convert` |
+|compare_money|--compare| `ignore` `convert` |
 |print_money|--print| `mixed` `convert` |
 |exchange_server| - | url |
 |exchange_time| - | integer > 0 |
@@ -140,7 +140,7 @@ Example [config file](https://github.com/HalfTough/MonEx/blob/master/config/mone
 |show_to|--show_to| `last` `today` `force_today` |
 |default_timeframe|--timeframe, -t| `year` `month` `week` `day` |
 |time_inverval|--interval| interes > 0 |
-|week_start|--week_start| `monday` `tuesday` `...` `mon` `tue` `...` 0<integer<=7 |
+|week_start|--week_start| `monday` `tuesday` `...` `mon` `tue` `...` 1<=integer<=7 |
 |time_shift|--shift| `start` `end` integer |
 |symbol_separator| - | `space` `none` string |
 |currency_separator| - | `comma` `none` `space` string |
@@ -179,3 +179,4 @@ To set background color use
 
 `back:<color>`
 
+Separate attributes by "," and rows by ";"
