@@ -48,24 +48,26 @@ Adds payment to the category `name` at `date`. If no date is specified current d
 ## Showing table
 `monex [show] [filters]`  
 
-## Detailed info about project
-`monex project <project>`  
-Shows all payments from given project
+More about [filters](#filters)
 
-## Showing projects
-`monex projects [filters]`  
+## Detailed info about category
+`monex category <name>`  
+Shows all payments from given category
+
+## Showing categories
+`monex categories [filters]`  
 Shows all projects matching filters
 
-## Removing projects
-`monex remove <project>`
+## Removing categories
+`monex remove <name>`
 
 ## Removing payments
 `monex remove <filters>`
 
-## Renaming projects
+## Renaming categories
 `monex rename <oldname> <newname>`
 
-## Modifying projects
+## Modifying payments
 `monex modify <filters> [amount] [date]
 
 ## Money
@@ -74,7 +76,7 @@ Examples: 5, 15USD, 3.52$
 Note there is no space between value and currency.
 
 ## Filters
-`names:<project[,project[,...]]>`  
+`names:<category[,category[,...]]>`  
 `min:<money>`  
 `max:<money>`  
 `from:<date>`  
@@ -82,8 +84,8 @@ Note there is no space between value and currency.
 `between:<date>:<date>`  
 `on:<date>`
 Newer filter overrides an older one so  
-`monex show names:project from:today form:2017-01-01`  
-will show payments from project starting at 2017-01-01 and from:today will be ignored
+`monex show names:tickets from:today form:2017-01-01`  
+will show payments from category named "tickets" starting at 2017-01-01 and `from:today` will be ignored
 
 ## Dates
 `YYYY-MM-DD`  

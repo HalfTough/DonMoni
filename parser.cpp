@@ -290,11 +290,11 @@ bool Parser::parseAsAction(const QString &arg){
         _action = remove;
         return true;
     }
-    if(arg == "project"){
+    if(arg == "category"){
         _action = project;
         return true;
     }
-    if(arg == "projects"){
+    if(arg == "categories"){
         _action = projects;
         return true;
     }
