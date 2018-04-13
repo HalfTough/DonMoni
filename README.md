@@ -75,11 +75,26 @@ Shows all projects matching filters
 Examples: 5, 15USD, 3.52$  
 Note there is no space between value and currency.
 
+ISO codes will be converted into matching currency symbol.
+
+You can mix different currencies  
+`monex add figures 50$,1200JPY`  
+will show as  
+```
+Name          April      Total
+figures  1200￥, 50$ 1200￥, 50$
+```
+
+You can also use custom currencies  
+`monex add myDoge 12DogeCoins`
+
+If you set `print_money` to `convert` in your config, application will try to convert everything to your default currency. Have in mind that if conversion rate is not found, currency will be treated as worthless. 
+
 ## Filters
 `names:<category[,category[,...]]>` – only show from listed categories  
 `min:<money>` – only show payments >= min  
 `max:<money>` – only show payments <= max  
-`from:<date> – only show payments made after "date"`  
+`from:<date>` – only show payments made after "date"  
 `to:<date>` – only show payments made before "date"  
 `between:<date>:<date>` – only show payments made between dates  
 `on:<date>` – only show payments made on "date"
