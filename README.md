@@ -20,7 +20,8 @@ if "$" is yous default currency, you can skip it
 
 Now running `monex` will show a little table
 
-```Name        April Total  
+```
+Name        April Total  
 cigarettes    10$   10$  
 cola           1$    1$  
 Total         11$   11$
@@ -30,7 +31,8 @@ If you want to add a payment for a date different than today, you can do it by a
 `monex add cigarettes 10 2018-03-25`
 
 Running `monex` without arguments will now show us
-```Name        March April Total
+```
+Name        March April Total
 cigarettes    10$   10$   20$
 cola          0zł    1$    1$
 Total         10$   11$   21$
