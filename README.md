@@ -105,7 +105,7 @@ Recurring time can be more complicated if you need it to be
 `monex add Wikipedia 10$ recur:1month,week`
 
 ## Config
-MonEx will read config from `/etc/xdg/monex.conf` and `/home/gurtos/.config/monex.conf`. The letter will override the firs one. On top of that, you can pass some of the settings as arguments
+MonEx will read config from `/etc/xdg/monex.conf` and `~/.config/monex.conf`. The letter will override the firs one. On top of that, you can pass some of the settings as arguments
 
 Example [config file](https://github.com/HalfTough/MonEx/blob/master/config/monex.conf).
 
