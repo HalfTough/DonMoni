@@ -69,8 +69,6 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
 void Parser::parseArgument(QString arg, ArgumentType acceptableTypes){
     if(acceptableTypes&names && parseAsNames(arg))
         return;
-    else if(acceptableTypes&setting && parseAsSetting(arg))
-        return;
     else if(acceptableTypes&setting_value && parseAsSettingValue(arg))
         return;
     else if(acceptableTypes&dates && parseAsDates(arg))
@@ -84,6 +82,8 @@ void Parser::parseArgument(QString arg, ArgumentType acceptableTypes){
     else if(acceptableTypes&amount && parseAsAmount(arg))
         return;
     else if(acceptableTypes&action && parseAsAction(arg))
+        return;
+    else if(acceptableTypes&setting && parseAsSetting(arg))
         return;
     else if(acceptableTypes&name && parseAsName(arg))
         return;

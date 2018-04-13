@@ -151,11 +151,7 @@ QList <QVector<Money>*> * Printer::getMoneyTable(QMap<QString,Project*> *project
     QList <QVector<Money>*> *table = new QList <QVector<Money>*>();
 
     QDate to = filter.getTo();
-    if(!to.isValid()){
-        to = QDate::currentDate();
-    }
     QDate iDat = start;
-
     auto lastCol = new QVector<Money>(projects->size(), Money());
     while(iDat <= to){
         auto col = new QVector<Money>();
@@ -306,6 +302,15 @@ void Printer::adjustStartEndDate(const Filter &filter, QMap<QString,Project*> *p
             }
         }
     }
+
+    switch(Settings::getTimeframe()){
+    case Settings::year:
+        start = start.addMonths(-(start.month()-1));
+        end = end.addMonths(12-end.month());
+    case Settings::month:
+        start = start.addDays(-(start.day()-1));
+        end = end.addDays(end.daysInMonth()-end.day());
+    }
 }
 
 int Printer::diffMonths(const QDate &from, const QDate &to){
@@ -383,6 +388,8 @@ void Printer::print(Tracker *tracker, const Filter &filter){
     QList<int> *sizes = new QList<int>();
     QDate startDate, endDate;
     adjustStartEndDate(fil, projects, startDate, endDate);
+    //Dates (from,to) in the filter shows if given payment should be counted
+    //Datest start, end show where extended time intervals are
     QList<QVector<Money>* > *moneyTable = getMoneyTable(projects, fil, startDate);
     allCols = moneyTable->size()-1;
     int sizesSum = 0;
