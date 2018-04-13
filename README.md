@@ -34,7 +34,7 @@ Running `monex` without arguments will now show us
 ```
 Name        March April Total
 cigarettes    10$   10$   20$
-cola          0zł    1$    1$
+cola           0$    1$    1$
 Total         10$   11$   21$
 ```
 
@@ -76,13 +76,14 @@ Examples: 5, 15USD, 3.52$
 Note there is no space between value and currency.
 
 ## Filters
-`names:<category[,category[,...]]>`  
-`min:<money>`  
-`max:<money>`  
-`from:<date>`  
-`to:<date>`  
-`between:<date>:<date>`  
-`on:<date>`
+`names:<category[,category[,...]]>` – only show from listed categories  
+`min:<money>` – only show payments >= min  
+`max:<money>` – only show payments <= max  
+`from:<date> – only show payments made after "date"`  
+`to:<date>` – only show payments made before "date"  
+`between:<date>:<date>` – only show payments made between dates  
+`on:<date>` – only show payments made on "date"
+
 Newer filter overrides an older one so  
 `monex show names:tickets from:today form:2017-01-01`  
 will show payments from category named "tickets" starting at 2017-01-01 and `from:today` will be ignored
@@ -145,21 +146,21 @@ You can use instructions:
 
 You can color using terminal defaults
 
-| black | red | green | yellow | blue | magenta | cyan | gray |
+`black` `red` `green` `yellow` `blue` `magenta` `cyan` `gray`
 
 For 256 colors use
 
-| color255 |
+`color255`
 
 and replace 255 with number of color
 
 For true color use
 
-| color#ffffff |
+`color#ffffff`
 
 and replace #ffffff with your color
 
 To set background color use
 
-| back:<color> |
+`back:<color>`
 
