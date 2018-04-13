@@ -18,7 +18,7 @@ public:
     void addProject(QString name);
     void addProject(Project *project);
     void add(QString name, Money amount, QDate date = QDate());
-    void addRecur(QString name, Money amount, Time time, QDate date = QDate());
+    void addRecur(const QString &name, const Money &amount, const Time &time, const QDate &date = QDate(), const QDate &until = QDate());
     bool removeProject(const QString &name);
     bool renameProject(const QString &name, const QString &newName);
     int removePayments(const Filter &filter);

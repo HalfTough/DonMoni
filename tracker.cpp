@@ -82,10 +82,11 @@ void Tracker::add(QString name, Money amount, QDate date)
     projects->value(name)->addPayment(amount, date);
 }
 
-void Tracker::addRecur(QString name, Money amount, Time time, QDate date){
+void Tracker::addRecur(const QString &name, const Money &amount,
+                       const Time &time, const QDate &date, const QDate &until){
     if(!projects->contains(name))
         projects->insert(name, new Project(name));
-    projects->value(name)->addRecur(new RecurringDonation(amount, time, date));
+    projects->value(name)->addRecur(new RecurringDonation(amount, time, date, until));
 }
 
 bool Tracker::removeProject(const QString &name){

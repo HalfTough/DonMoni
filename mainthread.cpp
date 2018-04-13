@@ -80,7 +80,7 @@ void MainProgram::run(){
     case Parser::add:
         if(parser->hasAmount()){
             if(parser->hasRecurTime()){ //Adding recurring donation
-                tracker->addRecur(parser->getName(), parser->getAmount(), parser->getRecurTime(), parser->getDate());
+                tracker->addRecur(parser->getName(), parser->getAmount(), parser->getRecurTime(), parser->getDate(), parser->getUntil());
             }
             else{ //Adding donation
                 tracker->add(parser->getName(), parser->getAmount(), parser->getDate());

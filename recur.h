@@ -43,13 +43,13 @@ struct Time{
 class RecurringDonation{
     Project *parent;
     Money money;
-    QDate next;
+    QDate next, until;
     Time step;
 
     friend class Project;
 public:
     RecurringDonation(const RecurringDonation &);
-    RecurringDonation(Money, Time, QDate=QDate());
+    RecurringDonation(Money, Time, QDate=QDate(), QDate until=QDate());
     RecurringDonation(const QJsonObject &);
     Payment* getNextDueDonation();
     Money getMoney() const { return money; }

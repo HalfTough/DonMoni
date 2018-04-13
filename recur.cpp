@@ -19,10 +19,11 @@ Time::Time(const QJsonObject &jobject){
 RecurringDonation::RecurringDonation(const RecurringDonation &donation){
     money = donation.money;
     next = donation.next;
+    until = donation.until;
     step = donation.step;
 }
 
-RecurringDonation::RecurringDonation(Money money, Time time, QDate date) : money(money), step(time){
+RecurringDonation::RecurringDonation(Money money, Time time, QDate date, QDate until) : money(money), step(time), until(until){
     if(date.isNull())
         next = QDate::currentDate();
     else
@@ -49,6 +50,12 @@ RecurringDonation::RecurringDonation(const QJsonObject &jobject){
     next = QDate::fromString(v.toString(), Qt::ISODate);
     if(!next.isValid())
         throw JsonParsingException();
+    v = jobject.value("until");
+    if(!v.isUndefined()){
+        until = QDate::fromString(v.toString(), Qt::ISODate);
+        if(!until.isValid())
+            throw JsonParsingException();
+    }
     v = jobject.value("step");
     if(!v.isObject())
         throw JsonParsingException();
@@ -62,6 +69,8 @@ RecurringDonation::RecurringDonation(const QJsonObject &jobject){
 Payment* RecurringDonation::getNextDueDonation(){
     if(next>QDate::currentDate())
         return nullptr;
+    if(!until.isNull() && next>until)
+        return nullptr;
     Payment *donation = new Payment(money, next);
     next = next.addYears(step.years);
     next = next.addMonths(step.months);
@@ -74,6 +83,8 @@ QJsonObject RecurringDonation::toJson() const{
     QJsonObject jrecur;
     jrecur.insert("amount", money.toJson());
     jrecur.insert("next", next.toString(Qt::ISODate));
+    if(!until.isNull())
+        jrecur.insert("until", until.toString(Qt::ISODate));
     jrecur.insert("step", step.toJson());
     return jrecur;
 }

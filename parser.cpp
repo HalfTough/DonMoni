@@ -51,6 +51,8 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
             return ArgumentType(name);
         else if(!_hasAmount)
             return amount;
+        else if(!recurTime.empty())
+            return ArgumentType(date|until|setting);
         else
             return ArgumentType(date|recur|setting);
     case project:
@@ -87,6 +89,8 @@ void Parser::parseArgument(QString arg, ArgumentType acceptableTypes){
     else if(acceptableTypes&dates && parseAsDates(arg))
         return;
     else if(acceptableTypes&recur && parseAsRecur(arg))
+        return;
+    else if(acceptableTypes&until && parseAsUntil(arg))
         return;
     else if(acceptableTypes&money && parseAsMoney(arg))
         return;
@@ -246,6 +250,19 @@ bool Parser::parseAsRecur(const QString &arg){
             return true;
         }
         recurTime = recurTime + time;
+    }
+    return true;
+}
+
+bool Parser::parseAsUntil(const QString &arg){
+    if(!arg.startsWith(untilPrefix))
+        return false;
+    QDate d = checkDate(arg.mid(6));
+    if(d.isNull()){
+        _action = error;
+    }
+    else{
+        _until = d;
     }
     return true;
 }

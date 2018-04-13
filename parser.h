@@ -23,6 +23,7 @@ private:
                         setting=4096,
                         setting_value=8192,
                         profile_type=16384,
+                        until=32768,
                         none=0 };
 
     const QString namesPrefix = "names:";
@@ -31,6 +32,7 @@ private:
     const QString betweenPrefix = "between:";
     const QString onPrefix = "on:";
     const QString recurPrefix = "recur:";
+    const QString untilPrefix = "until:";
     const QString maxPrefix = "max:";
     const QString minPrefix = "min:";
     const QString settProfile = "--profile";
@@ -51,7 +53,7 @@ private:
     Action _action;
     bool _hasAmount = false, _hasDate=false;
     Money _amount;
-    QDate _date;
+    QDate _date, _until;
     QString _name, _newName;
     Time recurTime;
     QString _setting;
@@ -61,6 +63,7 @@ private:
     bool parseAsSettingValue(const QString &arg);
     bool parseAsDates(const QString &arg);
     bool parseAsRecur(const QString &arg);
+    bool parseAsUntil(const QString &arg);
     bool parseAsMoney(const QString &arg);
     bool parseAsDate(const QString &arg);
     bool parseAsAmount(const QString &arg);
@@ -81,6 +84,7 @@ public:
     QString getNewName() const{return _newName; }
     bool hasRecurTime() const{ return !(recurTime.empty()); }
     Time getRecurTime() const{ return recurTime; }
+    QDate getUntil() const{ return _until; }
     bool hasAmount() const{ return _hasAmount; }
     Money getAmount() const{ return _amount; }
     QDate getDate() const{ return _date; }

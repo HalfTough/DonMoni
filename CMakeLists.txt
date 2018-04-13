@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.2)
 project (MonEx)
 set (MonEx_VERSION_MAJOR 1)
-set (MonEx_VERSION_MINOR 3)
+set (MonEx_VERSION_MINOR 4)
 set (MonEx_VERSION_PATCH 0)
 set(CMAKE_AUTOMOC ON)
 find_package(Qt5Core)
