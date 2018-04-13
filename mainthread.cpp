@@ -11,17 +11,60 @@ void MainProgram::run(){
     if(parser->getAction() == Parser::error){
         Printer::printParseError();
         exitApp(1);
+        return;
     }
     if(parser->getAction() == Parser::help){
         Printer::printHelp();
         exitApp(0);
+        return;
     }
     if(parser->getAction() == Parser::version){
         Printer::printVersion();
         exitApp(0);
+        return;
     }
 
     Tracker *tracker = new Tracker();
+    switch(parser->getAction()){
+    case Parser::profiles:
+        Printer::printProfiles(tracker->getProfiles());
+        exitApp(0);
+        return;
+    case Parser::profDel:
+        switch(tracker->removeProfile(parser->getName())){
+        case 0:
+            Printer::printProfileRemoved(parser->getName());
+            exitApp(0);
+            return;
+        case 1:
+            Printer::printProfileNotRemovedDoesntExists(parser->getName());
+            exitApp(1);
+            return;
+        case 2:
+            Printer::printProfileNotRemoved(parser->getName());
+            exitApp(1);
+            return;
+        }
+    case Parser::profRename:
+        switch(tracker->renameProfile(parser->getName(), parser->getNewName())){
+        case 0:
+            Printer::printProfileRenamed();
+            exitApp(0);
+            return;
+        case 1:
+            Printer::printProfileNotRenamedDoesntExist(parser->getName());
+            exitApp(1);
+            return;
+        case 2:
+            Printer::printProfileNotRenamedTargetExists(parser->getNewName());
+            exitApp(1);
+            return;
+        case 3:
+            Printer::printProfileNotRenamed();
+            exitApp(1);
+            return;
+        }
+    }
     try{
         tracker->load();
     }catch(const FileOpenException &foe){

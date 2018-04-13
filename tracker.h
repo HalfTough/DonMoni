@@ -10,7 +10,7 @@
 class Tracker{
     QMap<QString,Project*> *projects;
     Money money;
-    
+    QString profiles = "/profiles";
 public:
     Tracker();
     void save();
@@ -31,6 +31,9 @@ public:
     QMap<QString,Project*> *matchingProjects(const Filter &filter) const;
     Money getMoney() const { return money; }
     //Money getSumFrom(int year, int month) const;
+    QStringList getProfiles() const;
+    int removeProfile(const QString &name);
+    int renameProfile(const QString &name, const QString &newName);
     QJsonArray toJson() const;
 };
 

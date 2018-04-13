@@ -61,6 +61,14 @@ public:
     static void printProjectInfo(Tracker *tracker, const QString&);
     static void printProjectExists(const QString&);
     static void printProjectDoesntExists(const QString&);
+    static void printProfiles(const QStringList &);
+    static void printProfileRemoved(const QString &name);
+    static void printProfileNotRemovedDoesntExists(const QString &name);
+    static void printProfileNotRemoved(const QString &name);
+    static void printProfileRenamed();
+    static void printProfileNotRenamedDoesntExist(const QString &name);
+    static void printProfileNotRenamedTargetExists(const QString &name);
+    static void printProfileNotRenamed();
     static void printFileOpenError(const FileOpenException &);
     static void printFileOpenError(const QString &file, const QString &error);
     static void printJsonParsingError(const FileParsingException &);

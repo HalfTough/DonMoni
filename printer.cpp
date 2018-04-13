@@ -589,11 +589,48 @@ void Printer::printProjectInfo(Tracker *tracker, const QString &name){
 }
 
 void Printer::printProjectExists(const QString &name){
-    err << tr("%1: category already exists").arg(name) << endl;
+    err << tr("\"%1\": category already exists").arg(name) << endl;
+}
+
+void Printer::printProfiles(const QStringList &profiles){
+    for(QString profile : profiles){
+        out << profile << endl;
+    }
+}
+
+void Printer::printProfileRemoved(const QString &name){
+    out << tr("Profile \"%1\" removed").arg(name) << endl;
+}
+
+void Printer::printProfileNotRemovedDoesntExists(const QString &name){
+    err << tr("Couldn't remove profile: %1").arg(name) << endl;
+    err << tr("File doesn't exist") << endl;
+}
+
+void Printer::printProfileNotRemoved(const QString &name){
+    err << tr("Couldn't remove profile: %1").arg(name) << endl;
+}
+
+void Printer::printProfileRenamed(){
+    out << tr("Profile remaned") << endl;
+}
+
+void Printer::printProfileNotRenamedDoesntExist(const QString &name){
+    err << tr("Couldn't rename profile") << endl;
+    err << tr("\"%1\" – file doesn't exist").arg(name) << endl;
+}
+
+void Printer::printProfileNotRenamedTargetExists(const QString &name){
+    err << tr("Couldn't rename profile") << endl;
+    err << tr("\"%1\" – file already exists").arg(name) << endl;
+}
+
+void Printer::printProfileNotRenamed(){
+    err << tr("Couldn't rename profile") << endl;
 }
 
 void Printer::printProjectDoesntExists(const QString &name){
-    err << tr("%1: category doesn't exist").arg(name) << endl;
+    err << tr("\"%1\": category doesn't exist").arg(name) << endl;
 }
 
 void Printer::printFileOpenError(const FileOpenException &foe){

@@ -1,8 +1,10 @@
 #include <QDebug>
 #include <QDir>
 #include <QJsonDocument>
-#include <QTextStream>
+#include <QRegularExpression>
 #include <QStandardPaths>
+#include <QStringList>
+#include <QTextStream>
 
 #include "tracker.h"
 #include "settings.h"
@@ -13,7 +15,10 @@ Tracker::Tracker(){
 }
 
 void Tracker::save(){
-    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
+    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] + profiles );
+    if(!dir.exists()){
+        dir.mkpath(".");
+    }
     QFile saveFile(dir.filePath(Settings::getProfile()));
     if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
         throw FileOpenException(saveFile.fileName());
@@ -25,7 +30,7 @@ void Tracker::save(){
 void Tracker::load(){
     //We try to parse file, even if there were some errors and throw exception after we're done
     bool parsingErr = false;
-    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] );
+    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] + "/profiles" );
     QFile saveFile(dir.filePath(Settings::getProfile()));
     if(!saveFile.exists())
         return;
@@ -92,9 +97,15 @@ bool Tracker::removeProject(const QString &name){
     return true;
 }
 
+//TODO int instead of bool
 bool Tracker::renameProject(const QString &name, const QString &newName){
+    //Checking if project we want to rename exists
     auto project = projects->find(name);
     if(project == projects->end())
+        return false;
+    //Don't let it rename to a project that exists
+    auto other = projects->find(newName);
+    if(other != projects->end())
         return false;
     (*project)->rename(newName);
     return true;
@@ -151,14 +162,29 @@ QMap<QString,Project*>* Tracker::matchingProjects(const Filter &filter) const{
     return matches;
 }
 
+QStringList Tracker::getProfiles() const {
+    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] + profiles );
+    return dir.entryList().filter(QRegularExpression("^((?!\\.).)*$"));
+}
 
-//Money Tracker::getSumFrom(int year, int month) const {
-//    Money sum;
-//    for(Project *project : *projects){
-//        sum += project->getFromMonth(year, month);
-//    }
-//    return sum;
-//}
+int Tracker::removeProfile(const QString &name){
+    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] + profiles );
+    QFile profFile(dir.filePath(name));
+    if(!profFile.exists())
+        return 1;
+    return profFile.remove()?0:2;
+}
+
+int Tracker::renameProfile(const QString &name, const QString &newName){
+    QDir dir(QStandardPaths::standardLocations( QStandardPaths::DataLocation )[0] + profiles );
+    QFile profFile(dir.filePath(name));
+    if(!profFile.exists())
+        return 1;
+    QFile newFile(dir.filePath(newName));
+    if(newFile.exists())
+        return 2;
+    return profFile.rename(newName)?0:3;
+}
 
 QJsonArray Tracker::toJson() const{
     QJsonArray array;

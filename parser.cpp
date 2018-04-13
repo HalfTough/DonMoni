@@ -25,8 +25,12 @@ Parser::Parser(int argc, char **argv){
     //sprawdzamy czy sa wymagane argumety
     if(((_action == add || _action==project) && _name.isNull())
         || (_action == remove && _filter.isEmpty() && _name.isNull())
+        || (_action == rename && _newName.isEmpty())
         || (_action == modify && (_filter.isEmpty() || (_amount.isNull() && _date.isNull()) ))
-        || !_setting.isEmpty()  )
+        || !_setting.isEmpty()
+        || _action == profile
+        || (_action == profDel && _name.isEmpty())
+        || (_action == profRename && _newName.isEmpty()))
         _action = error;
     //Sprawdzamy wykluczające się argumenty
     if(_action == remove && !_name.isNull() && !_filter.isEmpty())
@@ -54,12 +58,21 @@ Parser::ArgumentType Parser::getAcceptableTypes() const{
     case remove:
         return ArgumentType(name|filter|setting);
     case rename:
+    case profRename:
         if(_newName.isEmpty())
             return name;
         else
             return none;
     case modify:
         return ArgumentType(filter|amount|date|setting);
+    case profile:
+        return profile_type;
+    case profDel:
+        if(_name.isEmpty())
+            return name;
+        else
+            return none;
+    case profiles:
     case version:
     case help:
         return none;
@@ -84,6 +97,8 @@ void Parser::parseArgument(QString arg, ArgumentType acceptableTypes){
     else if(acceptableTypes&action && parseAsAction(arg))
         return;
     else if(acceptableTypes&setting && parseAsSetting(arg))
+        return;
+    else if(acceptableTypes&profile_type && parseAsProfileType(arg))
         return;
     else if(acceptableTypes&name && parseAsName(arg))
         return;
@@ -306,6 +321,14 @@ bool Parser::parseAsAction(const QString &arg){
         _action = modify;
         return true;
     }
+    if(arg == "profile"){
+        _action = profile;
+        return true;
+    }
+    if(arg == "profiles"){
+        _action = profiles;
+        return true;
+    }
     if(arg == "version" || arg == "--version" || arg == "-v"){
         _action = version;
         return true;
@@ -317,6 +340,19 @@ bool Parser::parseAsAction(const QString &arg){
     return false;
 }
 
+bool Parser::parseAsProfileType(const QString &arg){
+    if(arg == "delete" || arg == "remove"){
+        _action = profDel;
+    }
+    else if(arg == "rename"){
+        _action = profRename;
+    }
+    else{
+        return false;
+    }
+    return true;
+}
+
 bool Parser::parseAsName(const QString &arg){
     if(arg.startsWith(namesPrefix) || arg.startsWith(fromPrefix) || arg.startsWith(toPrefix)
             || arg.startsWith(betweenPrefix) || arg.startsWith(onPrefix)
@@ -324,7 +360,7 @@ bool Parser::parseAsName(const QString &arg){
         return false;
     if(_name.isEmpty())
         _name = arg;
-    else if(_action==rename && _newName.isEmpty())
+    else if((_action==rename || _action==profRename) && _newName.isEmpty())
         _newName = arg;
     else
         return false;

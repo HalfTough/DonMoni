@@ -10,7 +10,7 @@
 
 class Parser{
 public:
-    enum Action { null=0, show, add, remove, project, projects, rename, modify, version, help, error };
+    enum Action { null=0, show, add, remove, project, projects, rename, modify, profile, profiles, profRename, profDel, version, help, error };
 private:
     enum ArgumentType { action=1, name=2, amount=4, date=8,
                         names=16, dfrom=32, dto=64, day=128, between=256,
@@ -22,6 +22,7 @@ private:
                         recur=2048,
                         setting=4096,
                         setting_value=8192,
+                        profile_type=16384,
                         none=0 };
 
     const QString namesPrefix = "names:";
@@ -64,6 +65,7 @@ private:
     bool parseAsDate(const QString &arg);
     bool parseAsAmount(const QString &arg);
     bool parseAsAction(const QString &arg);
+    bool parseAsProfileType(const QString &arg);
     bool parseAsName(const QString &arg);
 
     ArgumentType getAcceptableTypes() const;
