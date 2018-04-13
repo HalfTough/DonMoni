@@ -20,25 +20,31 @@ if "$" is yous default currency, you can skip it
 
 Now running `monex` will show a little table
 
-`Name        April Total  
+```Name        April Total  
 cigarettes    10$   10$  
 cola           1$    1$  
 Total         11$   11$
-`
+```
 
 If you want to add a payment for a date different than today, you can do it by adding date after amount  
 `monex add cigarettes 10 2018-03-25`
 
-## Adding new projects/payments
-`monex add <project>`  
-Adds empty project.
+Running `monex` without arguments will now show us
+```Name        March April Total
+cigarettes    10$   10$   20$
+cola          0zł    1$    1$
+Total         10$   11$   21$
+```
 
-`monex add <project> <amount> [date]`  
-Adds payment to the project at date. If no date is specified current date is used. If project of given name doesn't exist, it will be automatically created. 
+## Adding new categories/payments
+`monex add <name>`  
+Adds empty category.
+
+`monex add <name> <amount> [date]`  
+Adds payment to the category `name` at `date`. If no date is specified current date is used. If category of given name doesn't exist, it will be automatically created. 
 
 ## Showing table
 `monex [show] [filters]`  
-Shows payments devided by month and name
 
 ## Detailed info about project
 `monex project <project>`  
