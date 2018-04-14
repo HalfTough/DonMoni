@@ -164,6 +164,8 @@ will add 5 of your default currency to project Krita every two weeks, statring o
 Recurring time can be more complicated if you need it to be
 `monex add Wikipedia 10$ recur:1month,week`
 
+You can also add `until:date` which will stop adding payments at specified point.
+
 ## Config
 MonEx will read config from `/etc/xdg/monex.conf` and `~/.config/monex.conf`. The letter will override the firs one. On top of that, you can pass some of the settings as arguments
 
