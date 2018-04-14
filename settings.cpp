@@ -16,6 +16,7 @@ QString Settings::defaultCurrency = "";
 Settings::Currencies Settings::compareMoney = Settings::ignoreCurrencies;
 Settings::Currencies Settings::printMoney = Settings::ignoreCurrencies;
 QString Settings::exchangeServer = "https://api.fixer.io/";
+QString Settings::apiKey = "";
 int Settings::exchangeTime = 1;
 QStringList Settings::rowColoring = QStringList({"\e[0m", "\e[40m"});
 int Settings::minUncutCols = 3;
@@ -69,6 +70,8 @@ bool Settings::parseSetting(QString name, QString value){
         return setPrintMoney(value);
     }else if(name == "exchange_server"){
         setExchangeServer(value);
+    }else if(name == "api_key"){
+        apiKey = value;
     }else if(name == "exchange_time"){
         int a = value.toInt();
         if(a>0)

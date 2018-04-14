@@ -16,9 +16,10 @@ class Currencies : public QObject{
     QNetworkAccessManager *manager;
     QUrl url;
     QFile *file;
+    QString curDir = "/currencies";
     Printer *printer;
 
-    static QString fileName;
+    //static QString fileName;
     static QMap<QString, double> table;
     static bool downloaded;
     bool isCurrenciesFileOld();

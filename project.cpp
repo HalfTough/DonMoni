@@ -265,7 +265,8 @@ QJsonObject Project::toJson() const{
     }
     QJsonArray jrecur;
     for(RecurringDonation *recur : *recuring){
-        jrecur.append(recur->toJson());
+        if(!recur->hasEnded())
+            jrecur.append(recur->toJson());
     }
     project.insert("payments", jpayments);
     project.insert("recurring", jrecur);

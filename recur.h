@@ -56,6 +56,7 @@ public:
     Time getTime() const { return step; }
     QDate getNext() const { return next; }
     Project *getParent() const { return parent; }
+    bool hasEnded() const;
     QJsonObject toJson() const;
 };
 

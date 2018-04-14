@@ -13,21 +13,24 @@
 
 #include <QDebug>
 
-QString Currencies::fileName = "currencies_";
+//QString Currencies::fileName = "";
 QMap<QString, double> Currencies::table;
 bool Currencies::downloaded = false;
 
 Currencies::Currencies(){
-    QDir dir(QStandardPaths::standardLocations(QStandardPaths::DataLocation )[0]);
+    QDir dir(QStandardPaths::standardLocations(QStandardPaths::DataLocation )[0] + curDir);
     if(!dir.exists()){
         bool s = dir.mkpath(".");
     }
-    file = new QFile(dir.filePath(fileName+Settings::getCurrency()));
+    file = new QFile(dir.filePath(Settings::getCurrency()));
     QString server = Settings::getExchangeServer();
     if(!server.endsWith('/')){
         server += '/';
     }
     server += "latest?base=" + Settings::getCurrency();
+    if(!Settings::getApiKey().isEmpty()){
+        server += "&access_key="+Settings::getApiKey();
+    }
     url = QUrl(server);
 }
 
@@ -35,7 +38,6 @@ void Currencies::downloadExchange(){
     manager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished, this, &Currencies::replyFinished);
     downloaded = true;
-    qDebug() << "downloadin";
     QNetworkReply *reply = manager->get(QNetworkRequest(url));
 }
 
@@ -72,8 +74,8 @@ void Currencies::initTable(){
 }
 
 bool Currencies::isCurrenciesFileOld(){
-    QDateTime fileDT = file->fileTime(QFileDevice::FileModificationTime);
-    if(!fileDT.isValid() || (QDateTime::currentDateTime().addDays(Settings::getExchangeTime()) < fileDT)){
+    QDateTime fileDT = file->fileTime(QFileDevice::FileModificationTime).addDays(Settings::getExchangeTime());
+    if(!fileDT.isValid() || (QDateTime::currentDateTime() > fileDT)){
         return true;
     }
     return false;

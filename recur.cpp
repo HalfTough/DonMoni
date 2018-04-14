@@ -79,6 +79,12 @@ Payment* RecurringDonation::getNextDueDonation(){
     return donation;
 }
 
+bool RecurringDonation::hasEnded() const{
+    if(until.isValid() && next>until)
+        return true;
+    return false;
+}
+
 QJsonObject RecurringDonation::toJson() const{
     QJsonObject jrecur;
     jrecur.insert("amount", money.toJson());

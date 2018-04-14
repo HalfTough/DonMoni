@@ -28,6 +28,7 @@ private:
     static Currencies compareMoney;
     static Currencies printMoney;
     static QString exchangeServer;
+    static QString apiKey;
     static int exchangeTime;
 	static QStringList rowColoring;
     static int minUncutCols;
@@ -59,6 +60,7 @@ public:
     static QString getDateSeparator(){ return datesSeparator; }
     static int getExchangeTime(){ return exchangeTime; }
     static QString getExchangeServer(){ return exchangeServer; }
+    static QString getApiKey(){ return apiKey; }
     static QString terminalFormatFromSetting(const QString &);
 
     static bool setProfile(const QString &value);
