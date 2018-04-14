@@ -617,12 +617,12 @@ void Printer::printProfileRenamed(){
 
 void Printer::printProfileNotRenamedDoesntExist(const QString &name){
     err << tr("Couldn't rename profile") << endl;
-    err << tr("\"%1\" – file doesn't exist").arg(name) << endl;
+    err << tr("\"%1\": file doesn't exist").arg(name) << endl;
 }
 
 void Printer::printProfileNotRenamedTargetExists(const QString &name){
     err << tr("Couldn't rename profile") << endl;
-    err << tr("\"%1\" – file already exists").arg(name) << endl;
+    err << tr("\"%1\": file already exists").arg(name) << endl;
 }
 
 void Printer::printProfileNotRenamed(){
