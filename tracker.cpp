@@ -98,18 +98,17 @@ bool Tracker::removeProject(const QString &name){
     return true;
 }
 
-//TODO int instead of bool
-bool Tracker::renameProject(const QString &name, const QString &newName){
+int Tracker::renameProject(const QString &name, const QString &newName){
     //Checking if project we want to rename exists
     auto project = projects->find(name);
     if(project == projects->end())
-        return false;
+        return 1;
     //Don't let it rename to a project that exists
     auto other = projects->find(newName);
     if(other != projects->end())
-        return false;
+        return 2;
     (*project)->rename(newName);
-    return true;
+    return 0;
 }
 
 int Tracker::removePayments(const Filter &filter){

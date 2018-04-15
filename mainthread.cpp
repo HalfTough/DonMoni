@@ -118,12 +118,19 @@ void MainProgram::run(){
         }
         break;
     case Parser::rename:
-        if(tracker->renameProject(parser->getName(), parser->getNewName()) ){
+        switch(tracker->renameProject(parser->getName(), parser->getNewName()) ){
+        case 0:
             tracker->save();
-        }
-        else{
+            exitApp(0);
+            return;
+        case 1:
             Printer::printProjectDoesntExists(parser->getName());
             exitApp(1);
+            return;
+        case 2:
+            Printer::printProjectExists(parser->getNewName());
+            exitApp(1);
+            return;
         }
         break;
     case Parser::modify:{
